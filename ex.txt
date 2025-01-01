@@ -1,0 +1,27 @@
+select orders.CustomerID,
+customers.Email,
+customers.Phone2 as billignumber,
+SUM(CASE WHEN foodtype.Type = 'Breakfast' THEN orders.TotalAmount ELSE 0 END) AS breakfast,
+SUM(CASE WHEN foodtype.Type = 'Lunch' THEN orders.TotalAmount ELSE 0 END) AS lunch,
+SUM(CASE WHEN foodtype.Type = 'Dinner' THEN orders.TotalAmount ELSE 0 END) AS dinner
+from orders
+join foodtype on orders.FoodTypeID = foodtype.sno
+join customers on orders.CustomerID = customers.CustomerID
+WHERE orders.CustomerID = 2 and orders.OrderDate BETWEEN '2024-12-27' and  '2024-12-31'
+GROUP BY foodtype.type
+
+
+above query will return the total amount of each foodtype of particular cid between selected dates
+
+
+select orders.CustomerID,
+customers.Email,
+customers.Phone2 as billignumber,
+sum(orders.TotalAmount) as TotalAmount
+from orders
+join foodtype on orders.FoodTypeID = foodtype.sno
+join customers on orders.CustomerID = customers.CustomerID
+WHERE orders.OrderDate BETWEEN '2024-12-27' and  '2024-12-31'
+GROUP by orders.CustomerID
+
+above query will return the total amount of every foodtype of every cid between selected dates
