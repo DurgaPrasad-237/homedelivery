@@ -84,97 +84,12 @@ elseif($load == "linsert"){
 elseif($load == "updatelunch"){
     updatelunch($conn);
 }
+else if($load == "fetchitemsb") {
+    fetchitemsb($conn);
+} else if ($load == "getitemsb") {
+    getitemsb($conn);
+}
 
-
-// updating lunch quantity in the regiter
-// function updatelunch($conn)
-// {
-//     global $date, $foodid, $cid, $foodtype, $reason, $datalunch, $quantity, $status, $price;
-
-//     //check the date wheather lunch inserted or not in that data
-//     $checkdata = "select * from orders where OrderDate='$date' and FoodTypeID=$foodtype and CustomerID = $cid";
-//     $cdresult = getData($conn, $checkdata);
-
-//     //if cdresult greter than 0 so we should update
-//     if (count($cdresult) > 0) {
-//         //check order id first
-//         $selectorderid = "select OrderID from orders where OrderDate='$date' and FoodTypeID = '$foodtype' and CustomerID = $cid";
-//         $resultorderid = getData($conn, $selectorderid);
-//         $orderid = $resultorderid[0]['OrderID'];
-
-//         foreach ($datalunch as $ld) {
-//             //check the foodid exist or not
-//             $checkfoodid = "select OrderID from orders where OrderDate='$date'
-//              and FoodTypeID = '$foodtype' and CustomerID = $cid and FoodID = '$ld[foodid]'";
-//             $resultcheckfoodid = getData($conn, $checkfoodid);
-
-//             if (count($resultcheckfoodid) > 0) {
-//                 $totalamount = $ld['price'] * $ld['quantity'];
-//                 $updatequery = "
-//                 UPDATE 
-//                 orders SET 
-//                 TotalAmount = '$totalamount',
-//                 Quantity = '$ld[quantity]' 
-//                 WHERE 
-//                 CustomerID = '$cid' 
-//                 AND FoodID = '$ld[foodid]' 
-//                 AND OrderID = '$orderid';
-//                 ";
-
-//                 $updateresult = setData($conn, $updatequery);
-
-//                 if ($updateresult == "Record created") {
-//                     $logQuery = "INSERT INTO logs(CustomerID, OrderID, Quantity, Price, FoodType) 
-//             VALUES ('$cid', '$orderid', '$ld[quantity]', '$totalamount', '$foodtype')";
-//                     setData($conn, $logQuery);
-//                     $jsonresponse = array('code' => '500', 'status' => 'success', 'message' => "Updated Successfully", $date, $foodtype, $resultorderid);
-//                 } else {
-//                     $jsonresponse = array('code' => '500', 'status' => 'error', 'message' => "no data there", $date, $foodtype, $resultorderid, $datalunch);
-//                 }
-//             } else {
-//                 $totalamount = $ld['price'] * $ld['quantity'];
-//                 $insertquery = "INSERT INTO orders(OrderID, CustomerID, OrderDate, FoodTypeID, TotalAmount, Status, Quantity, CategoryID, FoodID)
-//                 VALUES ('$orderid','$cid','$date','$foodtype','$totalamount ','1','$ld[quantity]','1','$ld[foodid]')";
-//                 $resultquery = setData($conn, $insertquery);
-
-//                 if ($resultquery == "Record created") {
-//                     $logQuery = "INSERT INTO logs(CustomerID, OrderID, Quantity, Price, FoodType) 
-//                     VALUES ('$cid', '$orderid', '$ld[quantity]', '$totalamount', '$foodtype')";
-//                     setData($conn, $logQuery);
-
-//                     $jsonresponse = array('code' => '500', 'status' => 'success', 'message' => "Order Placed Succesfully", $date, $foodtype, $resultorderid, $insertquery);
-//                 } else {
-//                     $jsonresponse = array('code' => '500', 'status' => 'error', 'message' => "no data there", $date, $foodtype, $resultorderid, $datalunch);
-//                 }
-//             }
-//         }
-//     }
-//     //insert the lunchdata
-//     else {
-//         $querylastorderid = "select COALESCE(max(OrderId)) as orderid from orders";
-//         $resultorderid = getData($conn, $querylastorderid);
-//         $orderid = $resultorderid[0]['orderid'] + 1;
-
-//         foreach ($datalunch as $ld) {
-//             $totalamount = $ld['price'] * $ld['quantity'];
-//             $insertquery = "INSERT INTO orders(OrderID, CustomerID, OrderDate, FoodTypeID, TotalAmount, Status, Quantity, CategoryID, FoodID)
-//              VALUES ('$orderid','$cid','$date','$foodtype','$totalamount','1','$ld[quantity]','1','$ld[foodid]')";
-
-//             $resultquery = setData($conn, $insertquery);
-
-//             if ($resultquery == "Record created") {
-//                 // Log the insertion (no reason required)
-//                 $logQuery = "INSERT INTO logs(CustomerID, OrderID, Quantity, Price, FoodType) 
-//             VALUES ('$cid', '$orderid', '$ld[quantity]', '$totalamount', '$foodtype')";
-//                 setData($conn, $logQuery);
-//                 $jsonresponse = array('code' => '500', 'status' => 'success', 'message' => "Order Placed Successfully", $date, $foodtype, $resultorderid, $insertquery);
-//             } else {
-//                 $jsonresponse = array('code' => '500', 'status' => 'error', 'message' => "no data there", $date, $foodtype, $resultorderid, $datalunch);
-//             }
-//         }
-//     }
-//     echo json_encode($jsonresponse);
-// }
 
 
 
@@ -379,117 +294,154 @@ function fetchheader($conn)
 
 function setitemsb($conn)
 {
-    global $data, $cid;
+    global $cid, $ordertype, $totalamount, $quantity, $dates, $foodid,$day;
 
+    if (empty($dates)) {
+        $jsonresponse = array('code' => '400', 'status' => 'error', 'message' => "Date range is missing");
+        echo json_encode($jsonresponse);
+        return;
+    }
 
-    $skippedRecords = [];
-    $insertedRecords = false;
-    foreach ($data as $record) {
-        $date = $record['Date'];
-        $quantity = $record['Quantity'];
-        $price = $record['Price'];
-        $optionid = $record['OptionID'];
-        $foodtypeid = $record['foodtypeid'];
-        $reason = $record['Reason'];
+    $existingDates = [];
+    $newDates = [];
+    $insertedDates = [];
 
-        // Skip if quantity is 0 or less
-        if ($quantity <= 0) {
-            continue;
-        }
-
-        // Check for existing record
-        $checkquery = "SELECT * FROM `orders` WHERE `OrderDate` = '$date' AND `FoodID` = '$optionid' AND `FoodTypeID`='$foodtypeid' AND `CustomerID`='$cid' AND `Quantity`<> 0";
-        $result = getData($conn, $checkquery);
-
-        if (!empty($result)) {
-            $skippedRecords[] = $date; // Track skipped dates
-            continue;
-        }
-
-        // Insert new record
-        $insertquery = "INSERT INTO `orders` (`CustomerID`, `FoodTypeID`, `TotalAmount`, `Quantity`, `OrderDate`, `Status`, `CategoryID`, `FoodID`) 
-                        VALUES ('$cid', '$foodtypeid', '$price' * '$quantity', '$quantity', '$date', '1', '1', '$optionid')";
-        $resultquery  = setData($conn, $insertquery);
-        if ($resultquery) {
-            $lastReceiptId = mysqli_insert_id($conn);
-            $insertedRecords = true;
-            $insertquery = "INSERT INTO `logs`(`CustomerID`, `OrderID`, `Quantity`, `Price`, `FoodType`, `Reason`) VALUES ('$cid','$lastReceiptId','$quantity','$price' * '$quantity','$foodtypeid','$reason')";
-            $resultquery  = setData($conn, $insertquery);
+    // Check for existing dates
+    foreach ($dates as $date) {
+        $checkquery = "SELECT * FROM `orders` WHERE `CustomerID` = '$cid' AND `OrderDate` = '$date' AND `FoodTypeID` = '$ordertype' AND `Quantity`<> 0";
+        $resultselectquery = getData($conn, $checkquery);
+        if (count($resultselectquery) > 0) {
+            $existingDates[] = $date;
+        } else {
+            $newDates[] = $date;
         }
     }
 
-    // Determine the response message based on the conditions
-    if (!empty($skippedRecords) && $insertedRecords) {
-        $responseMessage = "Orders placed with new data";
-    } elseif (!empty($skippedRecords)) {
-        $responseMessage = "Order already exists";
-    } elseif ($insertedRecords) {
-        $responseMessage = "Order Placed Successfully";
-    } else {
-        $responseMessage = "No valid records to process";
+    // Insert new records
+    foreach ($newDates as $date) {
+        $day = date('l', strtotime($date));
+        //to check prices
+        $query = "SELECT Price,OptionID FROM fooddetails WHERE OptionID = (SELECT sno FROM week WHERE day = '$day')";
+        $result = $conn->query($query);
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $totalamount = $row['Price'];
+            $foodid = $row['OptionID'];
+        }
+        $orderidquery = "SELECT COALESCE(MAX(OrderID),0)+1 AS OrderID FROM `orders`";
+        $orderidResult = $conn->query($orderidquery);
+        if ($orderidResult && $orderidResult->num_rows > 0) {
+            $row = $orderidResult->fetch_assoc();
+            $orderid = $row['OrderID'];
+        }
+
+        $insertquery = "INSERT INTO `orders` (`OrderID`, `CustomerID`, `FoodTypeID`, `TotalAmount`, `Quantity`, `OrderDate`, `Status`, `CategoryID`, `FoodID`) 
+                        VALUES ('$orderid','$cid', '$ordertype', '$totalamount' * '$quantity', '$quantity', '$date', '1', '1', '$foodid')";
+        $insertResult = $conn->query($insertquery);
+
+        if ($conn->affected_rows > 0) {
+            $logQuery = "INSERT INTO `logs`(`CustomerID`, `OrderID`, `Quantity`, `Price`, `FoodType`) 
+                         VALUES ('$cid', '$orderid', '$quantity', '$totalamount' * '$quantity', '$ordertype')";
+            setData($conn, $logQuery);
+
+            $insertedDates[] = $date;
+        }
+
+        $result = payments($cid,$date,$conn);
+
+
     }
 
-    // Return the response as JSON
-    $jsonresponse = array('code' => '200', 'status' => 'success', 'message' => $responseMessage);
+    // Prepare single JSON response
+    $responseMessage = '';
+    if (!empty($existingDates)) {
+        $responseMessage .= 'Records already exist for the following dates: ' . implode(', ', $existingDates) . '. ';
+    }
+    if (!empty($insertedDates)) {
+        $responseMessage .= 'Order placed successfully for the following dates: ' . implode(', ', $insertedDates) . '.';
+    }
+
+    $jsonresponse = array(
+        'code' => !empty($insertedDates) ? '201' : '200',
+        'status' => !empty($insertedDates) ? 'success' : 'partial_success',
+        'message' => $responseMessage
+    );
+
     echo json_encode($jsonresponse);
 }
 
 function setitemsd($conn)
 {
-    global $data, $cid;
+    global $cid, $ordertype, $totalamount, $quantity, $dates, $foodid;
 
+    if (empty($dates)) {
+        $jsonresponse = array('code' => '400', 'status' => 'error', 'message' => "Date range is missing");
+        echo json_encode($jsonresponse);
+        return;
+    }
 
-    $skippedRecords = [];
-    $insertedRecords = false;
-    foreach ($data as $record) {
-        $date = $record['Date'];
-        $quantity = $record['Quantity'];
-        $price = $record['Price'];
-        $optionid = $record['OptionID'];
-        $foodtypeid = $record['foodtypeid'];
-        $reason = $record['Reason'];
+    $existingDates = [];
+    $newDates = [];
+    $insertedDates = [];
 
-
-        // Skip if quantity is 0 or less
-        if ($quantity <= 0) {
-            continue;
-        }
-
-        // Check for existing record
-        $checkquery = "SELECT * FROM `orders` WHERE `OrderDate` = '$date' AND `FoodID` = '$optionid' AND `FoodTypeID`='$foodtypeid' AND `CustomerID`='$cid' AND `Quantity`<> 0";
-        $result = getData($conn, $checkquery);
-
-        if (!empty($result)) {
-            $skippedRecords[] = $date; // Track skipped dates
-            continue;
-        }
-
-        // Insert new record
-        $insertquery = "INSERT INTO `orders` (`CustomerID`, `FoodTypeID`, `TotalAmount`, `Quantity`, `OrderDate`, `Status`, `CategoryID`, `FoodID`) 
-                        VALUES ('$cid', '$foodtypeid', '$price' * '$quantity', '$quantity', '$date', '1', '1', '$optionid')";
-        $resultquery  = setData($conn, $insertquery);
-
-        if ($resultquery) {
-            $lastReceiptId = mysqli_insert_id($conn);
-            $insertedRecords = true;
-            $insertquery = "INSERT INTO `logs`(`CustomerID`, `OrderID`, `Quantity`, `Price`, `FoodType`, `Reason`) VALUES ('$cid','$lastReceiptId','$quantity','$price' * '$quantity','$foodtypeid','$reason')";
-            $resultquery  = setData($conn, $insertquery);
+    // Check for existing dates
+    foreach ($dates as $date) {
+        $checkquery = "SELECT * FROM `orders` WHERE `CustomerID` = '$cid' AND `OrderDate` = '$date' AND `FoodTypeID` = '$ordertype' AND `Quantity`<> 0";
+        $resultselectquery = getData($conn, $checkquery);
+        if (count($resultselectquery) > 0) {
+            $existingDates[] = $date;
+        } else {
+            $newDates[] = $date;
         }
     }
 
-    // Determine the response message based on the conditions
-    if (!empty($skippedRecords) && $insertedRecords) {
-        $responseMessage = "Orders placed with new data";
-    } elseif (!empty($skippedRecords)) {
-        $responseMessage = "Order already exists";
-    } elseif ($insertedRecords) {
-        $responseMessage = "Order Placed Successfully";
-    } else {
-        $responseMessage = "No valid records to process";
+    // Insert new records
+    foreach ($newDates as $date) {
+        $day = date('l', strtotime($date));
+        $query = "SELECT Price,OptionID FROM fooddetails WHERE OptionID = (SELECT sno FROM week WHERE day = '$day')";
+        $result = $conn->query($query);
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $totalamount = $row['Price'];
+            $foodid = $row['OptionID'];
+        }
+        $orderidqueryd = "SELECT COALESCE(MAX(OrderID),0)+1 AS OrderID FROM `orders`";
+        $orderidResultd = $conn->query($orderidqueryd);
+        if ($orderidResultd && $orderidResultd->num_rows > 0) {
+            $row = $orderidResultd->fetch_assoc();
+            $orderid = $row['OrderID'];
+        }
+
+        $insertquery = "INSERT INTO `orders` (`OrderID`, `CustomerID`, `FoodTypeID`, `TotalAmount`, `Quantity`, `OrderDate`, `Status`, `CategoryID`, `FoodID`) 
+                        VALUES ('$orderid','$cid', '$ordertype', '$totalamount', '$quantity', '$date', '1', '1', '$foodid')";
+        $insertResult = $conn->query($insertquery);
+
+        if ($conn->affected_rows > 0) {
+            $logQuery = "INSERT INTO `logs`(`CustomerID`, `OrderID`, `Quantity`, `Price`, `FoodType`) 
+                         VALUES ('$cid', '$orderid', '$quantity', '$totalamount', '$ordertype')";
+            setData($conn, $logQuery);
+
+            $insertedDates[] = $date;
+        }
+
+        $result = payments($cid,$date,$conn);
     }
 
-    // Return the response as JSON
-    $jsonresponse = array('code' => '200', 'status' => 'success', 'message' => $responseMessage);
+    // Prepare single JSON response
+    $responseMessage = '';
+    if (!empty($existingDates)) {
+        $responseMessage .= 'Records already exist for the following dates: ' . implode(', ', $existingDates) . '.\n';
+    }
+    if (!empty($insertedDates)) {
+        $responseMessage .= 'Order placed successfully for the following dates: ' . implode(', ', $insertedDates) . '.';
+    }
+
+    $jsonresponse = array(
+        'code' => !empty($insertedDates) ? '201' : '200',
+        'status' => !empty($insertedDates) ? 'success' : 'partial_success',
+        'message' => $responseMessage
+    );
+
     echo json_encode($jsonresponse);
 }
 
@@ -1074,6 +1026,34 @@ function setitems($conn)
         $jsonresponse = array('code' => '500', 'status' => 'fail', 'message' => $responseMessage,'data'=>$data);
         echo json_encode($jsonresponse);
     }
+}
 
-    
+function fetchitemsb($conn)
+{
+    global $day;
+    $selectQuery = "SELECT ItemName,Price,OptionID,1 as category FROM `fooddetails` WHERE OptionID = (SELECT sno FROM week where day = '$day')";
+    $resultquery = getdata($conn, $selectQuery);
+
+    if (count($resultquery) > 0) {
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resultquery);
+        echo json_encode($jsonresponse);
+    } else {
+        $jsonresponse = array('code' => '200', 'status' => 'error', 'message' => 'No items found');
+        echo json_encode($jsonresponse);
+    }
+}
+
+function getitemsb($conn)
+{
+    global $day;
+    $selectQuery = "SELECT ItemName,Price,OptionID,3 as category FROM `fooddetails` WHERE OptionID = (SELECT sno FROM week where day = '$day')";
+    $resultquery = getdata($conn, $selectQuery);
+
+    if (count($resultquery) > 0) {
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resultquery);
+        echo json_encode($jsonresponse);
+    } else {
+        $jsonresponse = array('code' => '200', 'status' => 'error', 'message' => 'No items found');
+        echo json_encode($jsonresponse);
+    }
 }

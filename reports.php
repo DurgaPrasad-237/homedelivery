@@ -425,7 +425,12 @@
             z-index: 1000;
             top:0px;
         }
-
+        .pay_list_divs:nth-child(even){
+            background-color: white;
+        }
+        .pay_list_divs:nth-child(odd){
+           background-color:  rgb(195, 178, 178);
+        }
         
 
 
@@ -857,6 +862,7 @@ function viewHistory(cid,psno,name,fd,td,tamt,piamt,peamt,clickedButton ){
                 if(response.data.length > 0){
                     response.data.forEach(itm=>{
                         let divele = document.createElement('div');
+                        divele.classList.add('pay_list_divs')
                         divele.innerHTML = `
                             <p>${itm.paid_date}</p>
                             <p>${itm.paid_amount}</p>
@@ -907,6 +913,8 @@ subreports.addEventListener('click',()=>{
 
 function monthly_summary(){
     document.querySelector('.sumamry_tabs').style.display = "none";
+    document.querySelector('.payment_list').style.display = "none";
+            document.querySelector('.food_list').style.display = "none";
     var payload = {
         load:"loadpayments",
         customerid:document.querySelector('#customer_id').value,

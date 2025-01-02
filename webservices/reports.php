@@ -80,7 +80,7 @@ function orderHistory($conn){
     join fooddetails on orders.FoodID = fooddetails.OptionID
     join foodtype on orders.FoodTypeID = foodtype.sno
     where orders.CustomerID = $cid and orders.OrderDate BETWEEN '$fromdate' and '$todate'
-    ORDER by orders.FoodTypeID asc";
+    ORDER by orders.OrderDate asc";
 
     $resultquery = getData($conn,$selectquery);
 

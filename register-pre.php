@@ -302,11 +302,12 @@
 
         .button-container {
             display: flex;
-            justify-content: flex-start;
+            justify-content: space-around;
             gap: 20px;
             padding: 10px;
             background-color: #f9f9f9;
             border-bottom: 2px solid #ddd;
+            background-color: black;
 
         }
 
@@ -318,11 +319,14 @@
             background-color: #fff;
             cursor: pointer;
             transition: all 0.3s ease;
+            background-color: #ffc7574a;
+            color:#FFC857;
+            border:2px solid #ffc7574a;
         }
 
         .menu-button:hover {
-            background-color: #ddd;
-            border-color: #444;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            transform: scale(0.9);
         }
 
         .menu-button:active {
@@ -616,7 +620,7 @@
         }
 
         thead {
-            background-color: gray;
+            background-color: #e4a300;
             position: sticky;
             top: -4px;
             bottom: 0;
@@ -964,7 +968,7 @@
         .bfhead {
             display: flex;
             flex-direction: row;
-            background-color: gray;
+            background-color: #e4a300;
             padding: 10px;
             align-items: center;
             gap: 50px;
@@ -995,7 +999,7 @@
         }
 
         table th {
-            background-color: gray;
+            background-color: #e4a300;
             color: #fff;
             padding: 10px;
         }
@@ -1050,6 +1054,21 @@
             height:80vh;
             width:100%;
             display:none;
+        }
+        .show_fdbtn{
+            background-color: transparent;
+            border: 2px solid #FFC857;
+            color:#FFC857;
+            width:100px;
+            height:40px;
+            align-self: center;
+            justify-self:flex-end;
+        }
+        .show_fdbtn:hover{
+            background-color: #FFC857;
+            color:white;
+            cursor:pointer;
+            transition: background-color 0.4s ease, color 0.4s ease;
         }
 
         /* .placeorderbtn{
@@ -1230,10 +1249,10 @@
                     <input type="number" id="mealqtyd" value="0" readonly />
                     <input type="number" id="mealamtd" value="0" readonly />
                 </button>
-                <button onclick="showedit()" class="edit-button">
+                <!-- <button onclick="showedit()" class="edit-button">
                     Edit Order
-                </button>
-                <button onclick="showfooddetails()">
+                </button> -->
+                <button class="show_fdbtn" onclick="showfooddetails()">
                     FoodDetails
                 </button>
             </div>
@@ -2321,93 +2340,93 @@
 
         function fetchall() {
 
-var payload = {
-    load: "fetchitems",
-    day: dayName,
-    cid: customerid
-};
+            var payload = {
+                load: "fetchitems",
+                day: dayName,
+                cid: customerid
+            };
 
-$.ajax({
-    url: './webservices/dinner.php',
-    type: 'POST',
-    dataType: 'json',
-    data: JSON.stringify(payload),
-    success: function(response) {
-        console.log("fetchall", response);
+            $.ajax({
+                url: './webservices/dinner.php',
+                type: 'POST',
+                dataType: 'json',
+                data: JSON.stringify(payload),
+                success: function(response) {
+                    console.log("fetchall", response);
 
-        const table1Body = $('#table1 tbody');
-        const table2Body = $('#table2 tbody');
-        table1Body.empty();
-        table2Body.empty();
+                    const table1Body = $('#table1 tbody');
+                    const table2Body = $('#table2 tbody');
+                    table1Body.empty();
+                    table2Body.empty();
 
-        // Append data for the first table (first 15 rows)
-        response.data.slice(0, 15).forEach((x, index) => {
-            const row = $('<tr>');
-            row.html(`
-<td>${x.Date}</td>
-<td>
-<input type='number' min='0' class='tableqty' id='tableqty-${x.Date.replaceAll('-', '')}' 
-    data-optionid='${x.OptionID}' data-price='${x.Price}' data-index='${index}' data-category='${x.category}'
-    data-initial='${x.Quantity}' value='${x.Quantity}' readonly>
-</td>
-<td><input type='text' class='reason' id='reason-${x.Date.replaceAll('-', '')}'></td>
-<td><button class="table-btn" onclick="update('${x.Date}', this,'${x.category}','${x.OptionID}','${x.Price}','${x.OrderID}')" disabled>Edit</button></td>
-`);
-            table1Body.append(row);
-        });
+                    // Append data for the first table (first 15 rows)
+                    response.data.slice(0, 15).forEach((x, index) => {
+                        const row = $('<tr>');
+                        row.html(`
+            <td>${x.Date}</td>
+            <td>
+            <input type='number' min='0' class='tableqty' id='tableqty-${x.Date.replaceAll('-', '')}' 
+                data-optionid='${x.OptionID}' data-price='${x.Price}' data-index='${index}' data-category='${x.category}'
+                data-initial='${x.Quantity}' value='${x.Quantity}' readonly>
+            </td>
+            <td><input type='text' class='reason' id='reason-${x.Date.replaceAll('-', '')}'></td>
+            <td><button class="table-btn" onclick="update('${x.Date}', this,'${x.category}','${x.OptionID}','${x.Price}','${x.OrderID}')" disabled>Edit</button></td>
+            `);
+                        table1Body.append(row);
+                    });
 
-        // Append data for the second table (next 15 rows)
-        response.data.slice(15, 30).forEach((x, index) => {
-            const row = $('<tr>');
-            row.html(`
-<td>${x.Date}</td>
-<td>
-<input type='number' min='0' class='tableqty' id='tableqty-${x.Date.replaceAll('-', '')}' 
-    data-optionid='${x.OptionID}' data-price='${x.Price}' data-index='${index}'  data-category='${x.category}'
-    data-initial='${x.Quantity}' value='${x.Quantity}' readonly>
-</td>
-<td><input type='text' class='reason' id='reason-${x.Date.replaceAll('-', '')}'></td>
-<td><button class="table-btn" onclick="update('${x.Date}', this,'${x.category}','${x.OptionID}','${x.Price}','${x.OrderID}')" disabled>Edit</button></td>
-`);
-            table2Body.append(row);
-        });
+                    // Append data for the second table (next 15 rows)
+                    response.data.slice(15, 30).forEach((x, index) => {
+                        const row = $('<tr>');
+                        row.html(`
+            <td>${x.Date}</td>
+            <td>
+            <input type='number' min='0' class='tableqty' id='tableqty-${x.Date.replaceAll('-', '')}' 
+                data-optionid='${x.OptionID}' data-price='${x.Price}' data-index='${index}'  data-category='${x.category}'
+                data-initial='${x.Quantity}' value='${x.Quantity}' readonly>
+            </td>
+            <td><input type='text' class='reason' id='reason-${x.Date.replaceAll('-', '')}'></td>
+            <td><button class="table-btn" onclick="update('${x.Date}', this,'${x.category}','${x.OptionID}','${x.Price}','${x.OrderID}')" disabled>Edit</button></td>
+            `);
+                        table2Body.append(row);
+                    });
 
-        // Enable editing on input click
-        $('.tableqty').on('click', function() {
-            if ($(this).is('[readonly]')) {
-                $(this).removeAttr('readonly'); // Make editable
-                $(this).focus(); // Focus on the input field
+                    // Enable editing on input click
+                    $('.tableqty').on('click', function() {
+                        if ($(this).is('[readonly]')) {
+                            $(this).removeAttr('readonly'); // Make editable
+                            $(this).focus(); // Focus on the input field
+                        }
+                    });
+
+                    // Revert to readonly on blur
+                    $('.tableqty').on('blur', function() {
+                        $(this).attr('readonly', true); // Revert to readonly
+                    });
+                    $('.tableqty').on('input', function() {
+                        const $input = $(this);
+                        const currentValue = parseInt($input.val(), 10) || 0; // Current value
+                        const initialValue = parseInt($input.data('initial'), 10) || 0; // Initial value
+                        const dateId = $input.attr('id').split('-')[1]; // Extract the date ID
+                        const button = $input.closest('tr').find('.table-btn');
+
+                        // Enable the button only if the current value differs from the initial value
+                        if (currentValue !== initialValue) {
+                            button.prop('disabled', false);
+                        } else {
+                            button.prop('disabled', true);
+                        }
+                    });
+                    initialQuantitySumB = calculateTotalSum('.tableqty');
+                    $('.tableqty').on('input', calculateTotalB); // Optional calculation
+
+                    $('#breakfast-contain').show();
+                },
+                error: function(error) {
+                    console.error('Error fetching data:', error);
+                }
+            });
             }
-        });
-
-        // Revert to readonly on blur
-        $('.tableqty').on('blur', function() {
-            $(this).attr('readonly', true); // Revert to readonly
-        });
-        $('.tableqty').on('input', function() {
-            const $input = $(this);
-            const currentValue = parseInt($input.val(), 10) || 0; // Current value
-            const initialValue = parseInt($input.data('initial'), 10) || 0; // Initial value
-            const dateId = $input.attr('id').split('-')[1]; // Extract the date ID
-            const button = $input.closest('tr').find('.table-btn');
-
-            // Enable the button only if the current value differs from the initial value
-            if (currentValue !== initialValue) {
-                button.prop('disabled', false);
-            } else {
-                button.prop('disabled', true);
-            }
-        });
-        initialQuantitySumB = calculateTotalSum('.tableqty');
-        $('.tableqty').on('input', calculateTotalB); // Optional calculation
-
-        $('#breakfast-contain').show();
-    },
-    error: function(error) {
-        console.error('Error fetching data:', error);
-    }
-});
-}
 
 function getall() {
 var payload = {
