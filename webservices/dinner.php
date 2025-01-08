@@ -89,6 +89,98 @@ else if($load == "fetchitemsb") {
 } else if ($load == "getitemsb") {
     getitemsb($conn);
 }
+elseif($load == "nlunch"){
+    nlunch($conn);
+}
+
+
+function nlunch($conn) {
+    global $totalamount, $cid, $dates, $foodtype, $items;
+
+    // Validate dates
+    if (empty($dates)) {
+        $jsonresponse = array('code' => '400', 'status' => 'error', 'message' => "Date range is missing");
+        echo json_encode($jsonresponse);
+        return;
+    }
+
+    // Arrays to collect conflicting and valid dates
+    $existingDates = [];
+    $validDates = [];
+
+    // Loop through each date and check if an order already exists
+    foreach ($dates as $date) {
+        $checkOrderQuery = "SELECT * FROM orders WHERE CustomerID = '$cid' AND OrderDate = '$date' AND FoodTypeID = '$foodtype' AND `Quantity` <> 0";
+        $existingOrder = getData($conn, $checkOrderQuery);
+
+        if (!empty($existingOrder)) {
+            // Add the problematic date to the list
+            $existingDates[] = $date;
+        } else {
+            // Add the valid date to the list
+            $validDates[] = $date;
+        }
+    }
+
+    // Proceed with insertion for valid dates
+    foreach ($validDates as $date) {
+        // Generate a new OrderID for the current date
+        $querylastorderid = "SELECT COALESCE(MAX(OrderID), 0) + 1 AS OrderID FROM orders";
+        $resultorderid = getData($conn, $querylastorderid);
+        $orderid = $resultorderid[0]['OrderID'];
+
+        foreach ($items as $item) {
+            // Extract item properties
+            $foodid = $item['foodid'];
+            $quantity = $item['quantity'];
+            $price = $item['price'];
+            $totalamount = $price * $quantity;
+
+            // Insert query for the current item into orders
+            $insertquery = "INSERT INTO orders (OrderID, CustomerID, OrderDate, FoodTypeID, TotalAmount, Status, Quantity, CategoryID, FoodID) 
+                            VALUES ('$orderid', '$cid', '$date', '$foodtype', '$totalamount', '1', '$quantity', '1', '$foodid')";
+
+            // Execute the orders insertion query
+            $resultquery = setData($conn, $insertquery);
+
+            if ($resultquery == "Record created") {
+                // Insert the same record into logs
+                $logQuery = "INSERT INTO logs (CustomerID, OrderID, Quantity, Price, FoodType) 
+                             VALUES ('$cid', '$orderid', '$quantity', '$price', '$foodtype')";
+                $logResult = setData($conn, $logQuery);
+
+                if ($logResult != "Record created") {
+                    // If log insertion fails, return an error response
+                    $jsonresponse = array('code' => '500', 'status' => 'error', 'message' => "Failed to insert log for date $date");
+                    echo json_encode($jsonresponse);
+                    return;
+                }
+                else{
+                    $result = payments($cid,$date,$conn);
+                }
+            } else {
+                // If the orders insertion fails, return an error response
+                $jsonresponse = array('code' => '500', 'status' => 'error', 'message' => "Failed to insert records for date $date");
+                echo json_encode($jsonresponse);
+                return;
+            }
+        }
+    }
+
+    // Prepare response with success and conflict information
+    $message = "";
+    if (!empty($existingDates)) {
+        $message .= "Orders already exist for dates: " . implode(", ", $existingDates) . ". ";
+    }
+    if (!empty($validDates)) {
+        $message .= "Orders successfully placed for dates: " . implode(", ", $validDates) . ".";
+    }
+
+    $jsonresponse = array('code' => '200', 'status' => 'success', 'message' => $message,'result'=>$result);
+    echo json_encode($jsonresponse);
+}
+
+
 
 
 
@@ -875,7 +967,7 @@ echo json_encode($jsonresponse);
 // it is used to fetch the main lunch 3 items in the lunch table for container1
 function getall($conn)
 {
-    $sql = "Select ItemName,Price,OptionID from fooddetails where OptionID>7 and OptionID<11;";
+    $sql = "Select ItemName,Price,OptionID from fooddetails where OptionID>14 and OptionID<18;";
     $result = getdata($conn, $sql);
     $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $result);
     echo json_encode($jsonresponse);
@@ -884,7 +976,7 @@ function getall($conn)
 // it is used to fetch the add items in the lunch table for container1
 function getadditems($conn)
 {
-    $sql = "Select ItemName,Price,OptionID from fooddetails where OptionID>11 and OptionID<17;";
+    $sql = "Select ItemName,Price,OptionID from fooddetails where OptionID>17 and OptionID<25;";
     $result = getdata($conn, $sql);
     $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $result);
     echo json_encode($jsonresponse);

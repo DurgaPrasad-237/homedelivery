@@ -1466,7 +1466,7 @@
                         <input type="radio" name="breakfast-category" value="category2" disabled>
                         Category 2
                     </label>
-                    <button id="insert-button" onclick="LunchDetails()">Place Order</button>
+                    <button id="insert-button" onclick="openSummaryModal(event)">Place Order</button>
                 </div>
 
 
@@ -1699,7 +1699,7 @@
                         <tr>
                             <td>
                                 <label>
-                                    <input type="radio" name="lunch-category" value="category1" onclick="fetchalll()">
+                                    <input type="radio" name="lunch-category" value="category1" onclick="fetchalllunch()">
                                     Category 1
                                 </label>
                                 <label>
@@ -1711,8 +1711,8 @@
                     </table>
 
                     <!-- Dynamic Options Container -->
-                    <div id="lunch-options-container" style="display: none; margin-top: 10px;">
-                        <table id="lunch-table">
+                    <div id="lunch-options-containers" style="display: none; margin-top: 10px;">
+                        <table id="lunch-table-l">
                             <thead>
                                 <tr>
                                     <th>Item</th>
@@ -1732,7 +1732,7 @@
                         <button onclick="fetchadditems()">Add Items</button>
                     </div>
                     <div id="lunch-options-container1" style="display: none; margin-top: 10px;">
-                        <table id="lunch-table1">
+                        <table id="lunch-table1-l">
                             <thead>
                                 <tr>
                                     <th>Item</th>
@@ -2688,7 +2688,7 @@
             // console.log("cid", cid);
 
             const bqty = calculateTotalBB();
-            const lqty = Number(document.getElementById("mealqtyl").value) || 0;
+            const lqty = Number(document.getElementById("mealqtylb").value) || 0;
             const dqty = calculateTotalDB();
 
             if ((bqty + lqty + dqty) < 1) {
@@ -2710,7 +2710,7 @@
                 submitForB(event);
             }
             if (lqty > 0) {
-                lunchdetails(event);
+                nlunch(event);
             }
             if (dqty > 0) {
                 submitForD(event);
@@ -3156,105 +3156,6 @@ function fetchalll(thlength) {
 
 
 
-
-// function updateOrder(buttonElement) {
-//     const row = buttonElement.closest('tr'); // Find the row
-//     const tdate = buttonElement.getAttribute('data-tdate'); // Date of the row
-//     const inputs = row.querySelectorAll('.tableqty'); // All inputs in the row
-//     const reasonInput = row.querySelector('.reason-input'); // Reason input field
-
-//     const lunchdata = []; // Data payload
-//     let isUpdate = false; // Flag for update operation
-//     let allInitialZero = true; // Flag to check if all initial values are 0
-
-//     // Loop through all inputs
-//     inputs.forEach(input => {
-//         let optionid = input.getAttribute('data-optionid'); // Food ID
-//         let newQuantity = parseInt(input.value, 10); // New value
-//         let initialValue = parseInt(input.getAttribute('data-initial-value'), 10); // Initial value
-//         let price = parseFloat(input.getAttribute('data-price')); // Price
-
-//         // Check if any initial value is non-zero
-//         if (initialValue !== 0) {
-//             allInitialZero = false; // At least one non-zero value exists
-//         }
-
-//         // Check if the value has changed
-//         if (newQuantity !== initialValue) {
-//             lunchdata.push({
-//                 quantity: newQuantity,
-//                 foodid: optionid,
-//                 price: price,
-//             });
-
-//             // If any initial value is non-zero, it's an update
-//             if (initialValue !== 0) {
-//                 isUpdate = true;
-//             }
-//         }
-//     });
-
-//     // Determine if an update or insert is needed
-//     if (isUpdate) {
-//         // Require a reason for updates
-//         if (!reasonInput || !reasonInput.value.trim()) {
-//             alert("Please provide a reason for the update.");
-//             return;
-//         }
-//     } else if (allInitialZero) {
-//         // If all initial values are 0, treat as an insert
-//         console.log("Insert operation detected.");
-//     }
-
-//     // If no changes detected
-//     if (lunchdata.length === 0) {
-//         alert("No changes detected.");
-//         return;
-//     }
-
-//     // Prepare the payload
-//     const payload = {
-//         load: "updatelunch",
-//         reason: isUpdate ? reasonInput.value.trim() : null, // Reason only for updates
-//         date: tdate,
-//         cid: customerid, // Assume globally available
-//         foodtype: 2, // Example: FoodTypeID for lunch
-//         datalunch: lunchdata,
-//     };
-
-//     console.log("Payload to send:", payload);
-
-//     // AJAX request
-//     $.ajax({
-//         url: './webservices/dinner.php',
-//         type: 'POST',
-//         dataType: 'json',
-//         contentType: 'application/json',
-//         data: JSON.stringify(payload),
-//         success: function(response) {
-//             if (response.status === 'success') {
-//                 console.log("Server response:", response);
-
-//                 // Update the state of the edit button dynamically
-//                 updateEditButtonState(row);
-
-//                 alert(response.message);
-
-//                 // Update initial values to reflect the current state
-//                 inputs.forEach(input => {
-//                     input.setAttribute('data-initial-value', input.value);
-//                 });
-//             } else {
-//                 console.warn("Server warning:", response.message);
-//                 alert(response.message);
-//             }
-//         },
-//         error: function(error) {
-//             console.error("Error during update:", error);
-//             alert("An error occurred while updating. Please try again.");
-//         }
-//     });
-// }
 // Function to update Edit button state dynamically
 function updateEditButtonState(row) {
     const inputs = row.querySelectorAll('.tableqty'); // Get all inputs in the row
@@ -3438,83 +3339,6 @@ let itemName = headerCell ? headerCell.getAttribute('data-ItemName') : `Item ${o
     });
 }
 
-
-// function headerfetch() {
-//             console.log("function");
-//             document.getElementById('lunch-options-container').style.display = 'block';
-
-//             let demo = document.querySelector('#lunch-table thead');
-//             console.log(demo);
-//             if (!demo) {
-//                 console.error('Table header element not found!');
-//                 return;
-//             }
-
-//             demo.innerHTML = ''; // Clear existing headers
-//             let tr = document.createElement('tr');
-//             let th = document.createElement('th');
-
-//             // Add the "Date" column at the beginning
-//             let dateTh = document.createElement('th');
-//             dateTh.textContent = "Date";
-//             tr.appendChild(dateTh);
-
-//             // Payload for AJAX request
-//             const payload = {
-//                 load: "fetchheader"
-//             };
-
-//             // Fetch data from the server
-//             $.ajax({
-//                 url: './webservices/dinner.php',
-//                 type: 'POST',
-//                 dataType: 'json',
-//                 contentType: 'application/json',
-//                 data: JSON.stringify(payload),
-//                 success: function(response) {
-//                     console.log("2729",response);
-//                     if (response.code === 200 && Array.isArray(response.data)) {
-//                         console.log('Fetched Data:', response.data);
-
-//                         // Populate headers based on fetched data
-//                         response.data.forEach(item => {
-//                             let th = document.createElement('th');
-//                             th.setAttribute('data-ItemName', `${item.ItemName}`)
-//                             th.setAttribute('data-Price', `${
-//                                 item.Price}`)
-//                             th.textContent = `${item.ItemName}  ${item.Price} `;
-//                             th.setAttribute('data-ItemID', `${
-//                                 item.OptionID}`)
-//                             tr.appendChild(th);
-
-//                             lunchidsprice.push({
-//                                 id: item.OptionID,
-//                                 price: item.Price
-//                             })
-//                         });
-
-//                         let reasonTh = document.createElement('th');
-//                         reasonTh.textContent = "Reason";
-//                         tr.appendChild(reasonTh);
-
-//                         // Add the "Edit Function" column at the end
-//                         let editTh = document.createElement('th');
-//                         editTh.textContent = "Edit";
-//                         tr.appendChild(editTh);
-
-//                         demo.appendChild(tr); // Append the row to the table header
-//                     } else {
-//                         console.error('No data available:', response.messagde || 'Unknown error');
-//                         alert('No data available to display.');
-//                     }
-//                     fetchalll();
-//                 },
-//                 error: function(error) {
-//                     console.error('Error fetching header data:', error);
-//                     alert('Failed to fetch data.');
-//                 }
-//             });
-//         }
 
 function headerfetch() {
             console.log("function");
@@ -4003,79 +3827,79 @@ $.ajax({
 
 
 
-        function fetchadditems() {
-            const payload = {
-                load: 'fetchadditems'
-            };
+        // function fetchadditems() {
+        //     const payload = {
+        //         load: 'fetchadditems'
+        //     };
 
-            $.ajax({
-                url: "./webservices/dinner.php",
-                type: 'POST',
-                dataType: 'json',
-                contentType: 'application/json',
-                data: JSON.stringify(payload),
-                success: function(response) {
-                    console.log("Response received:", response);
-                    if (response.status === 'success') {
-                        const tableBody = $('#lunch-table1 tbody');
-                        tableBody.empty(); // Clear any previous rows
+        //     $.ajax({
+        //         url: "./webservices/dinner.php",
+        //         type: 'POST',
+        //         dataType: 'json',
+        //         contentType: 'application/json',
+        //         data: JSON.stringify(payload),
+        //         success: function(response) {
+        //             console.log("Response received:", response);
+        //             if (response.status === 'success') {
+        //                 const tableBody = $('#lunch-table1 tbody');
+        //                 tableBody.empty(); // Clear any previous rows
 
-                        // Loop through the fetched data and add rows to the table
-                        response.data.forEach(item => {
-                            const date = new DataTransferItemList
-                            const row = $('<tr>').attr('data-optionid', item.OptionID); // Store OptionID in data attribute
-                            row.html(`
-                        <td>${item.ItemName}</td>
-                        <td>${item.Price}</td>
-                        <td><input type="number" class="tableqty"  placeholder="0" min="0"></td>
-                    `);
-                            tableBody.append(row);
-                        });
+        //                 // Loop through the fetched data and add rows to the table
+        //                 response.data.forEach(item => {
+        //                     const date = new DataTransferItemList
+        //                     const row = $('<tr>').attr('data-optionid', item.OptionID); // Store OptionID in data attribute
+        //                     row.html(`
+        //                 <td>${item.ItemName}</td>
+        //                 <td>${item.Price}</td>
+        //                 <td><input type="number" class="tableqty"  placeholder="0" min="0"></td>
+        //             `);
+        //                     tableBody.append(row);
+        //                 });
 
-                        $("#lunch-options-container1").show();
-                    } else {
-                        console.error('Error in response status:', response);
-                    }
-                },
-                error: function(error) {
-                    console.error('AJAX request failed:', error);
-                }
-            });
-        }
+        //                 $("#lunch-options-container1").show();
+        //             } else {
+        //                 console.error('Error in response status:', response);
+        //             }
+        //         },
+        //         error: function(error) {
+        //             console.error('AJAX request failed:', error);
+        //         }
+        //     });
+        // }
 
-        // Event listener for 'Add Items' button
-        $('#add-items').on('click', function() {
-            fetchadditems(); // Fetch additional items when button is clicked
-        });
+        // // Event listener for 'Add Items' button
+        // $('#add-items').on('click', function() {
+        //     fetchadditems(); // Fetch additional items when button is clicked
+        // });
 
-        // Collect data from both tables (lunch-table and lunch-table1)
-        function collectLunchItems() {
-            const items = [];
+        // // Collect data from both tables (lunch-table and lunch-table1)
+        // function collectLunchItems() {
+        //     const items = [];
 
-            // Function to extract data from a table
-            function processTable(tableId) {
-                $(`${tableId} tbody tr`).each(function() {
-                    const optionid = $(this).data('optionid'); // Get OptionID from data attribute
-                    const price = parseFloat($(this).find('td:nth-child(2)').text().trim()); // Get Price
-                    const quantity = parseInt($(this).find('input[type="number"]').val()) || 0; // Get Quantity (default to 0 if not valid)
+        //     // Function to extract data from a table
+        //     function processTable(tableId) {
+        //         $(`${tableId} tbody tr`).each(function() {
+        //             const optionid = $(this).data('optionid'); // Get OptionID from data attribute
+        //             const price = parseFloat($(this).find('td:nth-child(2)').text().trim()); // Get Price
+        //             const quantity = parseInt($(this).find('input[type="number"]').val()) || 0; // Get Quantity (default to 0 if not valid)
 
-                    // Validate that OptionID, Price, and Quantity are available
-                    if (quantity > 0 && optionid && !isNaN(price)) {
-                        items.push({
-                            foodid: optionid,
-                            price: price,
-                            quantity: quantity,
-                        });
-                    }
-                });
-            }
+        //             // Validate that OptionID, Price, and Quantity are available
+        //             if (quantity > 0 && optionid && !isNaN(price)) {
+        //                 items.push({
+        //                     foodid: optionid,
+        //                     price: price,
+        //                     quantity: quantity,
+        //                 });
+        //             }
+        //         });
+        //     }
 
-            // Collect items from both tables
-            processTable('#lunch-table'); // Process first table
-            processTable('#lunch-table1'); // Process second table
+        //     // Collect items from both tables
+        //     processTable('#lunch-table'); // Process first table
+        //     processTable('#lunch-table1'); // Process second table
 
-            return items;
-        }
+        //     return items;
+        // }
 
         // Function to handle form submission
         function LunchDetails() {
@@ -4588,6 +4412,290 @@ $.ajax({
                 }
             });
         }
+
+ // Global array to store both fetched items
+
+// Function to fetch all lunch items
+allItems = []; // Global array to store both fetched items
+
+// Function to fetch all lunch items
+function fetchalllunch() {
+    allItems = []; // Clear global array
+    const payload = { load: 'fetch' };
+
+    $.ajax({
+        url: "./webservices/dinner.php",
+        type: 'POST',
+        dataType: 'json',
+        data: JSON.stringify(payload),
+        success: function (response) {
+            console.log("All Lunch Items Response:", response);
+
+            if (response.status === 'success' && response.data) {
+                const chargesTableBody = $('#lunch-table-l tbody');
+                chargesTableBody.empty(); // Clear the table before adding new rows
+
+                response.data.forEach(item => {
+                    const row = $('<tr>');
+                    row.html(`
+                        <td class="itemname">${item.ItemName}</td>
+                        <td class="price">${item.Price}</td>
+                        <td><input type="number" data-optionid1="${item.OptionID}" placeholder="0" min="0" style="width:100px"></td>
+                    `);
+                    chargesTableBody.append(row);
+
+                    // Add the item to the global array
+                    allItems.push({
+                        itemname: item.ItemName,
+                        price: item.Price,
+                        foodid: item.OptionID // Ensure this matches data-optionid
+                    });
+                });
+
+                $("#lunch-options-containers").show();
+            } else {
+                console.error('Error in response data:', response);
+            }
+        },
+        error: function (error) {
+            console.error('Error fetching lunch items:', error);
+        }
+    });
+}
+
+// Function to fetch additional lunch items
+function fetchadditems() {
+    const payload = { load: 'fetchadditems' };
+
+    $.ajax({
+        url: "./webservices/dinner.php",
+        type: 'POST',
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify(payload),
+        success: function (response) {
+            console.log("Additional Lunch Items Response:", response);
+
+            if (response.status === 'success' && response.data) {
+                const tableBody = $('#lunch-table1-l tbody');
+                tableBody.empty(); // Clear the table before adding new rows
+
+                response.data.forEach(item => {
+                    const row = $('<tr>');
+                    row.html(`
+                        <td class="itemname">${item.ItemName}</td>
+                        <td class="price">${item.Price}</td>
+                        <td><input type="number" data-optionid1="${item.OptionID}" placeholder="0" min="0" style="width:100px"></td>
+                    `);
+                    tableBody.append(row);
+
+                    // Add the item to the global array
+                    allItems.push({
+                        itemname: item.ItemName,
+                        price: item.Price,
+                        foodid: item.OptionID
+                    });
+                });
+
+                $("#lunch-options-container1").show();
+            } else {
+                console.error('Error in additional items response:', response);
+            }
+        },
+        error: function (error) {
+            console.error('Error fetching additional lunch items:', error);
+        }
+    });
+}
+
+// Add items button event
+$('#add-items').on('click', function () {
+    fetchadditems();
+});
+
+// Function to handle lunch order submission
+function nlunch(event) {
+    event.preventDefault();
+
+    const fromDate = $('#from-date-l').val();
+    const toDate = $('#to-date-l').val();
+
+    let payload = {
+        load: 'nlunch',
+        cid: customerid,
+        foodtype: 2,
+        dates: [],
+        items: []
+    };
+
+    if (fromDate && toDate) {
+        const from = new Date(fromDate);
+        const to = new Date(toDate);
+        if (from > to) {
+            alert('Invalid date range.');
+            return;
+        }
+        let current = new Date(from);
+        while (current <= to) {
+            payload.dates.push(current.toISOString().split('T')[0]);
+            current.setDate(current.getDate() + 1);
+        }
+    } else {
+        payload.dates.push(new Date().toISOString().split('T')[0]);
+    }
+
+    allItems.forEach(item => {
+        const quantity = $(`input[data-optionid1="${item.foodid}"]`).val() || 0;
+        if (quantity > 0) {
+            payload.items.push({
+                itemname: item.itemname,
+                price: item.price,
+                quantity: parseInt(quantity, 10),
+                foodid: item.foodid
+            });
+        }
+    });
+
+    if (payload.items.length === 0) {
+        alert("Please enter quantities for at least one lunch item.");
+        return;
+    }
+
+    console.log('Payload:', payload);
+
+    $.ajax({
+        type: 'POST',
+        url: './webservices/dinner.php',
+        dataType: 'json',
+        data: JSON.stringify(payload),
+        success: function (response) {
+            console.log('Server Response:', response);
+            alert(response.message || 'Order placed successfully.');
+        },
+        error: function (xhr, status, error) {
+            console.error('Error response:', xhr.responseText);
+        }
+    });
+}
+
+
+// Function to update total amount
+function updateLunchTotaldl() {
+    let totalAmount = 0;
+
+    function calculateTableTotal(tableId) {
+        $(`${tableId} tbody tr`).each(function() {
+            const price = parseFloat($(this).find('td:nth-child(2)').text().trim()); // Get the price
+            const quantity = parseInt($(this).find('input[type="number"]').val()); // Get the quantity
+            console.log("Price:", price, "Quantity:", quantity);
+            if (!isNaN(price) && !isNaN(quantity)) {
+                totalAmount += price * quantity;
+            }
+        });
+    }
+
+    calculateTableTotal('#lunch-table-l');
+    calculateTableTotal('#lunch-table1-l');
+    $('#mealamountb').val(totalAmount.toFixed(2));
+}
+
+// Function to update total quantity
+function updateLunchQuantitydl() {
+    let totalQuantity = 0;
+
+    $('#lunch-table-l tbody input[type="number"], #lunch-table1-l tbody input[type="number"]').each(function() {
+        const quantity = parseInt($(this).val(), 10); // Parse the value as an integer
+        if (!isNaN(quantity) && quantity > 0) {
+            totalQuantity += quantity;
+        }
+    });
+
+    $('#mealqtylb').val(totalQuantity); // Default to 0 if no valid quantities
+}
+
+// Attach the event listener to dynamically update the total amount and quantity
+$(document).on('input', '#lunch-table-l tbody input[type="number"], #lunch-table1-l tbody input[type="number"]', function() {
+    updateLunchTotaldl();
+    updateLunchQuantitydl();
+});
+
+
+// // Function to send lunch details
+// function nlunch(event) {
+//     event.preventDefault();
+
+//     const fromDate = $('#from-date-l').val();
+//     const toDate = $('#to-date-l').val();
+
+//     // Initialize payload
+//     let payload = {
+//         load: 'nlunch',
+//         cid: customerid,
+//         foodtype: 2,
+//         category: '2',
+//         dates: [],
+//         items: [] // Initialize an array for storing item details
+//     };
+
+//     // Update total amount and quantity before submission
+//     updateLunchTotaldl();
+//     updateLunchQuantitydl();
+
+//     // Check date validity
+//     if (fromDate && toDate) {
+//         const from = new Date(fromDate);
+//         const to = new Date(toDate);
+//         if (from > to) {
+//             alert('Invalid date range.');
+//             return;
+//         }
+//         let current = new Date(from);
+//         while (current <= to) {
+//             payload.dates.push(current.toISOString().split('T')[0]); // Format date as YYYY-MM-DD
+//             current.setDate(current.getDate() + 1);
+//         }
+//     } else {
+//         payload.dates.push(new Date().toISOString().split('T')[0]); // Default to today's date
+//     }
+
+//     // Loop through all items (from both fetchalllunch and fetchadditems)
+//     allItems.forEach(item => {
+//         const quantity = parseInt($(`input[data-optionid="${item.OptionID}"]`).val() || 0, 10); // Get the quantity for the item
+//         const price = item.Price || 0; // Assuming you are retrieving price from your `allItems` array
+//         if (quantity > 0) {
+//             payload.items.push({
+//                 itemname: item.ItemName,
+//                 price: price,
+//                 quantity: quantity,
+//                 foodid: item.OptionID // Add OptionID to the payload
+//             });
+//         }
+//     });
+
+//     // If no items have been selected, alert the user
+//     if (payload.items.length === 0) {
+//         alert("Please enter quantities for at least one lunch item.");
+//         return;
+//     }
+
+//     console.log('Payload:', payload);
+
+//     // Send the data using AJAX
+//     $.ajax({
+//         type: 'POST',
+//         url: './webservices/dinner.php',
+//         dataType: 'json',
+//         data: JSON.stringify(payload),
+//         success: function(response) {
+//             alert(response.message);
+//             location.reload(); // Reload the page after successful update
+//         },
+//         error: function(error) {
+//             console.error('Error:', error);
+//         }
+//     });
+// }
+
 </script>
 
 </body>

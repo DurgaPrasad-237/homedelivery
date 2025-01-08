@@ -341,6 +341,7 @@
             overflow-y: auto;
             font-size: 15px;
             background-color: rgba(255, 255, 255, 0.5);
+            padding-bottom:10px;
             
         }
         .breakfast_list div, .lunch_list div, .dinner_list div{
@@ -349,6 +350,7 @@
             justify-content: space-around;
             height:18%;
             text-align: center;
+           
         }
         .breakfast_list div p,.lunch_list div p,.dinner_list div p{
             width:20%;
@@ -357,7 +359,11 @@
             margin:0px;
             /* border:2px solid black; */
             background-color: black;
-            color:white
+            color:white;
+            /* border:2px solid red; */
+            position: sticky;
+            z-index: 999;
+            top:0
         }
         .payment_list{
             /* border:2px solid black; */

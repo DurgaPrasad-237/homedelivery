@@ -219,9 +219,7 @@
 
         #ItemName,
         #Price, 
-        #category,
-        .food_item,
-        .food_items_dp{
+        #category{
             border: none;
             border-bottom: 2px solid rgb(6, 6, 6);
             outline: none;
@@ -253,7 +251,6 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-           
         }
         .category-container {
             width: 100%;
@@ -280,102 +277,6 @@
     color: #333;
     margin-top: 10px;
 }
-.add_bf{
-    /* border:2px solid black; */
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-    /* padding:10px; */
-    height:55vh;
-    width:40vw;
-    display:none;
-    margin:20px auto;
-    border-radius: 10px;
-    background-color:white;   
-    flex-direction: row;
-    justify-content: space-between;
-}
-.add_table_bf {
-    width: 100%;
-    border-collapse: collapse;
-    border:none;
-    background-color: transparent;
-}
-
-.add_table_bf thead th, .add_table_bf tbody td {
-    /* background-color: white; */
-    color: black;
-    padding: 5px;
-    font-size: 12px; 
-    line-height: 1;
-    /* border: 1px solid #ddd;  */
-    text-align: center;
-    border:none;
-    border-radius: 0px;
-}
-
-.add_table_bf tbody tr {
-    /* background-color: white; */
-    color: black;
-    height: 10px;  
-   
-}
-
-.food_items_dp{
-    width:200px;
-}
-.no_price{
-    display:none;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-}
-.bf_itm_row input{
-    border:none;
-    border-bottom: 2px solid black;
-    outline:none;
-    background-color: transparent;
-}
-.bf_itm_row td:nth-child(1){
-    background-color: #FFC857;
-    font-weight: bold;
-}
-.add_table_bf thead th{
-    background-color: white;
-    font-size: 18px;
-    background-color:#FFC857;
-    color:white;
-    height:5vh; 
-}
-.add_table_bf thead{
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.35);
-}
-.add_table_bf thead th:nth-child(1){
-    border-top-left-radius: 10px;
-}
-.add_table_bf thead th:nth-child(3){
-    border-top-right-radius: 10px;
-}
-.add_table_bf tbody td{
-    font-size: 16px;
-}
-.add_table_bf thead th:nth-child(2){
-    width:100px;
-}
-.bf_eidtbtn{
-    background-color: transparent;
-    padding:2px;
-    margin:auto auto;
-    width:4vw;
-    border-radius: 5px;
-    border: 2px solid #FF5733  ;
-    color:#FF5733  ;
-    transition: background-color 0.3s ease, color 0.3s ease; 
-}
-.bf_eidtbtn:hover{
-    background-color: #FF5733;
-    color:white;
-    cursor:pointer;
-}
-
 
 
     </style>
@@ -389,11 +290,6 @@
         </div>
         <div class="heading2">
             <h2>Add Food details</h2>
-            <div>
-                <button onclick="navbtns(this)" class="pr_btn">Prices</button>
-                <button onclick="navbtns(this)" class="bf_din">BreakFast/Dinner</button>
-                <button onclick="navbtns(this)" class="ln_btn">Lunch</button>
-            </div>
         </div>
         <div class="main-container">
             <div class="category-container">
@@ -403,19 +299,18 @@
 
                     <div class="form-group" id="button">
                     <label for="category">Category:</label>
-                        <select id="category" class="category" onchange="loadFdItemByCategory()">
+                        <select id="category" class="category">
                         <option value="">Select category</option>
                                                         <!-- <option value="daily">Daily</option>
                             <option value="monthly">Monthly</option> -->
                         </select>
-                        <label for="food_item">FoodItem:</label>
-                       <select id="food_items-dp" class="food_items_dp" onchange="loadFoodPrices()">
-                          
-
-                       </select>
+                        <input type="text" id="ItemName" name="ItemName" placeholder="ItemName" required>
                         <input type="number" id="Price" name="Price" placeholder="Price" min="1" max="24" required>
                         <label for="from_date">From:</label>
                         <input type="date" id="from_date" name="from_date" required>
+
+                        <label for="to_date">To:</label>
+                        <input type="date" id="to_date" name="to_date" required>
 
                         <button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button>
                         <button type="cancel" class="btn btn-danger" onclick="cancelOperation()">Cancel</button>
@@ -433,9 +328,9 @@
                                 <th>Price</th>
                                 <th>From
                                     Date</th>
-                                <!-- <th>To
+                                <th>To
                                     Date
-                                </th> -->
+                                </th>
                                 <th>Edit</th>
                             </tr>
                         </thead>
@@ -443,28 +338,8 @@
                             <!-- Dynamic content will be inserted here -->
                         </tbody>
                     </table>
-                    <p class="no_price">Price not yet inserted</p>
                 </div>
             </div>
-
-
-            <div class="add_bf">
-                <table class="add_table_bf">
-                    <thead>
-                        <tr>
-                            <th>Day</th>
-                            <th>Item</th>
-                            <th>Edit</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bfd_body">
-                        
-                    </tbody>
-                </table>
-            </div>
-          
-
-
         </div>
         </div>
         </div>
@@ -479,188 +354,6 @@ $(document).ready(function() {
     fetchBackendData(); // Initial fetch when page loads
     load_foodType();    // Ensure the category dropdown is populated
 });
-
-//function for load food prices
-function loadFoodPrices(){
-    var payload = {
-        OptionID:document.querySelector('#food_items-dp').value,
-        load:"load_foodprices",
-    }
-    console.log("paydload",payload);
-    $.ajax({
-        type:"POST",
-        url: "./webservices/fooddetails1.php",
-        dataType: 'json',
-        data: JSON.stringify(payload),
-        success:function(response){
-            console.log(response.data);
-           if(response.data !== "No Data"){
-            document.querySelector('.no_price').style.display = "none";
-            console.log(response.data);
-                const typesTableBody = $('#typesTableBody');
-                typesTableBody.empty();
-                response.data.forEach(item => {
-                const fromDate = new Date(item.fromdate).toISOString().split('T')[0];  // Convert to YYYY-MM-DD format
-                // const toDate = new Date(item.to_date).toISOString().split('T')[0];  // Convert to YYYY-MM-DD format
-
-                const row = $('<tr>');
-                row.html(`
-                    <td>${item.type}</td>
-                    <td>${item.item_name}</td>
-                    <td>${item.price}</td>
-                    <td>${fromDate}</td>
-                    <td><center><button class="edit-buttonfd">Edit</button></center></td>
-                `);
-                typesTableBody.append(row);
-            });
-           }
-           else{
-            const typesTableBody = $('#typesTableBody');
-            typesTableBody.empty();
-            document.querySelector('.no_price').style.display = "block";
-           }
-        },
-        error:function(err){
-            console.log(err);
-        }
-    })
-}
-
-
-function loadFdItemByCategory(){
-  var payload = {
-    category: document.querySelector('.category').value,
-    load:"loadfdby_category"
-  }
-  $.ajax({
-    type:"POST",
-    url: "./webservices/fooddetails1.php",
-    dataType: 'json',
-    data: JSON.stringify(payload),
-    success:function(response){
-       if(response.data !== "No Data"){
-        let foodItems = document.querySelector('#food_items-dp');
-        foodItems.innerHTML = `<option value="">Select Food Item</option>`;
-        response.data.forEach(itm=>{
-            let option = document.createElement('option');
-            option.value = itm.OptionID
-            option.textContent = itm.ItemName
-            foodItems.appendChild(option);
-        })
-       }
-    }
-    ,
-    error:function(err){
-        console.log(err);
-    }
-  })
-  
-}
-
-function navbtns(this_button){
-    if(this_button.classList.contains('bf_din')){
-        document.querySelector('.category-container').style.display = "none";
-        document.querySelector('.add_bf').style.display = "flex";
-        fetchBreakFast_Dinner();
-       
-    }
-    else if(this_button.classList.contains('pr_btn')){
-        document.querySelector('.category-container').style.display = "block";
-        document.querySelector('.add_bf').style.display = "none";
-   
-    }
-    else{
-        document.querySelector('.category-container').style.display = "none";
-        document.querySelector('.add_bf').style.display = "none";
-    
-    }
-}
-
-
-//function for fetch breakfast dinner items
-function fetchBreakFast_Dinner(){
-    var payload = {
-        load:"loadbreakfast"
-    }
-
-    $.ajax({
-        type: 'POST',
-        url: "./webservices/fooddetails1.php",
-        dataType: 'json',
-        data: JSON.stringify(payload),
-        success:function(response){
-            let bfd_body = document.querySelector('.bfd_body');
-            bfd_body.innerHTML = "";
-           response.data.forEach(itm=>{
-                console.log("hello");
-                let trow = document.createElement('tr');
-                trow.setAttribute('class','bf_itm_row')
-                trow.innerHTML = `
-                <td>${itm.Weekday}</td>
-                <td><input value="${itm.FoodItem}" class="bf_item_input_${itm.ID}"></td>
-                <td><button class="bf_eidtbtn" onclick="breakfastfooditems('${itm.ID}','${itm.FoodItem}','${itm.FromDate}','${itm.Price}')">Edit</button></td>
-                `
-                bfd_body.appendChild(trow);
-           })
-
-        },
-        error:function(err){
-            console.log(err);
-        }
-    })
-}
-//insert and update breakfast dinner items
-function breakfastfooditems(id, fooditem,fromdate,price){
-    let action = "update";
-    
-    let pitem = fooditem;
-    let new_item = document.querySelector(`.bf_item_input_${id}`).value;
-  
-    if(new_item === ""){
-        alert("Item Name can't be null")
-        return;
-    }
-    if(pitem === ""){
-        action="insert"
-    }
-    if(pitem === new_item){
-        alert("Please change the item")
-        return
-    }
-    console.log(fromdate,price);
- 
-
-     var payload= {
-        load: 'breakfastfooditems',
-        OptionID:id,
-        ItemName:new_item,
-        action:action,
-        from_date:fromdate ?? "",
-        Price:price ?? ""
-     }
-        $.ajax({
-        type: 'POST',
-        url: "./webservices/fooddetails1.php",
-        dataType: 'json',
-        data: JSON.stringify(payload),
-        success:function(response){
-            if (response.code === '200') {
-            alert(response.alert); // Show success alert
-        } else {
-            alert(response.alert); // Show error alert
-        }
-          console.log(response)
-        },
-        error:function(error){
-            console.log(error)
-            
-        }
-   
-        })
-}
-        
-
-
 
 function fetchBackendData() {
     const payload = {
@@ -750,28 +443,25 @@ function startEdit(OptionID, csno, ItemName, Price, from_date, to_date) {
 
 function submitForm() {
     const category = $('#category').val();
-    const OptionID = $('#food_items-dp').val();
+    const ItemName = $('#ItemName').val();
     const Price = $('#Price').val();
     const from_date = $('#from_date').val();
-    const ItemName = $('#food_items-dp option:selected').text();
+    const to_date = $('#to_date').val();
 
-    if (!category || !OptionID || !Price || !from_date ) {
+    if (!category || !ItemName || !Price || !from_date || !to_date) {
         alert("Fields can't be empty");
         return;
     }
 
     const payload = {
         category: category,
-        OptionID: OptionID,
-        ItemName:ItemName,
+        ItemName: ItemName,
         Price: Price,
         from_date: from_date,
-        load:"setFoodPrices"
-        // to_date: to_date,
-        // load: editingId ? 'update' : 'add',
-        // OptionID: editingId // Include OptionID for update, not for add
+        to_date: to_date,
+        load: editingId ? 'update' : 'add',
+        OptionID: editingId // Include OptionID for update, not for add
     };
-    console.log("d",payload);
 
     $.ajax({
         type: 'POST',
@@ -779,15 +469,14 @@ function submitForm() {
         dataType: 'json',
         data: JSON.stringify(payload),
         success: function(response) {
-            console.log(response);
             alert(response.message);
-            // fetchBackendData(); // Refresh the table
-            // $('#category').val(''); // Clear input fields
-            // $('#ItemName').val('');
-            // $('#Price').val('');
-            // $('#from_date').val('');
-            // $('#to_date').val('');
-            // editingId = null; // Reset editing ID
+            fetchBackendData(); // Refresh the table
+            $('#category').val(''); // Clear input fields
+            $('#ItemName').val('');
+            $('#Price').val('');
+            $('#from_date').val('');
+            $('#to_date').val('');
+            editingId = null; // Reset editing ID
         },
         error: function(error) {
             console.error('Error:', error);

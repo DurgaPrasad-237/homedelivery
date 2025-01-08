@@ -10,11 +10,12 @@ $OptionID = $data["OptionID"] ?? "";
 $category = $data["category"] ?? "";
 $ItemName = $data["ItemName"] ?? "";
 $foodtype = $data['foodtype'] ?? "";
+$p_from_date = $data['p_from_date'] ?? "";
 $Price = $data["Price"] ?? "";
 $from_date = $data["from_date"] ?? "";
 $to_date = $data["to_date"] ?? "";
-
 $load = $data["load"] ?? "";
+$action= $data["action"] ?? "";
 
 if ($load == "add") {
     addcom($conn,$category, $ItemName, $Price, $from_date, $to_date);
@@ -27,6 +28,179 @@ else if($load == "load_foodtype"){
 else if ($load == "update") {
     updatecom($conn,$category, $OptionID, $ItemName, $Price, $from_date, $to_date);
 }
+else if($load == "load_foodprices"){
+    loadFoodPrices($conn);
+}
+else if($load == "setFoodPrices"){
+    setFoodPrices($conn);
+}
+else if($load == "loadfdby_category"){
+    loadfdby_category($conn);
+}
+else if($load == "loadbreakfast"){
+    loadbreakfast($conn);
+}
+else if($load == "breakfastfooditems"){
+    breakfastfooditems($conn);
+}
+
+
+//insert and unpdate breakfast
+function breakfastfooditems($conn)
+{
+    global $OptionID,$ItemName, $action,$from_date,$Price;
+    if (empty($OptionID) || empty($ItemName)) {
+        echo json_encode(array('code' => '400','status' => 'error','message' => 'Fields cannot be empty','alert' => 'Field cannot be empty!'));
+        return; // Exit the function early
+    }
+    $checkSql = "SELECT * FROM `fooddetails` WHERE `ItemName` = '$ItemName' AND `category` = '1'";
+    $Result = getData($conn, $checkSql);
+
+    if (count($Result) > 0) {
+        echo json_encode(array('code' => '400','status' => 'error','message' => 'DuplicateValue','alert' => 'Record Already exit' ));
+
+        return; // Exit early to prevent duplicate entries
+    }
+
+    if ($action == "insert"){
+        $sql = "INSERT INTO `fooddetails`(`OptionID`,`ItemName`,`category`) VALUES ('$OptionID','$ItemName','1')";   
+    }
+    else{
+        $sql = "UPDATE `fooddetails` SET `ItemName`='$ItemName' WHERE OptionID = $OptionID";
+    }
+    $resultsql = setData($conn, $sql);
+    if ($resultsql == "Record created") {
+        $logsql = "INSERT INTO `fooddetails_log`(`fd_oid`, `item_name`,`price`,`fromdate`) VALUES ('$OptionID','$ItemName','$Price','$from_date')";
+        $result = setData($conn, $logsql);
+        if ($result == "Record created") {
+            echo json_encode(array('code' => '200','status' => 'success','message' => $action == "insert" ? 'Record added successfully!' : 'Record updated successfully!','alert' => $action == "insert" ? 'Record added!' : 'Record updated!'));
+        } else {
+            echo json_encode(array('code' => '500','status' => 'error','message' => 'Record not inserted in log table','alert' => 'Record not inserted in log table' ));
+        }
+    } else {
+        echo json_encode(array('code' => '500','status' => 'error','message' => 'Record not inserted in fooddetails table','alert' => 'Record not inserted in fooddetails table'));
+    }
+}
+
+
+
+//load brekfast
+function loadbreakfast($conn){
+    $selectquery = "SELECT 
+    week.sno as ID,
+    week.day AS Weekday,
+  	COALESCE(fooddetails.Price, '') AS Price,
+    COALESCE(fooddetails.ItemName, '') AS FoodItem,
+      COALESCE(fooddetails.from_date, '') AS FromDate
+    FROM 
+        week
+    LEFT JOIN 
+        fooddetails ON week.sno = fooddetails.OptionID
+    ORDER BY 
+        week.sno";
+    $resultquery = getData($conn,$selectquery);
+    if(count($resultquery) > 0){
+        $jsonresponse = array('code'=>'200','status'=>'success','data'=>$resultquery);
+    }
+    else{
+        $jsonresponse = array('code'=>'200','status'=>'success','data'=>"No Data");
+    }
+    echo json_encode(($jsonresponse));
+}
+
+
+
+
+
+//load food items by category 
+function loadfdby_category($conn){
+    global $category;
+    $category = ($category == 3 || $category == 1) ? 1:2;
+    $selectquery = "SELECT * FROM `fooddetails` WHERE category = $category";
+    $resultsql = getData($conn,$selectquery);
+    if(count($resultsql) > 0){
+        $jsonresponse = array('code'=>'200','status'=>'success','data'=>$resultsql);
+    }
+    else{
+        $jsonresponse = array('code'=>'200','status'=>'success','data'=>"No Data");
+    }
+    echo json_encode(($jsonresponse));
+}
+
+
+
+//loadin prices of food details
+function loadFoodPrices($conn){
+    global $OptionID,$from_date;
+    $selectquery = "SELECT foodtype.type,fooddetails_log.item_name,fooddetails_log.price,fooddetails_log.fromdate,fooddetails.OptionID from fooddetails_log
+    join fooddetails on fooddetails_log.fd_oid = fooddetails.OptionID
+    join foodtype on fooddetails.category = foodtype.sno
+    WHERE 
+    fooddetails_log.fromdate IS NOT NULL 
+    AND fooddetails_log.fromdate != '0000-00-00' and fooddetails_log.fd_oid = $OptionID";
+
+    $resultquery = getData($conn,$selectquery);
+    if(count($resultquery) > 0){
+        $jsonresponse = array('code' => '200', 'status' => 'success','data'=>$resultquery);
+    }
+    else{
+        $jsonresponse = array('code' => '200', 'status' => 'success','data'=>"No Data");
+    }
+    echo json_encode($jsonresponse);
+}
+
+//set the prices
+function setFoodPrices($conn){
+    global $Price,$OptionID,$from_date,$ItemName,$p_from_date;
+    // if($p_from_date == ""){
+        $updatequery = "UPDATE `fooddetails` SET `Price`='$Price',
+        `from_date`='$from_date' WHERE OptionID = $OptionID";
+
+        $resultupdate = setData($conn,$updatequery);
+        if($resultupdate == "Record created"){
+            $insertlogprice = "INSERT INTO `fooddetails_log`(`fd_oid`,`price`, `fromdate`,`item_name`) VALUES ('$OptionID','$Price','$from_date','$ItemName')";
+            $resultlogprice = setData($conn,$insertlogprice);
+            if($resultlogprice == "Record created"){
+                $jsonresponse = array('code' => '200', 'status' => 'success','message'=>"Record Updated");
+            }
+            else{
+                $jsonresponse = array('code' => '500', 'status' => 'fail','message'=>"Fail To Record Insert in fooddetail log");
+            }
+        }
+        else{
+            $jsonresponse = array('code' => '500', 'status' => 'fail','message'=>"Fail To Record Insert in fooddetail");
+        }
+        
+    // }
+    // else{
+    //    $fromdate = date_create("$from_date");
+    //    $to_date =date_create("$from_date");
+    //    $to_date->modify("-1 day");
+    //    $updatequery = "UPDATE `fooddetails` SET `Price`='$Price',
+    //    `from_date`='$from_date' WHERE OptionID = $OptionID";
+
+    //    $resultupdate = setData($conn,$updatequery);
+
+    //    if($resultupdate == "Record created"){
+    //     $insertlogprice = "INSERT INTO `fooddetails_log`(`fd_oid`,`price`, `fromdate`,`item_name`) VALUES ('$OptionID','$Price','$from_date','$ItemName')";
+    //     $resultlogprice = setData($conn,$insertlogprice);
+    //     if($resultlogprice == "Record created"){
+    //         $jsonresponse = array('code' => '200', 'status' => 'success','message'=>"Record Updated");
+    //     }
+    //     else{
+    //         $jsonresponse = array('code' => '500', 'status' => 'fail','message'=>"Fail To Record Insert in fooddetail log");
+    //     }
+    //     }
+    //     else{
+    //         $jsonresponse = array('code' => '500', 'status' => 'fail','message'=>"Fail To Record Insert in fooddetail");
+    //     }
+    // }
+    echo json_encode($jsonresponse);
+   
+}
+
+
+
 
 function addcom($conn, $category, $ItemName, $Price, $from_date, $to_date)
 {
