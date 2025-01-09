@@ -375,6 +375,82 @@
     color:white;
     cursor:pointer;
 }
+.add_lun{
+    /* border:2px solid black; */
+    width:40vw;
+    height:60vh;
+    display:none;
+    margin-top: 20px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    flex-direction: column;
+    overflow-y: auto;
+}
+.add_lun h3{
+    background-color: #FFC857;
+    display:flex;
+    flex-direction: center;
+    align-items: center;
+    justify-content: center;
+    margin:0px;
+    padding:10px;
+    color:white;
+    font-weight: bold;
+    font-size: 18px;
+}
+.input_lun{
+    width:98%;
+    /* border:2px solid black; */
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding:5px;
+}
+.input_lun input{
+    outline:none;
+    border:none;
+    border-bottom:2px solid black;
+    width:70%;
+}
+.input_lun button{
+    width:25%;
+    padding:4px;
+    background-color: transparent;
+    color:#f50f1a;
+    border:2px solid #f50f1a;
+    font-weight: bold;
+    cursor:pointer;
+    
+}
+.lun_table thead{
+    background-color: #FFC857;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+.lun_table thead th{
+    background-color: #FFC857;
+    border-radius: 0px;
+}
+.lun_table tbody td{
+    text-align: center;
+    padding:6px;
+}
+.lunch_name{
+    width:70%;
+}
+.lunch_name input{
+    width:80%;
+    outline:none;
+    border:none;
+    /* border-bottom:2px solid black; */
+    text-align: center;
+    
+}
+.lun_edit{
+    width:70%;
+    background-color: transparent;
+    color:green;
+    border:2px solid green;
+    cursor:pointer;
+}
 
 
 
@@ -462,6 +538,29 @@
                     </tbody>
                 </table>
             </div>
+
+            <div class="add_lun">
+                <h3>Lunch Items</h3>
+                <div class="input_lun">
+                    <input placeholder="Enter Lunch Item">
+                    <button onclick="add_lunch_item()">Edit</button>
+                </div>
+                <div>
+                    <table class="lun_table">
+                        <thead>
+                            <tr>
+                                <th>ItemName</th>
+                                <th>Edit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
           
 
 
@@ -479,6 +578,69 @@ $(document).ready(function() {
     fetchBackendData(); // Initial fetch when page loads
     load_foodType();    // Ensure the category dropdown is populated
 });
+
+
+//function for addlunch item
+function add_lunch_item(){
+    var payload= {
+        load: 'addlunch',
+        ItemName:document.querySelector('.input_lun input').value,
+     }
+     document.querySelector('.input_lun input').value = "";
+     $.ajax({
+        type:"POST",
+        url: "./webservices/fooddetails1.php",
+        dataType: 'json',
+        data: JSON.stringify(payload),
+        success:function(response){
+            console.log(response);
+            if(response.status === "success"){
+                alert("Food item added");
+                load_lunchItem();
+            }
+        }
+        ,error:function(err){
+            console.log(err);
+        }
+     })
+}
+
+
+
+
+//function for load lunch item
+function load_lunchItem(){
+    var payload = {
+        load:"loadlunchitems"
+    }
+    $.ajax({
+        type:"POST",
+        url: "./webservices/fooddetails1.php",
+        dataType: 'json',
+        data: JSON.stringify(payload),
+        success:function(response){
+            console.log(response.data.length,"hello")
+            if(response.data.length > 0){
+                let lun_table = document.querySelector('.lun_table tbody');
+                lun_table.innerHTML = "";
+                response.data.forEach(itm=>{
+                    let trow = document.createElement('tr');
+                    trow.innerHTML = `
+                        <td class="lunch_name"><input value="${itm.ItemName}" disabled/></td>
+                        <td><button class="lun_edit" onclick="${itm.OptionID}">Edit</button></td>
+                    `
+                    lun_table.appendChild(trow);
+                })
+            }
+        },
+        error:function(err){
+            console.log(err);
+        }
+    })
+}
+
+
+
 
 //function for load food prices
 function loadFoodPrices(){
@@ -561,17 +723,21 @@ function navbtns(this_button){
     if(this_button.classList.contains('bf_din')){
         document.querySelector('.category-container').style.display = "none";
         document.querySelector('.add_bf').style.display = "flex";
+        document.querySelector('.add_lun').style.display = "none";
         fetchBreakFast_Dinner();
        
     }
     else if(this_button.classList.contains('pr_btn')){
         document.querySelector('.category-container').style.display = "block";
         document.querySelector('.add_bf').style.display = "none";
+        document.querySelector('.add_lun').style.display = "none";
    
     }
     else{
         document.querySelector('.category-container').style.display = "none";
         document.querySelector('.add_bf').style.display = "none";
+        document.querySelector('.add_lun').style.display = "flex";
+        load_lunchItem();
     
     }
 }
@@ -781,6 +947,7 @@ function submitForm() {
         success: function(response) {
             console.log(response);
             alert(response.message);
+            loadFoodPrices();
             // fetchBackendData(); // Refresh the table
             // $('#category').val(''); // Clear input fields
             // $('#ItemName').val('');

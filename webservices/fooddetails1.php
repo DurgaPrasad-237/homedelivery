@@ -43,6 +43,49 @@ else if($load == "loadbreakfast"){
 else if($load == "breakfastfooditems"){
     breakfastfooditems($conn);
 }
+else if($load == "loadlunchitems"){
+    loadlunchitems($conn);
+}
+else if($load == 'addlunch'){
+    addlunch($conn);
+}
+
+//add lunch
+function addlunch($conn){
+    global $ItemName,$Price,$from_date;
+    $sql = "INSERT INTO `fooddetails`(`ItemName`, `Price`, `category`, `from_date`) 
+    VALUES ('$ItemName','$Price','2','$from_date')";
+    $resultsql = setData($conn,$sql);
+    if($resultsql == "Record created"){
+        $last_id = $conn->insert_id;
+        $logsql = "INSERT INTO `fooddetails_log`(`fd_oid`, `item_name`, `price`, `fromdate`) 
+        VALUES ('$last_id','$ItemName','$Price','$from_date')";
+        $logresult = setData($conn,$logsql);
+        if($logresult == "Record created"){
+            $jsonresponse = array('code'=>'200','status'=>'success');
+        }
+        else{
+            $jsonresponse = array('code'=>'500','status'=>'fail','message'=>"fail to add in log table");
+        }
+    }
+    else{
+        $jsonresponse = array('code'=>'500','status'=>'fail');
+    }
+    echo json_encode($jsonresponse);
+}
+
+//laod lunch items
+function loadlunchitems($conn){
+    $sql = "SELECT * FROM `fooddetails` WHERE category = '2' order by OptionID desc";
+    $resultsql = getData($conn,$sql);
+    if(count($resultsql) > 0){
+        $jsonresponse = array('code'=>'200','status'=>'success','data'=>$resultsql);
+    }
+    else{
+        $jsonresponse = array('code'=>'200','status'=>'success','data'=>'');
+    }
+    echo json_encode($jsonresponse);
+}
 
 
 //insert and unpdate breakfast

@@ -2706,14 +2706,19 @@
             console.log(lqty, "lqty")
             console.log(dqty, "dqty")
 
+            try {
             if (bqty > 0) {
-                submitForB(event);
+            await submitForB(event); // Wait for submitForB to complete
             }
             if (lqty > 0) {
-                nlunch(event);
+            await nlunch(event); // Wait for lunchdetails to complete
             }
             if (dqty > 0) {
-                submitForD(event);
+            await submitForD(event); // Wait for submitForD to complete
+            }
+            console.log('All submissions completed successfully.');
+            } catch (error) {
+            console.error('Error during submissions:', error);
             }
         }
 
@@ -3091,7 +3096,7 @@ function fetchalll(thlength) {
                     <td>${formattedDate}</td>
                     
                     ${Array.from({ length: thlength }).map((_, index) => {
-                        count = (count > 8) ? 1 : count + 1;
+                        count = (count > thlength) ? 1 : count + 1;
 
                         const matchingItem = rowData.find(item => item.OptionID === lunchidsprice[count - 1].id);
                         const quantity = matchingItem ? matchingItem.Quantity : 0;
@@ -3591,8 +3596,8 @@ const row = $(btn).closest('tr');
 const tname = (category === "1") ? "#tableqty" : "#tableqtyd"
 const input = row.find('.tableqty, .tableqtyd');
 const quantity = parseInt(input.val(), 10) || 0;
-const currentValue = parseInt(input.val(), 10) || 0; 
-const initialValue = parseInt(input.data('initial'), 10) || 0;
+const currentValue = parseInt(input.val(), 10) || 0; // Current value
+const initialValue = parseInt(input.data('initial'), 10) || 0; 
 // const category =row.find(`#tableqtyd-${Date.replaceAll('-', '')}`).data('category');  
 // const optionid =row.find(`#tableqtyd-${Date.replaceAll('-', '')}`).data('optionid'); 
 const newQuantity = row.find(`${tname}-${Date.replaceAll('-', '')}`).val(); // Access the input field value
@@ -3601,6 +3606,26 @@ if (!reason.trim() & ((newQuantity==0)||(initialValue!=0 & currentValue !== init
     alert("Please provide a reason for updating the quantity.");
     return;
 }
+
+let confirmationMessageAdd = 'Do you want to place order for '+Date+'?';
+let confirmationMessageUpdate = 'Do you want to update order for '+Date+'?';
+let confirmationMessageDelete = 'Do you want to cancel order for '+Date+'?';
+let confirmation = '';
+if(initialValue==0){
+    confirmation = confirm(confirmationMessageAdd);
+}
+else if(currentValue==0){
+    confirmation = confirm(confirmationMessageDelete);
+}
+else{
+    confirmation = confirm(confirmationMessageUpdate);
+}
+console.log("Confirmation",confirmation);
+
+if (!confirmation) {
+    console.log('User cancelled the operation.');
+    return;
+    }
 
 
 var payload = {
@@ -4209,10 +4234,13 @@ $.ajax({
             const dayOfWeek = currentDate.getDay();
             const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
             const dayName = dayNames[dayOfWeek];
+            const fromDate = $('#from-date-b').val();
+            
 
             var payload = {
                 load: "fetchitemsb",
                 day: dayName,
+                fromdate:fromDate
             };
 
             $.ajax({
@@ -4255,10 +4283,12 @@ $.ajax({
             const dayOfWeek = currentDate.getDay();
             const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
             const dayName = dayNames[dayOfWeek];
+            const fromDate = $('#from-date-d').val();
 
             var payload = {
                 load: "getitemsb",
                 day: dayName,
+                fromdate:fromDate
             };
 
             $.ajax({
@@ -4292,126 +4322,125 @@ $.ajax({
             });
         }
 
-        function submitForB(event) {
-            event.preventDefault();
-            const quantity = $('#mealqtyb').val();
-            const totalAmount = $('#mealamtb').val();
+        async function submitForB(event) {
+    const quantity = $('#mealqtyb').val();
+    const totalAmount = $('#mealamtb').val();
+    const fromDate = $('#from-date-b').val();
+    const toDate = $('#to-date-b').val();
 
-            const fromDate = $('#from-date-b').val();
-            const toDate = $('#to-date-b').val();
-            const currentDate = new Date();
-            const dayOfWeek = currentDate.getDay();
-            const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-            const dayName = dayNames[dayOfWeek];
-            let payload = {
-                load: 'setitemsb',
-                quantity: quantity,
-                category: 1,
-                totalAmount: totalAmount,
-                foodid: foodidb,
-                cid: customerid,
-                day:dayName,
-                dates: []
-            };
-            if (quantity < 0) {
-                return
-            }
-            if (fromDate && toDate) {
-                const from = new Date(fromDate);
-                const to = new Date(toDate);
-                if (from > to) {
-                    alert('Invalid date range.');
-                    return;
-                }
-                let current = new Date(from);
-                while (current <= to) {
-                    payload.dates.push(current.toISOString().split('T')[0]); // Format date as YYYY-MM-DD
-                    current.setDate(current.getDate() + 1);
-                }
-            } else {
-                payload.dates.push(new Date().toISOString().split('T')[0]);
-            }
+    const currentDate = new Date();
+    const dayOfWeek = currentDate.getDay();
+    const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const dayName = dayNames[dayOfWeek];
 
-            console.log('Payload', payload.dates);
+    let payload = {
+        load: 'setitemsb',
+        quantity: quantity,
+        category: 1,
+        totalAmount: totalAmount,
+        foodid: foodidb,
+        cid: customerid,
+        day: dayName,
+        dates: []
+    };
 
-            $.ajax({
-                type: 'POST',
-                url: './webservices/dinner.php',
-                dataType: 'json',
-                data: JSON.stringify(payload),
-                success: function(response) {
-                    alert(response.message);
-                    if (response.status === 'success') {
-                        location.reload();
-                    }
-                },
-                error: function(error) {
-                    console.error('Error:', error);
-                }
-            });
+    if (quantity < 0) {
+        throw new Error('Invalid quantity for breakfast.');
+    }
+    if (fromDate && toDate) {
+        const from = new Date(fromDate);
+        const to = new Date(toDate);
+        if (from > to) {
+            alert('Invalid date range.');
+            throw new Error('Invalid date range for breakfast.');
         }
-
-
-        function submitForD(event) {
-            event.preventDefault();
-            const quantity = $('#mealqtydb').val();
-            const totalAmount = $('#mealamtdb').val();
-
-            const fromDate = $('#from-date-d').val();
-            const toDate = $('#to-date-d').val();
-            const currentDate = new Date();
-            const dayOfWeek = currentDate.getDay();
-            const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-            const dayName = dayNames[dayOfWeek];
-
-            let payload = {
-                load: 'setitemsb',
-                quantity: quantity,
-                category: 3,
-                totalAmount: totalAmount,
-                foodid: foodidd,
-                cid: customerid,
-                day:dayName,
-                dates: []
-            };
-
-            if (quantity < 0) {
-                return
-            }
-            if (fromDate && toDate) {
-                const from = new Date(fromDate);
-                const to = new Date(toDate);
-                if (from > to) {
-                    alert('Invalid date range.');
-                    return;
-                }
-                let current = new Date(from);
-                while (current <= to) {
-                    payload.dates.push(current.toISOString().split('T')[0]); // Format date as YYYY-MM-DD
-                    current.setDate(current.getDate() + 1);
-                }
-            } else {
-                payload.dates.push(new Date().toISOString().split('T')[0]);
-            }
-
-            console.log('Payload', payload);
-
-            $.ajax({
-                type: 'POST',
-                url: './webservices/dinner.php',
-                dataType: 'json',
-                data: JSON.stringify(payload),
-                success: function(response) {
-                    alert(response.message);
-                    if (response.status === 'success') {
-                        location.reload();
-                    }
-                },
-                error: function(error) {
-                    console.error('Error:', error);
-                }
-            });
+        let current = new Date(from);
+        while (current <= to) {
+            payload.dates.push(current.toISOString().split('T')[0]); // Format date as YYYY-MM-DD
+            current.setDate(current.getDate() + 1);
         }
+    } else {
+        payload.dates.push(new Date().toISOString().split('T')[0]);
+    }
+
+    console.log('Payload for Breakfast:', payload);
+
+    return $.ajax({
+        type: 'POST',
+        url: './webservices/dinner.php',
+        dataType: 'json',
+        data: JSON.stringify(payload)
+    }).then(response => {
+        if (response.status !== 'success') {
+            throw new Error(response.message);
+        }
+        alert(response.message);
+    }).catch(error => {
+        console.error('Error in submitForB:', error);
+        throw error;
+    });
+}
+
+
+
+async function submitForD(event) {
+    const quantity = $('#mealqtydb').val();
+    const totalAmount = $('#mealamtdb').val();
+    const fromDate = $('#from-date-d').val();
+    const toDate = $('#to-date-d').val();
+
+    const currentDate = new Date();
+    const dayOfWeek = currentDate.getDay();
+    const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const dayName = dayNames[dayOfWeek];
+
+    let payload = {
+        load: 'setitemsb',
+        quantity: quantity,
+        category: 3,
+        totalAmount: totalAmount,
+        foodid: foodidd,
+        cid: customerid,
+        day: dayName,
+        dates: []
+    };
+
+    if (quantity < 0) {
+        throw new Error('Invalid quantity for dinner.');
+    }
+    if (fromDate && toDate) {
+        const from = new Date(fromDate);
+        const to = new Date(toDate);
+        if (from > to) {
+            alert('Invalid date range.');
+            throw new Error('Invalid date range for dinner.');
+        }
+        let current = new Date(from);
+        while (current <= to) {
+            payload.dates.push(current.toISOString().split('T')[0]); // Format date as YYYY-MM-DD
+            current.setDate(current.getDate() + 1);
+        }
+    } else {
+        payload.dates.push(new Date().toISOString().split('T')[0]);
+    }
+
+    console.log('Payload for Dinner:', payload);
+
+    return $.ajax({
+        type: 'POST',
+        url: './webservices/dinner.php',
+        dataType: 'json',
+        data: JSON.stringify(payload)
+    }).then(response => {
+        if (response.status !== 'success') {
+            throw new Error(response.message);
+        }
+        alert(response.message);
+    }).catch(error => {
+        console.error('Error in submitForD:', error);
+        throw error;
+    });
+}
 
  // Global array to store both fetched items
 
