@@ -1274,12 +1274,12 @@
                             <label>Email:</label>
                             <input disabled class="customer_Email" id="customer_email">
                         </div>
-                        <div class="input_row" id="selectionperiod">
+                        <!-- <div class="input_row" id="selectionperiod">
                             <label>Period:</label>
                             <select class="payment_period" id="payment_period">
 
                             </select>
-                        </div>
+                        </div> -->
                         <div class="reg_address">
                             <input placeholder="flatno/houseno" class="regaddress_input" id="regflat">
                             <input placeholder="Street" class="regaddress_input" id="regstreet">
@@ -2151,6 +2151,7 @@
             document.getElementById('customer_div_id').style.display = "none";
             document.querySelector('.reg_address').style.display = "flex";
             document.querySelector('.btngenerate').style.display = "block";
+            document.querySelector('.today_list').style.display = "none";
             enableinputs();
             customername.value = "";
             email.value = "";
@@ -2252,12 +2253,13 @@
                         response.data.forEach(cust => {
                             searchinput.value = "";
                             document.getElementById('customer_div_id').style.display = "flex";
+                            document.querySelector('.today_list').style.display = "block";
                             document.querySelector('.customer_id').value = cust.CustomerID;
                             customername.value = cust.CustomerName;
                             console.log("helo", customername.value + " " + cust.CustomerName.trim());
                             primaryphone.value = cust.Phone1
                             email.value = cust.Email
-                            periodicity.value = cust.Periodicity.trim();
+                            // periodicity.value = cust.Periodicity.trim();
                             intialdeliveryaddress = cust.DeliveryAddress + "," + cust.Phone3 + "," + cust.Map;
                             if (cust.BillingAddress !== null) {
                                 const baddressarray = cust.BillingAddress.split(",");

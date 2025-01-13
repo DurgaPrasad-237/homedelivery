@@ -1034,7 +1034,6 @@ GROUP BY
 ORDER BY 
     d.day ASC
 
-
 ";
     $resultquery = getdata($conn, $selectQuery);
 

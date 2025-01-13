@@ -217,22 +217,24 @@
             align-items: center;
             background-color: rgb(11, 10, 10);
         }
+
         .summary_head input{
             outline: none;
             border: none;
             border-bottom: 2px solid white;
             background-color: transparent;
-            width:10vw;
+            width:8vw;
             color:white;
         }
-        .summary_head input[type="date"]::-webkit-calendar-picker-indicator {
+        .summary_head input[type="date"]::-webkit-calendar-picker-indicator ,
+        .summary_head input[type="month"]::-webkit-calendar-picker-indicator {
             background-color: #FFC857; 
             border-radius: 50%;
             padding: 5px; 
         }
         .summary_head label{
             color:white;
-            font-size: 15px;
+            font-size: 12px;
         }
         .summary_head button{
             padding:5px;
@@ -274,7 +276,7 @@
             margin-top: 5px;
         }
         .s_table th{
-            font-size: 14px;
+            font-size: 10px;
             background-color:#e4a300 ;
             color:#ffffff;
         }
@@ -322,7 +324,11 @@
             color:white;
             margin:0px;
             font-size: 18px;
-            padding:5px
+            padding:5px;
+            display:flex;
+            justify-content: space-between;
+            flex-direction: row;
+        
         }
         .food_list{
             display:flex;
@@ -437,6 +443,16 @@
         .pay_list_divs:nth-child(odd){
            background-color:  rgb(195, 178, 178);
         }
+        .total_amount_footer h3{
+            margin:0px;
+            font-size: 16px;
+            display:flex;
+            flex-direction: row;
+            justify-content: space-between;
+            color:#FFC857;
+            background-color: black;
+            padding:4px;
+        }
         
 
 
@@ -525,11 +541,15 @@
                     </div>
                     <div>
                     <label>From Date:</label>
-                    <input type="date" id="s_fromdate">
+                    <input type="date" id="s_fromdate" disabled>
                     </div>
                     <div>
                     <label>To Date:</label>
-                    <input type="date" id="s_todate">
+                    <input type="date" id="s_todate" disabled>
+                    </div>
+                    <div>
+                    <label>Select Month:</label>
+                    <input type="month" id="selected_month">
                     </div>
                     <button onclick="monthly_summary()">Submit</button>
                 </div>
@@ -545,6 +565,7 @@
                                 <th>Paid Amount</th>
                                 <th>Pending Amount</th>
                                 <th>Total Amount</th>
+                                <th>Related Y-M</th>
                                 <th>Edit Amount</th>
                                 <th></th>
                                 <th></th>
@@ -580,6 +601,9 @@
 
                         <div class="dinner_list">
                             <h3>Dinner</h3>
+                        </div>
+                        <div class="total_amount_footer">
+
                         </div>
                     </div>
 
@@ -652,7 +676,43 @@
     let reports = document.querySelector('#reports');
     let previous_paid_amount;
     const summary_wrapper = document.querySelector('.view_summary_wrapper');
+    let selectedmonth = document.querySelector('#selected_month');
+    let [year,month] = [];
+    let months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+
+  
     
+function togetMonth(index){
+    return months[index -1];
+}
+
+
+   
+selectedmonth.addEventListener('change',()=>{
+    let monthyear = selectedmonth.value;
+    let todaymonthyear = new Date().toISOString().split('T')[0];
+
+    [year,month] = monthyear.split('-');
+    let [tyear,tmonth,tdate] = todaymonthyear.split('-');
+
+    let firstday = `${year}-${month}-01`;
+    let lastDayDate = new Date(year, month, 0);
+    let lastDay = `${year}-${month}-${lastDayDate.getDate()}`
+
+    if(year !== tyear && month !== tmonth){
+        document.querySelector('#s_todate').setAttribute('max', lastDay);
+        document.querySelector('#s_todate').setAttribute('value', lastDay);
+    }
+    else{
+        document.querySelector('#s_todate').setAttribute('max', todaymonthyear);
+        document.querySelector('#s_todate').setAttribute('value', todaymonthyear);
+    }
+    document.querySelector('#s_fromdate').setAttribute('min', firstday);
+    document.querySelector('#s_fromdate').setAttribute('value', firstday); 
+
+    
+})
+
       
 //date format function
 function date_format(date) {
@@ -706,7 +766,9 @@ function viewHistory(cid,psno,name,fd,td,tamt,piamt,peamt,clickedButton ){
  
     let summarytabs = document.querySelector('.sumamry_tabs');
     let allButtons = document.querySelectorAll('.view_history');
-
+    let bfamount = 0;
+    let lnamount = 0;
+    let dnamount = 0;
     document.querySelector('.payment_list').style.display = "none";
     document.querySelector('.food_list').style.display = "none";
    
@@ -774,21 +836,21 @@ function viewHistory(cid,psno,name,fd,td,tamt,piamt,peamt,clickedButton ){
             lunchlist.innerHTML = "";
             dinnerlist.innerHTML = "";
          // Clear previous data if necessary
-            breakfastlist.innerHTML = `<h3>BreakFast</h3>
+            breakfastlist.innerHTML = `<h3>BreakFast<span class="bfamount">0</span></h3>
                 <div>
                     <p><b>Date</b></p>
                     <p><b>Item</b></p>
                     <p><b>Quantity</b></p>
                     <p><b>Amount</b></p>
                 </div>`;
-            lunchlist.innerHTML = `<h3>Lunch</h3>
+            lunchlist.innerHTML = `<h3>Lunch <span class="lnamount">0</span></h3>
                 <div>
                      <p><b>Date</b></p>
                     <p><b>Item</b></p>
                     <p><b>Quantity</b></p>
                     <p><b>Amount</b></p>
                 </div>`;
-            dinnerlist.innerHTML = `<h3>Dinner</h3>
+            dinnerlist.innerHTML = `<h3>Dinner <span class="dnamount">0</span></h3>
                 <div>
                     <p><b>Date</b></p>
                     <p><b>Item</b></p>
@@ -799,6 +861,7 @@ function viewHistory(cid,psno,name,fd,td,tamt,piamt,peamt,clickedButton ){
             // Process the response data
             response.data.forEach((itm) => {
                 let divele = document.createElement('div');
+                
                 divele.innerHTML = `
                     <p>${itm.OrderDate}</p>
                     <p>${itm.ItemName}</p>
@@ -807,13 +870,20 @@ function viewHistory(cid,psno,name,fd,td,tamt,piamt,peamt,clickedButton ){
                 `;
 
                 if (itm.type === "breakfast") {
+                    bfamount += parseInt(itm.TotalAmount);
                     breakfastlist.appendChild(divele);
+                    document.querySelector('.bfamount').textContent = bfamount;
                 } else if (itm.type === "lunch") {
+                    lnamount += parseInt(itm.TotalAmount);
                     lunchlist.appendChild(divele);
+                    document.querySelector('.lnamount').textContent = lnamount;
                 } else if (itm.type === "dinner") {
+                    dnamount += parseInt(itm.TotalAmount);
                     dinnerlist.appendChild(divele);
+                    document.querySelector('.dnamount').textContent = dnamount;
                 }
             });
+            document.querySelector('.total_amount_footer').innerHTML = `<h3>Total Amount:<span>${bfamount+lnamount+dnamount}</span></h3>`;
         },
         error:function(err){
             console.log(err);
@@ -889,6 +959,8 @@ function viewHistory(cid,psno,name,fd,td,tamt,piamt,peamt,clickedButton ){
 reports.addEventListener('click',()=>{
     document.querySelector('.container').style.display = "flex";
     document.querySelector('.summary').style.display = "none";
+    let s_tbody = document.querySelector('.s_tbody');
+    s_tbody.innerHTML = "";
 })
 
 
@@ -896,7 +968,13 @@ subreports.addEventListener('click',()=>{
    document.querySelector('.container').style.display = "none";
    document.querySelector('.summary').style.display = "flex";
 
+   let reporttbody = document.querySelector('.report_tbody');
+   reporttbody.innerHTML = "";
+
    let today = new Date();
+   let todaydate = today.toISOString().split('T')[0]
+   let formattedDate = todaydate.slice(0, 7);
+   [year, month] = formattedDate.split('-');
 
    console.log("today",today);
    const firstdate = new Date(Date.UTC(today.getFullYear(), today.getMonth(), 1));
@@ -910,9 +988,10 @@ subreports.addEventListener('click',()=>{
 
     document.querySelector('#s_fromdate').setAttribute('min', firstdateStr);
     document.querySelector('#s_fromdate').setAttribute('value', firstdateStr); 
+    selectedmonth.setAttribute('value',formattedDate)
 
-    document.querySelector('#s_todate').setAttribute('max', lastdateStr);
-    document.querySelector('#s_todate').setAttribute('value', lastdateStr);
+    document.querySelector('#s_todate').setAttribute('max', todaydate);
+    document.querySelector('#s_todate').setAttribute('value', todaydate);
 
 })
 
@@ -920,7 +999,8 @@ subreports.addEventListener('click',()=>{
 function monthly_summary(){
     document.querySelector('.sumamry_tabs').style.display = "none";
     document.querySelector('.payment_list').style.display = "none";
-            document.querySelector('.food_list').style.display = "none";
+    document.querySelector('.food_list').style.display = "none";
+
     var payload = {
         load:"loadpayments",
         customerid:document.querySelector('#customer_id').value,
@@ -948,17 +1028,18 @@ function monthly_summary(){
                 <td data-cid="${dt.customer_id}" data-psno="${dt.sno}" class="customer_name">${dt.CustomerName}</td>
                 <td>${dt.Email}</td>
                 <td>${dt.Phone2}</td>
-                <td class="p_fromdate" data-fromdate="${dt.from_date}">${date_format(dt.from_date)}</td>
-                <td class="p_todate" data-todate="${dt.to_date}">${date_format(dt.to_date)}</td>
+                <td class="p_fromdate" data-fromdate="${payload.fromdate}">${date_format(payload.fromdate)}</td>
+                <td class="p_todate" data-todate="${payload.todate}">${date_format(payload.todate)}</td>
                 <td data-initial-value="${dt.paid_amount}" class="previous_paid_amount">${dt.paid_amount}</td>
-                <td>${dt.unpaid_amount}</td>
+                <td>${dt.total_amount - dt.paid_amount}</td>
                 <td>${dt.total_amount}</td>
+                <td class="related_month">${year}-${togetMonth(month)}</td>
                 <td><input type="number"  oninput="payment_input(event)" class="paidamount_value"></td>
                 <td><button onclick="payment_update(event)" class="payment_update_btn" disabled>
                 <i class="fa-solid fa-pen-to-square fa-beat-fade"></i>
                 </button></td>    
                 <td><button class="view_history" onclick="viewHistory('${dt.customer_id}', '${dt.sno}', '${dt.CustomerName}', 
-                '${dt.from_date}', '${dt.to_date}', '${dt.total_amount}', '${dt.paid_amount}', '${dt.unpaid_amount}',this)">
+                '${payload.fromdate}', '${payload.todate}', '${dt.total_amount}', '${dt.paid_amount}', '${dt.total_amount - dt.paid_amount}',this)">
                <i class="fa-solid fa-eye fa-beat-fade"></i></button></td>    
                 `
                 s_tbody.appendChild(trow);
@@ -1024,6 +1105,7 @@ function payment_update(event){
          fromdate:ptrow.querySelector('.p_fromdate').dataset.fromdate,
          todate:ptrow.querySelector('.p_todate').dataset.todate,
          load:"update_payment",
+         relatedmonth:ptrow.querySelector('.related_month').textContent,
          todaydate:todaydate.toISOString().split('T')[0]
        }
 
@@ -1038,6 +1120,7 @@ function payment_update(event){
             console.log(response);
             if(response.status == "Success"){
                 alert("Successfully Updated")
+                monthly_summary();
             }
             else{
                 alert("NO updated")

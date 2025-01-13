@@ -26,6 +26,7 @@ $paid_amount = $data['paid_amount'] ?? "";
 $paymentsno = $data['paymentsno'] ?? "";
 $todaydate = $data['todaydate'] ?? "";
 $new_value = $data['new_value'] ?? "";
+$relatedmonth = $data['relatedmonth'] ?? "";
 
 if($load == "load_report"){
     loadReport($conn);
@@ -79,7 +80,8 @@ function orderHistory($conn){
     from orders
     join fooddetails on orders.FoodID = fooddetails.OptionID
     join foodtype on orders.FoodTypeID = foodtype.sno
-    where orders.CustomerID = $cid and orders.OrderDate BETWEEN '$fromdate' and '$todate'
+    where orders.CustomerID = $cid and orders.OrderDate BETWEEN '$fromdate' and '$todate' and orders.Quantity > 0
+    and orders.status = 2
     ORDER by orders.OrderDate asc";
 
     $resultquery = getData($conn,$selectquery);
@@ -97,11 +99,13 @@ function orderHistory($conn){
 
 //function for update_payment
 function update_payment($conn){
-    global $cid,$fromdate,$todate,$paid_amount,$paymentsno,$todaydate,$new_value;
-    $updatequery = "UPDATE `payments` SET `paid_amount`='$paid_amount',`paid_date`='$todaydate' WHERE customer_id = '$cid' and from_date = '$fromdate' and to_date = '$todate'";
+    global $cid,$fromdate,$todate,$paid_amount,$paymentsno,$todaydate,$new_value,$relatedmonth;
+    $updatequery = "UPDATE `payments` SET `paid_amount`='$paid_amount',`paid_date`='$todaydate' WHERE customer_id = '$cid' AND 
+    payments.from_date <= '$fromdate' 
+    AND payments.to_date >= '$todate' ";
     $resultquery = setData($conn,$updatequery);
     if($resultquery == "Record created"){
-        $insertquery = "INSERT INTO `payments_log`(`payments_sno`, `paid_amount`,`paid_date`) VALUES ('$paymentsno','$new_value','$todaydate')";
+        $insertquery = "INSERT INTO `payments_log`(`payments_sno`, `paid_amount`,`paid_date`,`related_month`) VALUES ('$paymentsno','$new_value','$todaydate','$relatedmonth')";
         $resultinsert = setData($conn,$insertquery);
         if($resultinsert == "Record created"){
             $jsonresponse = array('code' => '200','status' => "Success");
@@ -122,14 +126,34 @@ function update_payment($conn){
 function load_payments($conn){
     global $cid,$fromdate,$todate;
 
-        $whereclause =($cid == "") ? "WHERE from_date='$fromdate' and to_date='$todate'":
-        "WHERE from_date='$fromdate' and to_date='$todate' and customer_id='$cid'";
+    $whereclause =($cid == "") ? "WHERE orders.OrderDate BETWEEN '$fromdate' AND '$todate'  AND orders.status = 2":
+    "WHERE orders.OrderDate BETWEEN '$fromdate' AND '$todate' AND  orders.CustomerID='$cid'
+    AND orders.status = 2";
 
-    $selectquery = "SELECT customers.CustomerName,payments.customer_id,payments.sno,customers.Phone2,customers.Email,payments.from_date
-    ,payments.to_date,payments.paid_amount,payments.unpaid_amount,payments.total_amount
-     FROM `payments`
-     JOIN customers on payments.customer_id = customers.CustomerID
-      $whereclause";
+      
+
+    $selectquery = "SELECT 
+    customers.CustomerName as CustomerName,
+    SUM(orders.TotalAmount) AS total_amount,
+    payments.sno,
+    payments.paid_amount,
+    payments.unpaid_amount,
+    payments.customer_id,
+    customers.Email,
+    customers.Phone2
+    FROM 
+        orders
+    JOIN 
+        customers ON orders.CustomerID = customers.CustomerID
+    LEFT JOIN 
+    payments ON orders.CustomerID = payments.customer_id
+	AND payments.from_date <= '$fromdate' 
+    AND payments.to_date >= '$todate' 
+    $whereclause
+    GROUP BY 
+    customers.CustomerName, payments.sno, payments.paid_amount, payments.unpaid_amount"
+    ;
+
     $resultquery = getData($conn,$selectquery);
 
     if(count($resultquery) > 0){
