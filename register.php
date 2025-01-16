@@ -341,6 +341,7 @@
             border: 1px solid #ddd;
             border-radius: 8px;
             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+            position:relative;
         }
 
 
@@ -622,7 +623,7 @@
         thead {
             background-color: gray;
             position: sticky;
-            top: -4px;
+            top: -20px;
             bottom: 0;
             z-index: 1;
         }
@@ -1211,6 +1212,9 @@
             padding: 10px;
             margin-top: 1%;
         }
+        #breakfast-box-b{
+            display: none;
+        }
         /* .placeorderbtn{
             margin-left: 20vw;
         } */
@@ -1406,18 +1410,18 @@
         <input type="date" name="from-date-b" id="from-date-b">
         <label for="to-date-b">To:</label>
         <input type="date" name="to-date-b" id="to-date-b">
-    </div> -->
+        </div> -->
 
                 <div class="bfhead">
                     <th>Breakfast Type</th><label>
-                        <input type="radio" name="breakfast-category" value="category1" onclick="fetchall()">
+                        <input type="radio" name="breakfast-category" value="categoryb1" disabled>
                         Category 1
                     </label>
                     <label>
-                        <input type="radio" name="breakfast-category" value="category2" disabled>
+                        <input type="radio" name="breakfast-category" value="categoryb2" disabled>
                         Category 2
                     </label>
-                    <button class="placeorderbtn" onclick="openSummaryModal(event);showBreakfastB()">Place Order</button>
+                    <button class="placeorderbtn" onclick="openSummaryModal(event)">Place Order</button>
                 </div>
 
 
@@ -1459,11 +1463,11 @@
             <div class="breakfast-box" id="lunch-box" style="display: none;">
                 <div class="bfhead">
                     <th>Lunch Type</th><label>
-                        <input type="radio" name="breakfast-category" value="category1" onclick="headerfetch()">
+                        <input type="radio" name="lunch-category" value="category1" onclick="headerfetch()">
                         Category 1
                     </label>
                     <label>
-                        <input type="radio" name="breakfast-category" value="category2" disabled>
+                        <input type="radio" name="lunch-category" value="category2" disabled>
                         Category 2
                     </label>
                     <button id="insert-button" onclick="openSummaryModal(event)">Place Order</button>
@@ -1494,14 +1498,14 @@
 </div> -->
                 <div class="bfhead">
                     <th>Dinner Type</th><label>
-                        <input type="radio" name="dinner-category" value="category1" onclick="getall()">
+                        <input type="radio" name="dinner-category" value="categoryd1" disabled>
                         Category 1
                     </label>
                     <label>
-                        <input type="radio" name="dinner-category" value="category2" disabled>
+                        <input type="radio" name="dinner-category" value="categoryd2" disabled>
                         Category 2
                     </label>
-                    <button class="placeorderbtn" onclick="openSummaryModal(event);showDinnerB()">Place Order</button>
+                    <button class="placeorderbtn" onclick="openSummaryModal(event)">Place Order</button>
                 </div>
 
                 <div id="dinner-container" class="dinner-container" style="display: none;">
@@ -1614,9 +1618,9 @@
                 <h4><b>Place Order</b></h4>
                 <button onclick="closeSummaryModal(event)" type="submit" id="closesummary">X</button>
                 <div class="dialog-container">
-            <div class="selection-container-b">
+                <div class="selection-container-b">
                 <div class="button-container-b">
-                    <button class="menu-button-b" onclick="showBreakfastB()">
+                    <button class="menu-button-b" onclick="showBreakfastB();fetchallb()">
                         Breakfast
                         <input type="number" id="mealqtyb" value="0" readonly />
                         <input type="number" id="mealamtb" value="0" readonly />
@@ -1625,7 +1629,7 @@
                         <input type="number" id="mealqtylb" value="0" readonly />
                         <input type="number" id="mealamountb" value="0" readonly />
                     </button>
-                    <button class="menu-button-b" onclick="showDinnerB()">
+                    <button class="menu-button-b" onclick="showDinnerB();getallb()">
                         Dinner
                         <input type="number" id="mealqtydb" value="0" readonly />
                         <input type="number" id="mealamtdb" value="0" readonly />
@@ -1650,11 +1654,11 @@
                         <tr>
                             <td>
                                 <label>
-                                    <input type="radio" name="breakfast-category" value="category1" onclick="fetchallb()">
+                                    <input type="radio" name="breakfast-category-b" value="categoryb1b" disabled>
                                     Category 1
                                 </label>
                                 <label>
-                                    <input type="radio" name="breakfast-category" value="category2" disabled>
+                                    <input type="radio" name="breakfast-category-b" value="categoryb2b" disabled>
                                     Category 2
                                 </label>
                             </td>
@@ -1771,11 +1775,11 @@
                         <tr>
                             <td>
                                 <label>
-                                    <input type="radio" name="dinner-category" value="category1" onclick="getallb()">
+                                    <input type="radio" name="dinner-category-b" value="categoryd1d" disabled>
                                     Category 1
                                 </label>
                                 <label>
-                                    <input type="radio" name="dinner-category" value="category2" disabled>
+                                    <input type="radio" name="dinner-category-b" value="categoryd2d" disabled>
                                     Category 2
                                 </label>
                             </td>
@@ -3689,13 +3693,31 @@ $.ajax({
             }
         }
 
+        // function showBreakfast() {
+        //     document.getElementById("breakfast-box").style.display = "block";
+        //     document.getElementById("lunch-box").style.display = "none";
+        //     document.getElementById("dinner-box").style.display = "none";
+        //     document.getElementById("insert-button").style.display = "block";
+        //     document.getElementById("edit-box").style.display = "none";
+        //     document.querySelector('.food_details').style.display = "none";
+        // }
         function showBreakfast() {
+            const cid = document.querySelector('.customer_id').value;
+            if(!cid){
+                alert("Please select any user!")
+                return
+            }
             document.getElementById("breakfast-box").style.display = "block";
             document.getElementById("lunch-box").style.display = "none";
             document.getElementById("dinner-box").style.display = "none";
             document.getElementById("insert-button").style.display = "block";
             document.getElementById("edit-box").style.display = "none";
             document.querySelector('.food_details').style.display = "none";
+            const radioBtn = document.querySelector('input[name="breakfast-category"][value="categoryb1"]');
+            if (radioBtn) {
+                radioBtn.checked = true; // Check the radio button
+            }
+            fetchall();
         }
 
         function showLunch() {
@@ -3707,13 +3729,31 @@ $.ajax({
             document.querySelector('.food_details').style.display = "none";
         }
 
+        // function showDinner() {
+        //     document.getElementById("breakfast-box").style.display = "none";
+        //     document.getElementById("lunch-box").style.display = "none";
+        //     document.getElementById("dinner-box").style.display = "block";
+        //     document.getElementById("insert-button").style.display = "block";
+        //     document.getElementById("edit-box").style.display = "none";
+        //     document.querySelector('.food_details').style.display = "none";
+        // }
         function showDinner() {
+            const cid = document.querySelector('.customer_id').value;
+            if(!cid){
+                alert("Please select any user!")
+                return
+            }
             document.getElementById("breakfast-box").style.display = "none";
             document.getElementById("lunch-box").style.display = "none";
             document.getElementById("dinner-box").style.display = "block";
             document.getElementById("insert-button").style.display = "block";
             document.getElementById("edit-box").style.display = "none";
             document.querySelector('.food_details').style.display = "none";
+            const radioBtn = document.querySelector('input[name="dinner-category"][value="categoryd1"]');
+        if (radioBtn) {
+            radioBtn.checked = true; // Check the radio button
+        }
+        getall();
         }
 
         function showedit() {
@@ -4147,26 +4187,74 @@ $.ajax({
         document.getElementById('day-name').textContent = dayName;
 
 
-        function openSummaryModal(event) {
-        event.preventDefault();
+    //     function openSummaryModal(event) {
+    //     event.preventDefault();
 
-        // Display the modal
-        document.getElementById('summary-modal').style.display = 'block';
-        document.getElementById('overlay').style.display = 'block';
+    //     // Display the modal
+    //     document.getElementById('summary-modal').style.display = 'block';
+    //     document.getElementById('overlay').style.display = 'block';
+    // }
+    function openSummaryModal(event) {
+            event.preventDefault();
+            const cid = document.querySelector('.customer_id').value;
+            if(!cid){
+                alert("Please select any user!")
+                return
+            }
+            document.getElementById('summary-modal').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
     }
 
+    // function closeSummaryModal(event) {
+    //     event.preventDefault();
+    //     // Hide the modal
+    //     document.getElementById('summary-modal').style.display = 'none';
+    //     document.getElementById('overlay').style.display = 'none';
+
+    // }
     function closeSummaryModal(event) {
         event.preventDefault();
         // Hide the modal
         document.getElementById('summary-modal').style.display = 'none';
         document.getElementById('overlay').style.display = 'none';
+        document.getElementById("breakfast-box-b").style.display = "none";
+        document.getElementById("dinner-box-b").style.display = "none";
+        let today = new Date().toISOString().split('T')[0];
+    
+    
+        document.getElementById('from-date-b').value = today;
+        document.getElementById('to-date-b').value = today;
+        document.getElementById('from-date-l').value = today;
+        document.getElementById('to-date-l').value = today;
+        document.getElementById('from-date-d').value = today;
+        document.getElementById('to-date-d').value = today;
+        $('#breakfast-contain-b').hide();
+        $('#dinner-container-b').hide();
+        const breakfastRadioBtn = document.querySelector('input[name="breakfast-category-b"][value="categoryb1b"]');
+        if (breakfastRadioBtn) {
+        breakfastRadioBtn.checked = false;  
+        }
 
+        const dinnerRadioBtn = document.querySelector('input[name="dinner-category-b"][value="categoryd1d"]');
+        if (dinnerRadioBtn) {
+        dinnerRadioBtn.checked = false; 
+        }
+       
     }
 
+    // function showBreakfastB() {
+    //     document.getElementById("breakfast-box-b").style.display = "block";
+    //     document.getElementById("lunch-box-b").style.display = "none";
+    //     document.getElementById("dinner-box-b").style.display = "none";
+    // }
     function showBreakfastB() {
         document.getElementById("breakfast-box-b").style.display = "block";
         document.getElementById("lunch-box-b").style.display = "none";
         document.getElementById("dinner-box-b").style.display = "none";
+        const radioBtn = document.querySelector('input[name="breakfast-category-b"][value="categoryb1b"]');
+        if (radioBtn) {
+            radioBtn.checked = true; 
+        }
     }
 
     function showLunchB() {
@@ -4175,10 +4263,19 @@ $.ajax({
         document.getElementById("dinner-box-b").style.display = "none";
     }
 
+    // function showDinnerB() {
+    //     document.getElementById("breakfast-box-b").style.display = "none";
+    //     document.getElementById("lunch-box-b").style.display = "none";
+    //     document.getElementById("dinner-box-b").style.display = "block";
+    // }
     function showDinnerB() {
         document.getElementById("breakfast-box-b").style.display = "none";
         document.getElementById("lunch-box-b").style.display = "none";
         document.getElementById("dinner-box-b").style.display = "block";
+        const radioBtn = document.querySelector('input[name="dinner-category-b"][value="categoryd1d"]');
+        if (radioBtn) {
+            radioBtn.checked = true; 
+        }
     }
 
     function calculateTotalBB() {
@@ -4324,125 +4421,246 @@ $.ajax({
             });
         }
 
-        async function submitForB(event) {
-    const quantity = $('#mealqtyb').val();
-    const totalAmount = $('#mealamtb').val();
-    const fromDate = $('#from-date-b').val();
-    const toDate = $('#to-date-b').val();
+//         async function submitForB(event) {
+//     const quantity = $('#mealqtyb').val();
+//     const totalAmount = $('#mealamtb').val();
+//     const fromDate = $('#from-date-b').val();
+//     const toDate = $('#to-date-b').val();
 
-    const currentDate = new Date();
-    const dayOfWeek = currentDate.getDay();
-    const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    const dayName = dayNames[dayOfWeek];
+//     const currentDate = new Date();
+//     const dayOfWeek = currentDate.getDay();
+//     const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+//     const dayName = dayNames[dayOfWeek];
 
-    let payload = {
-        load: 'setitemsb',
-        quantity: quantity,
-        category: 1,
-        totalAmount: totalAmount,
-        foodid: foodidb,
-        cid: customerid,
-        day: dayName,
-        dates: []
-    };
+//     let payload = {
+//         load: 'setitemsb',
+//         quantity: quantity,
+//         category: 1,
+//         totalAmount: totalAmount,
+//         foodid: foodidb,
+//         cid: customerid,
+//         day: dayName,
+//         dates: []
+//     };
 
-    if (quantity < 0) {
-        throw new Error('Invalid quantity for breakfast.');
-    }
-    if (fromDate && toDate) {
-        const from = new Date(fromDate);
-        const to = new Date(toDate);
-        if (from > to) {
-            alert('Invalid date range.');
-            throw new Error('Invalid date range for breakfast.');
+//     if (quantity < 0) {
+//         throw new Error('Invalid quantity for breakfast.');
+//     }
+//     if (fromDate && toDate) {
+//         const from = new Date(fromDate);
+//         const to = new Date(toDate);
+//         if (from > to) {
+//             alert('Invalid date range.');
+//             throw new Error('Invalid date range for breakfast.');
+//         }
+//         let current = new Date(from);
+//         while (current <= to) {
+//             payload.dates.push(current.toISOString().split('T')[0]); // Format date as YYYY-MM-DD
+//             current.setDate(current.getDate() + 1);
+//         }
+//     } else {
+//         payload.dates.push(new Date().toISOString().split('T')[0]);
+//     }
+
+//     console.log('Payload for Breakfast:', payload);
+
+//     return $.ajax({
+//         type: 'POST',
+//         url: './webservices/dinner.php',
+//         dataType: 'json',
+//         data: JSON.stringify(payload)
+//     }).then(response => {
+//         if (response.status !== 'success') {
+//             throw new Error(response.message);
+//         }
+//         alert(response.message);
+//     }).catch(error => {
+//         console.error('Error in submitForB:', error);
+//         throw error;
+//     });
+// }
+
+
+
+// async function submitForD(event) {
+//     const quantity = $('#mealqtydb').val();
+//     const totalAmount = $('#mealamtdb').val();
+//     const fromDate = $('#from-date-d').val();
+//     const toDate = $('#to-date-d').val();
+
+//     const currentDate = new Date();
+//     const dayOfWeek = currentDate.getDay();
+//     const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+//     const dayName = dayNames[dayOfWeek];
+
+//     let payload = {
+//         load: 'setitemsb',
+//         quantity: quantity,
+//         category: 3,
+//         totalAmount: totalAmount,
+//         foodid: foodidd,
+//         cid: customerid,
+//         day: dayName,
+//         dates: []
+//     };
+
+//     if (quantity < 0) {
+//         throw new Error('Invalid quantity for dinner.');
+//     }
+//     if (fromDate && toDate) {
+//         const from = new Date(fromDate);
+//         const to = new Date(toDate);
+//         if (from > to) {
+//             alert('Invalid date range.');
+//             throw new Error('Invalid date range for dinner.');
+//         }
+//         let current = new Date(from);
+//         while (current <= to) {
+//             payload.dates.push(current.toISOString().split('T')[0]); // Format date as YYYY-MM-DD
+//             current.setDate(current.getDate() + 1);
+//         }
+//     } else {
+//         payload.dates.push(new Date().toISOString().split('T')[0]);
+//     }
+
+//     console.log('Payload for Dinner:', payload);
+
+//     return $.ajax({
+//         type: 'POST',
+//         url: './webservices/dinner.php',
+//         dataType: 'json',
+//         data: JSON.stringify(payload)
+//     }).then(response => {
+//         if (response.status !== 'success') {
+//             throw new Error(response.message);
+//         }
+//         alert(response.message);
+//     }).catch(error => {
+//         console.error('Error in submitForD:', error);
+//         throw error;
+//     });
+// }
+async function submitForB(event) {
+            const quantity = $('#mealqtyb').val();
+            const totalAmount = $('#mealamtb').val();
+            const fromDate = $('#from-date-b').val();
+            const toDate = $('#to-date-b').val();
+
+            const currentDate = new Date();
+            const dayOfWeek = currentDate.getDay();
+            const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const dayName = dayNames[dayOfWeek];
+
+            let payload = {
+                load: 'setitemsb',
+                quantity: quantity,
+                category: 1,
+                totalAmount: totalAmount,
+                foodid: foodidb,
+                cid: customerid,
+                day: dayName,
+                dates: []
+            };
+
+            if (quantity < 0) {
+                throw new Error('Invalid quantity for breakfast.');
+            }
+            if (fromDate && toDate) {
+                const from = new Date(fromDate);
+                const to = new Date(toDate);
+                if (from > to) {
+                    alert('Invalid date range.');
+                    throw new Error('Invalid date range for breakfast.');
+                }
+                let current = new Date(from);
+                while (current <= to) {
+                    payload.dates.push(current.toISOString().split('T')[0]); // Format date as YYYY-MM-DD
+                    current.setDate(current.getDate() + 1);
+                }
+            } else {
+                payload.dates.push(new Date().toISOString().split('T')[0]);
+            }
+
+            console.log('Payload for Breakfast:', payload);
+
+            return $.ajax({
+                type: 'POST',
+                url: './webservices/dinner.php',
+                dataType: 'json',
+                data: JSON.stringify(payload)
+            }).then(response => {
+                if (response.status !== 'success') {
+                    throw new Error(response.message);
+                }
+                alert(response.message);
+                fetchall();
+            }).catch(error => {
+                console.error('Error in submitForB:', error);
+                throw error;
+            });
         }
-        let current = new Date(from);
-        while (current <= to) {
-            payload.dates.push(current.toISOString().split('T')[0]); // Format date as YYYY-MM-DD
-            current.setDate(current.getDate() + 1);
+
+
+
+        async function submitForD(event) {
+            const quantity = $('#mealqtydb').val();
+            const totalAmount = $('#mealamtdb').val();
+            const fromDate = $('#from-date-d').val();
+            const toDate = $('#to-date-d').val();
+
+            const currentDate = new Date();
+            const dayOfWeek = currentDate.getDay();
+            const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const dayName = dayNames[dayOfWeek];
+
+            let payload = {
+                load: 'setitemsb',
+                quantity: quantity,
+                category: 3,
+                totalAmount: totalAmount,
+                foodid: foodidd,
+                cid: customerid,
+                day: dayName,
+                dates: []
+            };
+
+            if (quantity < 0) {
+                throw new Error('Invalid quantity for dinner.');
+            }
+            if (fromDate && toDate) {
+                const from = new Date(fromDate);
+                const to = new Date(toDate);
+                if (from > to) {
+                    alert('Invalid date range.');
+                    throw new Error('Invalid date range for dinner.');
+                }
+                let current = new Date(from);
+                while (current <= to) {
+                    payload.dates.push(current.toISOString().split('T')[0]); // Format date as YYYY-MM-DD
+                    current.setDate(current.getDate() + 1);
+                }
+            } else {
+                payload.dates.push(new Date().toISOString().split('T')[0]);
+            }
+
+            console.log('Payload for Dinner:', payload);
+
+            return $.ajax({
+                type: 'POST',
+                url: './webservices/dinner.php',
+                dataType: 'json',
+                data: JSON.stringify(payload)
+            }).then(response => {
+                if (response.status !== 'success') {
+                    throw new Error(response.message);
+                }
+                alert(response.message);
+                getall();
+            }).catch(error => {
+                console.error('Error in submitForD:', error);
+                throw error;
+            });
         }
-    } else {
-        payload.dates.push(new Date().toISOString().split('T')[0]);
-    }
-
-    console.log('Payload for Breakfast:', payload);
-
-    return $.ajax({
-        type: 'POST',
-        url: './webservices/dinner.php',
-        dataType: 'json',
-        data: JSON.stringify(payload)
-    }).then(response => {
-        if (response.status !== 'success') {
-            throw new Error(response.message);
-        }
-        alert(response.message);
-    }).catch(error => {
-        console.error('Error in submitForB:', error);
-        throw error;
-    });
-}
-
-
-
-async function submitForD(event) {
-    const quantity = $('#mealqtydb').val();
-    const totalAmount = $('#mealamtdb').val();
-    const fromDate = $('#from-date-d').val();
-    const toDate = $('#to-date-d').val();
-
-    const currentDate = new Date();
-    const dayOfWeek = currentDate.getDay();
-    const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    const dayName = dayNames[dayOfWeek];
-
-    let payload = {
-        load: 'setitemsb',
-        quantity: quantity,
-        category: 3,
-        totalAmount: totalAmount,
-        foodid: foodidd,
-        cid: customerid,
-        day: dayName,
-        dates: []
-    };
-
-    if (quantity < 0) {
-        throw new Error('Invalid quantity for dinner.');
-    }
-    if (fromDate && toDate) {
-        const from = new Date(fromDate);
-        const to = new Date(toDate);
-        if (from > to) {
-            alert('Invalid date range.');
-            throw new Error('Invalid date range for dinner.');
-        }
-        let current = new Date(from);
-        while (current <= to) {
-            payload.dates.push(current.toISOString().split('T')[0]); // Format date as YYYY-MM-DD
-            current.setDate(current.getDate() + 1);
-        }
-    } else {
-        payload.dates.push(new Date().toISOString().split('T')[0]);
-    }
-
-    console.log('Payload for Dinner:', payload);
-
-    return $.ajax({
-        type: 'POST',
-        url: './webservices/dinner.php',
-        dataType: 'json',
-        data: JSON.stringify(payload)
-    }).then(response => {
-        if (response.status !== 'success') {
-            throw new Error(response.message);
-        }
-        alert(response.message);
-    }).catch(error => {
-        console.error('Error in submitForD:', error);
-        throw error;
-    });
-}
 
  // Global array to store both fetched items
 
@@ -4649,6 +4867,77 @@ $(document).on('input', '#lunch-table-l tbody input[type="number"], #lunch-table
     updateLunchTotaldl();
     updateLunchQuantitydl();
 });
+
+
+    $('#from-date-b, #to-date-b').on('change', handleDateChangeB);
+    $('#from-date-d, #to-date-d').on('change', handleDateChangeD);
+
+// Function for the first date pair (B)
+function handleDateChangeB() {
+    const fromDateB = $('#from-date-b').val();
+    const toDateB = $('#to-date-b').val();
+    const payload = { 
+        load: 'datechange',
+        fromdate: fromDateB,
+        todate: toDateB,
+        foodtype:1
+    };
+
+
+    if (fromDateB && toDateB) {
+        $.ajax({
+    url: './webservices/dinner.php',
+    type: 'POST',
+    dataType: 'json',
+    data: JSON.stringify(payload),
+    success: function(data) {
+        console.log(data,"date check");
+       if (data.status === 'success') {
+            $('#tableqtyb').val(data.data);
+        } else {
+            $('#tableqtyb').val(0);
+        }
+    },
+    error: function(error) {
+        console.error('Error:', error);
+    }
+});
+    }
+}
+
+
+function handleDateChangeD() {
+    const fromDateD = $('#from-date-d').val();
+    const toDateD = $('#to-date-d').val();
+    const payload = { 
+        load: 'datechange',
+        fromdate: fromDateD,
+        todate: toDateD,
+        foodtype:3
+    };
+
+   
+    if (fromDateD && toDateD) {
+        $.ajax({
+    url: './webservices/dinner.php',
+    type: 'POST',
+    dataType: 'json',
+    data: JSON.stringify(payload),
+    success: function(data) {
+        console.log(data);
+        
+        if (data.status === 'success') {
+            $('#tableqtyb').val(data.data);
+        } else {
+            $('#tableqtyb').val(0);
+        }
+    },
+    error: function(error) {
+        console.error('Error:', error);
+    }
+});
+    }
+}
 
 
 // // Function to send lunch details

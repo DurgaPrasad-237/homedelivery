@@ -16,7 +16,9 @@ $from_date = $data["from_date"] ?? "";
 $to_date = $data["to_date"] ?? "";
 $load = $data["load"] ?? "";
 $action= $data["action"] ?? "";
-
+$activity = $data['activity'] ?? "";
+$item= $data["item"] ?? "";
+$weeksno = $data["weeksno"] ?? "";
 if ($load == "add") {
     addcom($conn,$category, $ItemName, $Price, $from_date, $to_date);
 } else if ($load == "get") {
@@ -49,6 +51,167 @@ else if($load == "loadlunchitems"){
 else if($load == 'addlunch'){
     addlunch($conn);
 }
+else if($load == "activate_deactive_lunch"){
+    lunchActivity($conn);
+}
+else if($load == "loadbfitems"){
+    loadbfitems($conn);
+}
+else if($load == "addbf"){
+    addbf($conn);
+}
+else if($load == "loadbreakfast"){
+    loadbreakfast($conn);
+}
+else if($load == "setbreakfast"){
+    setBreakFast($conn);
+}
+// else if($load == 'setbreakfast'){
+//     setBreakFast($conn);
+    
+// }
+// else if($load == 'additem'){
+//     additem($conn);
+// }
+// else if($load == 'setactivity'){
+//     setactivity($conn);
+// }
+// else if($load == 'loaditems'){
+//     loaditems($conn);
+// }
+
+
+//function for loadbreakfast
+function loadbreakfast($conn){
+    $selectquery = "SELECT week.sno,week.day,COALESCE(fooddetails.ItemName,'') as ItemName,week.OptionID,week.fromdate
+    from week
+    left join fooddetails on week.OptionID = fooddetails.OptionID";
+    $resultquery = getData($conn,$selectquery);
+    if(count($resultquery) > 0){
+        $jsonresponse = array('code'=>'200','status'=>'success','data'=>$resultquery);
+    }
+    else{
+        $jsonresponse = array('code'=>'200','status'=>'success','data'=>"No Data");
+    }
+    echo json_encode(($jsonresponse));
+}
+
+
+//add breakfast
+function addbf($conn){
+    global $ItemName, $category;
+
+    // Check for duplicate records in the database
+    $selectquery = "SELECT * FROM fooddetails WHERE ItemName = '$ItemName' and category = '$category'";
+    $resultselectquery = getData($conn, $selectquery);
+
+    if (count($resultselectquery) > 0) {
+        // Record already exists
+        $jsonresponse = array('code' => '200', 'status' => 'exists');
+        echo json_encode($jsonresponse);
+    } else {
+        $sql = "INSERT INTO `fooddetails`(`ItemName`, `category`) VALUES ('$ItemName','$category')";
+        $resultsql = setData($conn,$sql);
+        if($resultsql == "Record created"){
+            $lastinsertid = mysqli_insert_id($conn); 
+            $logsql = "INSERT INTO `fooddetails_log`(`fd_oid`, `item_name`) 
+            VALUES ('$lastinsertid','$ItemName')";
+            $logresultsql = setData($conn,$logsql);
+            if($logresultsql == "Record created"){
+                $jsonresponse = array('code'=>'200','status'=>'success');
+            }
+            else{
+                $jsonresponse = array('code'=>'400','status'=>'fail to insert in food log');
+            }   
+        }
+        else{
+            $jsonresponse = array('code'=>'500','status'=>'fail');
+        }
+        echo json_encode($jsonresponse);
+    }
+}
+
+
+//load bfitems
+function loadbfitems($conn){
+    $selectquery = "select itemName, activity, OptionID from fooddetails where category=1  ";
+    $resultquery = getData($conn,$selectquery);
+
+    if(count($resultquery) > 0){
+        $jsonresponse = array('code' => '200', 'status' => 'success','data' => $resultquery);
+        echo json_encode($jsonresponse);
+    }
+}
+
+
+
+function setactivity($conn) {
+    global $activity, $OptionID;
+    $insertquery = "update fooddetails set activity= '$activity' WHERE OptionID= '$OptionID' ";
+    $result= setData($conn, $insertquery);
+    $jsonresponse = array('status'=>'updated');
+    echo json_encode($jsonresponse);
+}
+
+function additem($conn) {
+    global $item, $activity, $category;
+
+    // Check for duplicate records in the database
+    $selectquery = "SELECT * FROM fooddetails WHERE ItemName = '$item' AND activity = '$activity'";
+    $resultselectquery = getData($conn, $selectquery);
+
+    if (count($resultselectquery) > 0) {
+        // Record already exists
+        $jsonresponse = array('code' => '200', 'status' => 'Record already exists');
+        echo json_encode($jsonresponse);
+    } else {
+        $query = "SELECT COALESCE(max(OptionID)+1,1) as OptionID FROM fooddetails WHERE category='$category'";
+        $result = $conn->query($query);
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $foodid = $row['OptionID'];
+        }
+        // Insert new record
+        $insertquery = "INSERT INTO fooddetails (ItemName, activity, OptionID, category) VALUES ('$item', '$activity', '$foodid', '$category')";
+        $resultquery = setData($conn, $insertquery);
+
+        if ($resultquery == "Record created") {
+            // Record added successfully
+            $jsonresponse = array('code' => '200', 'status' => 'Record added successfully');
+            echo json_encode($jsonresponse);
+        } else {
+            // Handle any insert errors
+            $jsonresponse = array('code' => '500', 'status' => 'Failed to add record');
+            echo json_encode($jsonresponse);
+        }
+    }
+}
+function loaditems($conn){
+    $selectquery = "select itemName, activity, OptionID from fooddetails where category=1  ";
+    $resultquery = getData($conn,$selectquery);
+
+    if(count($resultquery) > 0){
+        $jsonresponse = array('code' => '200', 'status' => 'success','data' => $resultquery);
+        echo json_encode($jsonresponse);
+    }
+}
+
+//lunch activity
+function lunchActivity($conn){
+    global $activity,$OptionID;
+    $updatesql = "UPDATE `fooddetails` SET `activity`='$activity' WHERE `OptionID` = $OptionID";
+    $resultupdate = setData($conn,$updatesql);
+    if($resultupdate == "Record created"){
+        $jsonresponse = array('code'=>'200','status'=>'success');
+    }
+    else{
+        $jsonresponse = array('code'=>'500','status'=>'fail');
+    }
+    echo json_encode($jsonresponse);
+}
+
+
+
 
 //add lunch
 function addlunch($conn){
@@ -131,27 +294,39 @@ function breakfastfooditems($conn)
 
 
 //load brekfast
-function loadbreakfast($conn){
-    $selectquery = "SELECT 
-    week.sno as ID,
-    week.day AS Weekday,
-  	COALESCE(fooddetails.Price, '') AS Price,
-    COALESCE(fooddetails.ItemName, '') AS FoodItem,
-      COALESCE(fooddetails.from_date, '') AS FromDate
-    FROM 
-        week
-    LEFT JOIN 
-        fooddetails ON week.sno = fooddetails.OptionID
-    ORDER BY 
-        week.sno";
-    $resultquery = getData($conn,$selectquery);
-    if(count($resultquery) > 0){
-        $jsonresponse = array('code'=>'200','status'=>'success','data'=>$resultquery);
+// function loadbreakfast($conn){
+//     $selectquery = "SELECT week.sno,week.day,COALESCE(fooddetails.ItemName,'') as ItemName,week.OptionID,week.fromdate
+// from week
+// left join fooddetails on week.OptionID = fooddetails.OptionID";
+//     $resultquery = getData($conn,$selectquery);
+//     if(count($resultquery) > 0){
+//         $jsonresponse = array('code'=>'200','status'=>'success','data'=>$resultquery);
+//     }
+//     else{
+//         $jsonresponse = array('code'=>'200','status'=>'success','data'=>"No Data");
+//     }
+//     echo json_encode(($jsonresponse));
+// }
+
+//set breakfastfoodiitems
+function setBreakFast($conn){
+    global $OptionID,$from_date,$weeksno;
+    $updatequery = "UPDATE week SET OptionID='$OptionID',fromdate='$from_date' WHERE sno = $weeksno";
+    $resultupdate = setData($conn,$updatequery);
+    if($resultupdate == "Record created"){
+        $insertlog = "INSERT INTO week_log(weeksno, optionid, fromdate) VALUES ('$weeksno','$OptionID','$from_date')";
+        $resultlog = setData($conn,$insertlog);
+        if($resultlog == "Record created"){
+            $jsonresponse = array('code'=>'200','status'=>'success');
+        }
+        else{
+            $jsonresponse = array('code'=>'500','status'=>'fail','message'=>"fail to insert in week log table");
+        }
     }
     else{
-        $jsonresponse = array('code'=>'200','status'=>'success','data'=>"No Data");
+        $jsonresponse = array('code'=>'500','status'=>'fail','message'=>"fail to update in week table");
     }
-    echo json_encode(($jsonresponse));
+      echo json_encode(($jsonresponse));
 }
 
 

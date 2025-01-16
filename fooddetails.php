@@ -282,10 +282,10 @@
 }
 .add_bf{
     /* border:2px solid black; */
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    /* box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; */
     /* padding:10px; */
     height:55vh;
-    width:40vw;
+    width:60vw;
     display:none;
     margin:20px auto;
     border-radius: 10px;
@@ -294,7 +294,8 @@
     justify-content: space-between;
 }
 .add_table_bf {
-    width: 100%;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    width: 50%;
     border-collapse: collapse;
     border:none;
     background-color: transparent;
@@ -351,7 +352,7 @@
 .add_table_bf thead th:nth-child(1){
     border-top-left-radius: 10px;
 }
-.add_table_bf thead th:nth-child(3){
+.add_table_bf thead th:nth-child(4){
     border-top-right-radius: 10px;
 }
 .add_table_bf tbody td{
@@ -451,7 +452,84 @@
     border:2px solid green;
     cursor:pointer;
 }
+.bf_items_add{
+    /* border:2px solid black; */
+    height:100%;
+    width:48%;
+    overflow-y: auto;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+.bf_items_add h3{
+    width:98%;
+    text-align: center;
+    padding:4px;
+    background-color: #FFC857;
+    margin:0px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.35);
+    height:5vh;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    align-items: center;
+    display:flex;
+    justify-content: center;
+    font-size: 18px;
+    color:white;
+    font-weight: bold;
+}
+.bf_item_add{
+    display:flex;
+    flex-direction: row;
+    padding:5px;
+    justify-content: space-between;
+    align-items: center;
+    width:95%;
+}
+.bf_item_add input{
+    width:70%;
+    outline:none;
+    border:none;
+    border-bottom: 2px solid black;
+    background-color: transparent;
+    padding:5px;
+}
+.bf_item_add button{
+    padding:5px;
+    width:25%;
+    color:#FF5733;
+    border:2px solid #FF5733;
+    cursor:pointer
+}
+.bf_add_item_table table{
+    border-collapse: collapse;
+    border:none;
+    background-color: transparent;
+    position: relative;
+   
+}
+.bf_add_item_table table thead th{
+    background-color: #FFC857;
+    border-radius: 0px;
+}
+.bf_add_item_table table tbody tr td{
+  text-align: center;
+}
 
+.bf_add_item_table table thead{
+    position: sticky;
+    top:0;
+}
+.deactive_bf,.active_bf,.deactive_ln,.active_ln{
+    padding:2px;
+    width:100%;
+    background-color: red;
+    color:white;
+    border:none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.active_bf,.active_ln{ 
+    background-color: green;
+}
 
 
     </style>
@@ -525,11 +603,35 @@
 
 
             <div class="add_bf">
+                <div class="bf_items_add">
+                    <h3>Add Items</h3>
+                    <div class="bf_item_add">
+                        <input placeholder="Enter Item Name">
+                        <button onclick="addbf()">Add</button>
+                    </div>
+                    <div class="bf_add_item_table">
+                        <table>
+                            <thead>
+                                <tr>
+                                <th>ItemName</th>
+                                <th>Active/Deactive</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                               
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+
                 <table class="add_table_bf">
                     <thead>
                         <tr>
                             <th>Day</th>
                             <th>Item</th>
+                            <th>FromDate</th>
                             <th>Edit</th>
                         </tr>
                     </thead>
@@ -573,11 +675,189 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script>
         let editingId = null;
+        let  bf_food_items = [];
 
 $(document).ready(function() {
     fetchBackendData(); // Initial fetch when page loads
     load_foodType();    // Ensure the category dropdown is populated
 });
+
+//add breakfast
+function addbf(){
+    let bf_item_add = document.querySelector('.bf_item_add input').value;
+    var payload = {
+        ItemName:bf_item_add,
+        category:1,
+        activity:1,
+        load:"addbf"
+    }
+    document.querySelector('.bf_item_add input').value = "";
+    $.ajax({
+        type:"POST",
+        url: "./webservices/fooddetails1.php",
+        dataType: 'json',
+        data: JSON.stringify(payload),
+        success:function(response){
+            if(response.status === "success"){
+                alert("Item added")
+               
+                displaybf();
+            }
+            else if(response.status === "exists"){
+                alert("record already exists");
+            }
+            else{
+                alert("item not added")
+            }
+        },
+        error:function(err){
+            console.log(err);
+            alert("something wrong");
+        }
+    })
+}
+
+
+//display bf
+function displaybf(){
+    bf_food_items.length = 0;
+    var payload = {
+        load:"loadbfitems"
+    }
+    $.ajax({
+        type:"POST",
+        url: "./webservices/fooddetails1.php",
+        dataType: 'json',
+        data: JSON.stringify(payload),
+        success:function(response){
+            console.log(response);
+            if(response.data.length > 0){
+                let bf_add_item_table = document.querySelector('.bf_add_item_table table tbody');
+                bf_add_item_table.innerHTML = ""
+                response.data.forEach(itm=>{
+                    let trow = document.createElement('tr');
+                    let activestatus = (itm.activity === "1") ? `<button class="deactive_bf">Deactive</button>`:`<button class="active_bf">Active</button>`
+                    trow.innerHTML = `
+                    <td>${itm.itemName}</td>
+                    <td style="width:30%">${activestatus}</td>
+                    `
+                    bf_food_items.push({ bfid: `${itm.OptionID}`, itemname: `${itm.itemName}`});
+                    bf_add_item_table.appendChild(trow);
+                })
+                fetchBreakFast_Dinner();
+            }
+            console.log(bf_food_items);
+        },
+        error:function(err){
+            console.log(err);
+            alert("something wrong");
+        }
+    })
+}
+
+
+//fetch breakfast dinner
+function fetchBreakFast_Dinner() {
+    let dp;
+    var payload = {
+        load: "loadbreakfast"
+    };
+
+    $.ajax({
+        type: 'POST',
+        url: "./webservices/fooddetails1.php",
+        dataType: 'json',
+        data: JSON.stringify(payload),
+        success: function (response) {
+            console.log("fd",response);
+            let bfd_body = document.querySelector('.bfd_body');
+            
+            bfd_body.innerHTML = "";
+
+            response.data.forEach(itm => {
+
+                dp = document.createElement('select');
+                dp.setAttribute('onchange',`setBreakFast(${itm.sno})`);
+                dp.setAttribute('id',`item_id_${itm.sno}`)
+                dp.innerHTML = ""; 
+                dp.innerHTML = `<option value="">select the item</option>`; 
+
+             
+                bf_food_items.forEach(bfitm => {
+                    let option = document.createElement('option');
+                 
+                    option.value = bfitm.bfid;
+                    option.textContent = bfitm.itemname;
+
+                 
+                    if (itm.OptionID === bfitm.bfid) {
+                        option.selected = true;
+                    }
+
+                    dp.appendChild(option);
+                });
+
+              
+                let trow = document.createElement('tr');
+                trow.setAttribute('class', 'bf_itm_row');
+                trow.innerHTML = `
+                    <td>${itm.day}</td>
+                    <td></td>
+                    <td><input type="date" value=${itm.fromdate} class= "fromdate_${itm.sno}"></td>
+                    <td><button class="bf_eidtbtn" onclick="breakfastfooditems()">Edit</button></td>
+                `;
+                trow.cells[1].appendChild(dp);
+
+                
+                bfd_body.appendChild(trow);
+            });
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    });
+}
+
+
+//setting weeksno and bfitemsno values
+function setBreakFast(wsno){
+    itemsno = document.querySelector(`#item_id_${wsno}`).value
+    weeksno = wsno
+}
+
+//insert and update breakfast dinner items
+function breakfastfooditems(){
+    
+    let update_item = confirm("Do you really want to update")
+    if(!update_item){
+        fetchBreakFast_Dinner();
+        return
+    }
+
+    var payload = {
+        load:"setbreakfast",
+        OptionID:itemsno,
+        weeksno:weeksno,
+        from_date:document.querySelector(`.fromdate_${weeksno}`).value
+    }
+
+    $.ajax({
+        type: 'POST',
+        url: "./webservices/fooddetails1.php",
+        dataType: 'json',
+        data: JSON.stringify(payload),
+        success:function(response){
+           if(response.status == "success"){
+            alert("update successfully")
+           }
+        },
+        error:function(err){
+            console.log(err);
+            alert("something wrong")
+        }
+    })
+
+}
 
 
 //function for addlunch item
@@ -619,15 +899,18 @@ function load_lunchItem(){
         dataType: 'json',
         data: JSON.stringify(payload),
         success:function(response){
+            console.log(response.data);
             console.log(response.data.length,"hello")
             if(response.data.length > 0){
                 let lun_table = document.querySelector('.lun_table tbody');
                 lun_table.innerHTML = "";
                 response.data.forEach(itm=>{
+                    let activity = (itm.activity === "1") ? `<button onclick="activateDeactivate('${itm.OptionID}','${itm.activity}')">Deactivate</button>` 
+                    : `<button onclick="activateDeactivate('${itm.OptionID}','${itm.activity}')">Activate</button>`
                     let trow = document.createElement('tr');
                     trow.innerHTML = `
                         <td class="lunch_name"><input value="${itm.ItemName}" disabled/></td>
-                        <td><button class="lun_edit" onclick="${itm.OptionID}">Edit</button></td>
+                        <td>${activity}</td>
                     `
                     lun_table.appendChild(trow);
                 })
@@ -639,6 +922,34 @@ function load_lunchItem(){
     })
 }
 
+//function for activate deactive
+function activateDeactivate(OptionID,activity){
+    var  payload = {
+        load:"activate_deactive_lunch",
+        OptionID:OptionID,
+        activity:(activity === "1") ? 0 : 1
+    }
+    $.ajax({
+        type:"POST",
+        url: "./webservices/fooddetails1.php",
+        dataType: 'json',
+        data: JSON.stringify(payload),
+        success:function(response){
+            if(response.status === "success"){
+                alert("Record Updated");
+                load_lunchItem();
+            }
+            else{
+                alert("Record Not Updated")
+            }
+        },
+        error:function(error){
+            alert("something wrong");
+            console.log(error)
+        }
+
+    })
+}
 
 
 
@@ -724,7 +1035,7 @@ function navbtns(this_button){
         document.querySelector('.category-container').style.display = "none";
         document.querySelector('.add_bf').style.display = "flex";
         document.querySelector('.add_lun').style.display = "none";
-        fetchBreakFast_Dinner();
+        displaybf();
        
     }
     else if(this_button.classList.contains('pr_btn')){
@@ -744,86 +1055,86 @@ function navbtns(this_button){
 
 
 //function for fetch breakfast dinner items
-function fetchBreakFast_Dinner(){
-    var payload = {
-        load:"loadbreakfast"
-    }
+// function fetchBreakFast_Dinner(){
+//     var payload = {
+//         load:"loadbreakfast"
+//     }
 
-    $.ajax({
-        type: 'POST',
-        url: "./webservices/fooddetails1.php",
-        dataType: 'json',
-        data: JSON.stringify(payload),
-        success:function(response){
-            let bfd_body = document.querySelector('.bfd_body');
-            bfd_body.innerHTML = "";
-           response.data.forEach(itm=>{
-                console.log("hello");
-                let trow = document.createElement('tr');
-                trow.setAttribute('class','bf_itm_row')
-                trow.innerHTML = `
-                <td>${itm.Weekday}</td>
-                <td><input value="${itm.FoodItem}" class="bf_item_input_${itm.ID}"></td>
-                <td><button class="bf_eidtbtn" onclick="breakfastfooditems('${itm.ID}','${itm.FoodItem}','${itm.FromDate}','${itm.Price}')">Edit</button></td>
-                `
-                bfd_body.appendChild(trow);
-           })
+//     $.ajax({
+//         type: 'POST',
+//         url: "./webservices/fooddetails1.php",
+//         dataType: 'json',
+//         data: JSON.stringify(payload),
+//         success:function(response){
+//             let bfd_body = document.querySelector('.bfd_body');
+//             bfd_body.innerHTML = "";
+//            response.data.forEach(itm=>{
+//                 console.log("hello");
+//                 let trow = document.createElement('tr');
+//                 trow.setAttribute('class','bf_itm_row')
+//                 trow.innerHTML = `
+//                 <td>${itm.Weekday}</td>
+//                 <td><input value="${itm.FoodItem}" class="bf_item_input_${itm.ID}"></td>
+//                 <td><button class="bf_eidtbtn" onclick="breakfastfooditems('${itm.ID}','${itm.FoodItem}','${itm.FromDate}','${itm.Price}')">Edit</button></td>
+//                 `
+//                 bfd_body.appendChild(trow);
+//            })
 
-        },
-        error:function(err){
-            console.log(err);
-        }
-    })
-}
+//         },
+//         error:function(err){
+//             console.log(err);
+//         }
+//     })
+// }
 //insert and update breakfast dinner items
-function breakfastfooditems(id, fooditem,fromdate,price){
-    let action = "update";
+// function breakfastfooditems(id, fooditem,fromdate,price){
+//     let action = "update";
     
-    let pitem = fooditem;
-    let new_item = document.querySelector(`.bf_item_input_${id}`).value;
+//     let pitem = fooditem;
+//     let new_item = document.querySelector(`.bf_item_input_${id}`).value;
   
-    if(new_item === ""){
-        alert("Item Name can't be null")
-        return;
-    }
-    if(pitem === ""){
-        action="insert"
-    }
-    if(pitem === new_item){
-        alert("Please change the item")
-        return
-    }
-    console.log(fromdate,price);
+//     if(new_item === ""){
+//         alert("Item Name can't be null")
+//         return;
+//     }
+//     if(pitem === ""){
+//         action="insert"
+//     }
+//     if(pitem === new_item){
+//         alert("Please change the item")
+//         return
+//     }
+//     console.log(fromdate,price);
  
 
-     var payload= {
-        load: 'breakfastfooditems',
-        OptionID:id,
-        ItemName:new_item,
-        action:action,
-        from_date:fromdate ?? "",
-        Price:price ?? ""
-     }
-        $.ajax({
-        type: 'POST',
-        url: "./webservices/fooddetails1.php",
-        dataType: 'json',
-        data: JSON.stringify(payload),
-        success:function(response){
-            if (response.code === '200') {
-            alert(response.alert); // Show success alert
-        } else {
-            alert(response.alert); // Show error alert
-        }
-          console.log(response)
-        },
-        error:function(error){
-            console.log(error)
+//      var payload= {
+//         load: 'breakfastfooditems',
+//         OptionID:id,
+//         ItemName:new_item,
+//         action:action,
+//         from_date:fromdate ?? "",
+//         Price:price ?? ""
+//      }
+//         $.ajax({
+//         type: 'POST',
+//         url: "./webservices/fooddetails1.php",
+//         dataType: 'json',
+//         data: JSON.stringify(payload),
+//         success:function(response){
+//             if (response.code === '200') {
+//             alert(response.alert); // Show success alert
+//         } else {
+//             alert(response.alert); // Show error alert
+//         }
+//           console.log(response)
+//         },
+//         error:function(error){
+//             console.log(error)
             
-        }
+//         }
    
-        })
-}
+//         })
+// }
         
 
 
