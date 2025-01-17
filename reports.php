@@ -206,7 +206,7 @@
         .summary{
             background-color: #f4f4f4;
             height:81vh;
-            
+            display:none;   
         }
         .summary_head{
             width:100%;
@@ -453,6 +453,38 @@
             background-color: black;
             padding:4px;
         }
+        /* Full screen overlay */
+.loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 99vw;
+  height: 99vh;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Ensure it's on top */
+  display:none;
+}
+
+/* Loader style */
+.loader {
+  border: 8px solid #f3f3f3; /* Light background color */
+  border-top: 8px solid #3498db; /* Blue color for the spinner */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 2s linear infinite;
+}
+
+/* Spinner animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+        
         
 
 
@@ -467,6 +499,10 @@
 
 <body>
     <div class="main-container">
+        <div class="loader-overlay">
+            <div class="loader"></div>
+        </div>
+
         <div class="header">
             <div class="header-box"><a href="register.php">Register</a></div>
             <div class="header-box" id="reports">Report</div>
@@ -488,14 +524,13 @@
                         <label for="to-date">To:</label>
                         <input type="date" id="to-date">
                     </div>
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="periodicity">Periodicity:</label>
                         <select id="periodicity" class="payment_period">
                         <option value="">Select Periodicity</option>
-                                                        <!-- <option value="daily">Daily</option>
-                            <option value="monthly">Monthly</option> -->
+                                                       
                         </select>
-                    </div>
+                    </div> -->
                     <div class="form-group">
                         <label for="foodtype">Foodtype :</label>
                         <select class="foodtype">
@@ -1143,20 +1178,20 @@ function reportdetails(){
     let fromDate = $("#from-date").val();
     let toDate = $("#to-date").val();
     let od;
-    let periodicity = document.querySelector('#periodicity').value
+    // let periodicity = document.querySelector('#periodicity').value
     let foodtype = document.querySelector('.foodtype').value
     let actualstatus;
 
-  //  if(!foodtype){
-    //    alert("Please select the foodtype")
-   //     return "";
-    // }
+   if(!foodtype){
+       alert("Please select the foodtype")
+       return "";
+    }
 
     var payload = {
         load:"load_report",
         todate:toDate,
         fromdate:fromDate,
-        periodicity:periodicity,
+        // periodicity:periodicity,
         customerid:document.getElementById('customer-id').value,
         foodtype:foodtype
     }
@@ -1178,12 +1213,12 @@ function reportdetails(){
                         alert("No Data Found");
                         return "";
                     }
-                    let od = (periodicity === '1') ? dt.OrderDate : dt.OrderDate;
+                    // let od = (periodicity === '1') ? dt.OrderDate : dt.OrderDate;
                     let filteredStatus = status.filter(sts => sts.sno !== "0");
                     
                     let actualstatus = `
                     <select class="orderstatus" 
-                    onchange="updateStatus(this, '${dt.CustomerID}', '${dt.mail}', '${dt.name}', '${od}')">
+                    onchange="updateStatus(this, '${dt.CustomerID}', '${dt.mail}', '${dt.name}', '${dt.OrderDate}')">
                     ${filteredStatus.map(sts => `
                         <option value="${sts.sno}" ${sts.status === dt.status ? 'selected' : ''}>
                             ${sts.status}
@@ -1202,7 +1237,7 @@ function reportdetails(){
 
                     <td class="biltd" onmouseover="show_num(this, '${dt.BillingNumber}')"  onmouseout="hide_num(this, '${dt.BillingNumber}')">
                     ${dt.mail}<br/><span class="show_hide_num">BillingNumber:<br/>${dt.BillingNumber}</span></td>
-                    <td>${od}</td>
+                    <td>${dt.OrderDate}</td>
                         <td>${dt.periodicity}</td>
                         <td>${dt.breakfast}</td>
                         <td>${dt.lunch}</td>
@@ -1219,6 +1254,8 @@ function reportdetails(){
             }
             else{
                 alert("No Data Found")
+                let reporttbody = document.querySelector('.report_tbody');
+                reporttbody.innerHTML = "";
             }
         }
         ,
@@ -1388,6 +1425,7 @@ function updateStatus(th,cid,mail,name,od){
         status:th.value
     }
     console.log("updatestatus",payload);
+    document.querySelector('.loader-overlay ').style.display = "flex";
     $.ajax({
         type: "POST",
         url: "./webservices/reports.php",
@@ -1397,6 +1435,7 @@ function updateStatus(th,cid,mail,name,od){
             console.log(response)
            if(response.status === "Success"){
             alert("Successfully Updated")
+            document.querySelector('.loader-overlay ').style.display = "none";
            }
         },
         error:function(err){

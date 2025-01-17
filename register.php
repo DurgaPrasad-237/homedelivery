@@ -1862,9 +1862,16 @@
         let finalquantity = 0;
         let existingOrders = [];
         let lunchidsprice = [];
+        let binitialqty = 0;
+        let binitialamt = 0;
+        let dinitialqty = 0;
+        let dinitialamt = 0;
+
 
 
         $(document).ready(intialload())
+
+        
 
         //function for load periodicity
         function loadperiodicity() {
@@ -2107,7 +2114,7 @@
                             let iqty = (itm.food_type === 'breakfast') ? "mealqty" : (itm.food_type === 'lunch') ? "mealqtyl" : "mealqtyd";
                             let iamt = (itm.food_type === 'breakfast') ? "mealamt" : (itm.food_type === 'lunch') ? "mealamount" : "mealamtd";
                             let iqtyb = (itm.food_type === 'breakfast') ? "mealqtyb" : (itm.food_type === 'lunch') ? "mealqtylb" : "mealqtydb";
-                            let iamtb = (itm.food_type === 'breakfast') ? "mealamtb" : (itm.food_type === 'lunch') ? "mealamount" : "mealamtdb";
+                            let iamtb = (itm.food_type === 'breakfast') ? "mealamtb" : (itm.food_type === 'lunch') ? "mealamountb" : "mealamtdb";
                             
                             document.getElementById(`${iqty}`).value = itm.quantity;
                             document.getElementById(`${iamt}`).value = itm.price;
@@ -4212,15 +4219,48 @@ $.ajax({
     //     document.getElementById('overlay').style.display = 'none';
 
     // }
+    // function closeSummaryModal(event) {
+    //     event.preventDefault();
+    //     // Hide the modal
+    //     document.getElementById('summary-modal').style.display = 'none';
+    //     document.getElementById('overlay').style.display = 'none';
+    //     document.getElementById("breakfast-box-b").style.display = "none";
+    //     document.getElementById("dinner-box-b").style.display = "none";
+    //     let today = new Date().toISOString().split('T')[0];
+    
+    
+    //     document.getElementById('from-date-b').value = today;
+    //     document.getElementById('to-date-b').value = today;
+    //     document.getElementById('from-date-l').value = today;
+    //     document.getElementById('to-date-l').value = today;
+    //     document.getElementById('from-date-d').value = today;
+    //     document.getElementById('to-date-d').value = today;
+    //     $('#breakfast-contain-b').hide();
+    //     $('#dinner-container-b').hide();
+    //     const breakfastRadioBtn = document.querySelector('input[name="breakfast-category-b"][value="categoryb1b"]');
+    //     if (breakfastRadioBtn) {
+    //     breakfastRadioBtn.checked = false;  
+    //     }
+
+    //     const dinnerRadioBtn = document.querySelector('input[name="dinner-category-b"][value="categoryd1d"]');
+    //     if (dinnerRadioBtn) {
+    //     dinnerRadioBtn.checked = false; 
+    //     }
+       
+    // }
     function closeSummaryModal(event) {
         event.preventDefault();
         // Hide the modal
+        document.getElementById("mealqtyb").value = binitialqty;
+        document.getElementById("mealamtb").value = binitialamt;
+        document.getElementById("mealqtydb").value = dinitialqty;
+        document.getElementById("mealamtdb").value = dinitialamt;
+
         document.getElementById('summary-modal').style.display = 'none';
         document.getElementById('overlay').style.display = 'none';
         document.getElementById("breakfast-box-b").style.display = "none";
         document.getElementById("dinner-box-b").style.display = "none";
         let today = new Date().toISOString().split('T')[0];
-    
     
         document.getElementById('from-date-b').value = today;
         document.getElementById('to-date-b').value = today;
@@ -4242,12 +4282,16 @@ $.ajax({
        
     }
 
+
+
     // function showBreakfastB() {
     //     document.getElementById("breakfast-box-b").style.display = "block";
     //     document.getElementById("lunch-box-b").style.display = "none";
     //     document.getElementById("dinner-box-b").style.display = "none";
     // }
     function showBreakfastB() {
+        binitialqty = document.getElementById("mealqtyb").value;
+        binitialamt = document.getElementById("mealamtb").value;
         document.getElementById("breakfast-box-b").style.display = "block";
         document.getElementById("lunch-box-b").style.display = "none";
         document.getElementById("dinner-box-b").style.display = "none";
@@ -4256,6 +4300,7 @@ $.ajax({
             radioBtn.checked = true; 
         }
     }
+
 
     function showLunchB() {
         document.getElementById("breakfast-box-b").style.display = "none";
@@ -4269,14 +4314,16 @@ $.ajax({
     //     document.getElementById("dinner-box-b").style.display = "block";
     // }
     function showDinnerB() {
+        dinitialqty = document.getElementById("mealqtydb").value;
+        dinitialamt = document.getElementById("mealamtdb").value;
         document.getElementById("breakfast-box-b").style.display = "none";
         document.getElementById("lunch-box-b").style.display = "none";
         document.getElementById("dinner-box-b").style.display = "block";
         const radioBtn = document.querySelector('input[name="dinner-category-b"][value="categoryd1d"]');
         if (radioBtn) {
             radioBtn.checked = true; 
-        }
-    }
+        }
+    }
 
     function calculateTotalBB() {
             let totalAmount = 0;

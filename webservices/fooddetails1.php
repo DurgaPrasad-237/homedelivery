@@ -66,6 +66,9 @@ else if($load == "loadbreakfast"){
 else if($load == "setbreakfast"){
     setBreakFast($conn);
 }
+else if($load == "activiyBF"){
+    activityBF($conn);
+}
 // else if($load == 'setbreakfast'){
 //     setBreakFast($conn);
     
@@ -79,6 +82,19 @@ else if($load == "setbreakfast"){
 // else if($load == 'loaditems'){
 //     loaditems($conn);
 // }
+
+function activityBF($conn){
+    global $activity,$OptionID;
+    $updatesql = "UPDATE `fooddetails` SET `activity`='$activity' WHERE `OptionID` = $OptionID";
+    $resultupdate = setData($conn,$updatesql);
+    if($resultupdate == "Record created"){
+        $jsonresponse = array('code'=>'200','status'=>'success');
+    }
+    else{
+        $jsonresponse = array('code'=>'500','status'=>'fail');
+    }
+    echo json_encode($jsonresponse);
+}
 
 
 //function for loadbreakfast

@@ -606,7 +606,7 @@
                 <div class="bf_items_add">
                     <h3>Add Items</h3>
                     <div class="bf_item_add">
-                        <input placeholder="Enter Item Name">
+                        <input placeholder="Enter Item Name" maxlength="20">
                         <button onclick="addbf()">Add</button>
                     </div>
                     <div class="bf_add_item_table">
@@ -644,7 +644,7 @@
             <div class="add_lun">
                 <h3>Lunch Items</h3>
                 <div class="input_lun">
-                    <input placeholder="Enter Lunch Item">
+                    <input placeholder="Enter Lunch Item" maxlength="20">
                     <button onclick="add_lunch_item()">Edit</button>
                 </div>
                 <div>
@@ -736,7 +736,8 @@ function displaybf(){
                 bf_add_item_table.innerHTML = ""
                 response.data.forEach(itm=>{
                     let trow = document.createElement('tr');
-                    let activestatus = (itm.activity === "1") ? `<button class="deactive_bf">Deactive</button>`:`<button class="active_bf">Active</button>`
+                    let activestatus = (itm.activity === "1") ? `<button class="deactive_bf" onclick="activebf('${itm.OptionID}','${itm.activity}')">Deactive</button>`
+                    :`<button class="active_bf" onclick="activebf('${itm.OptionID}','${itm.activity}')">Active</button>`
                     trow.innerHTML = `
                     <td>${itm.itemName}</td>
                     <td style="width:30%">${activestatus}</td>
@@ -753,6 +754,36 @@ function displaybf(){
             alert("something wrong");
         }
     })
+}
+
+//activity
+function activebf(optionid,activity){
+   var payload = {
+    OptionID:optionid,
+    activity:(activity === "1") ? 0 : 1,
+    load:"activiyBF"
+   }
+   $.ajax({
+        type: 'POST',
+        url: "./webservices/fooddetails1.php",
+        dataType: 'json',
+        data: JSON.stringify(payload),
+        success:function(response){
+            if(response.status === "success"){
+                if(activity === "1"){
+                    alert("Deactivated Successfully")
+                }
+                else{
+                    alert("Activated SUccessfully")
+                }
+                displaybf();
+            }
+        },
+        error:function(err){
+            alert("Something worng");
+            console.log(err);
+        }
+   })
 }
 
 
