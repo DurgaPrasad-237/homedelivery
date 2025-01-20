@@ -70,11 +70,11 @@ function add_billingaddress($conn){
     $sqlresult = setData($conn,$insertsql);
 
     if($sqlresult == "Record created"){
-        $jsonresponse = array('code' => '200', 'status' => "Success");
+        $jsonresponse =  array('code' => '200', 'status' => 'success');
         echo json_encode($jsonresponse);
     }
     else{
-        $jsonresponse = array('code' => '200', 'status' => "failed");
+        $jsonresponse = array('code' => '400', 'status' => 'fail');
         echo json_encode($jsonresponse);
     }
 }
@@ -104,14 +104,14 @@ function add_deliveryaddress($conn){
 
 //register the customer
 function register($conn){
-    global $customername,$primaryphone,$periodicity,$email,$deliveryaddress,$deliveryphone,$map;
+    global $customername,$primaryphone,$email,$deliveryaddress,$deliveryphone,$map;
     // $flatno,$street,$area,$landmark,$billingaddress,$deliveryaddress,$email,$periodicity,$map;
 
     // $insertsql = "INSERT INTO `customers`(`CustomerName`, `Phone1`, `Phone2`, `Phone3`, `FlatNo`, `Street`, `Area`, `Landmark`, `BillingAddress`, `DeliveryAddress`, `email`, `periodicity`, `Map`) 
     // VALUES ('customername','primaryphone','billingphone','deliveryphone','flatno','street','area','landmark','billingaddress','deliveryaddress','email','periodicity','map')";
     
-    $insertsql = "INSERT INTO `customers`(`CustomerName`, `Phone1`,`Email`,`Periodicity`,DeliveryAddress,Phone3,Map) 
-    VALUES ('$customername','$primaryphone','$email','$periodicity','$deliveryaddress','$deliveryphone','$map')";
+    $insertsql = "INSERT INTO `customers`(`CustomerName`, `Phone1`,`Email`,DeliveryAddress,Phone3,Map) 
+    VALUES ('$customername','$primaryphone','$email','$deliveryaddress','$deliveryphone','$map')";
 
     $sqlresult = setData($conn,$insertsql);
 

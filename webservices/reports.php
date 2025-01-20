@@ -52,6 +52,40 @@ else if($load == "orderHistory"){
 else if($load == "paymenthistory"){
     paymentHistory($conn);
 }
+else if($load == "todayordersummary"){
+    todayOrderSummary($conn);
+}
+
+//order summary
+function todayOrderSummary($conn){
+        $today = date('Y-m-d');
+        $selectquery =  "SELECT
+        SUM(CASE WHEN FoodTypeID = 1 THEN 1 ELSE 0 END) AS bf,
+        SUM(CASE WHEN FoodTypeID = 2 THEN 1 ELSE 0 END) AS lunch,
+        SUM(CASE WHEN FoodTypeID = 3 THEN 1 ELSE 0 END) AS Dinner,
+        SUM(CASE WHEN Status = 1 THEN 1 ELSE 0 END) AS Pending,
+        SUM(CASE WHEN Status = 2 THEN 1 ELSE 0 END) AS Delivered
+        FROM (
+            SELECT DISTINCT
+                OrderID,
+                FoodTypeID,
+                Status
+            FROM
+                orders
+            WHERE
+                OrderDate = '$today'
+        ) as distinct_orders";
+
+        $resultquery = getData($conn,$selectquery);
+
+        if(count($resultquery) > 0){
+            $jsonresponse = array('code' => '200','status' => "Success",'data'=>$resultquery);
+        }
+        else{
+            $jsonresponse = array('code' => '200','status' => "Success",'data'=>'');
+        }
+        echo json_encode($jsonresponse); 
+}
 
 
 //payment history of the particular customer and particular month

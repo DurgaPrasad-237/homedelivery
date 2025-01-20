@@ -27,14 +27,12 @@
 
         .header {
             width: 100%;
-            height: 15vh;
+            height: 12vh;
             display: flex;
             gap: 5%;
             background-color: #FFC857;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
             cursor: default;
-
-            /* border: 2px solid brown; */
 
         }
 
@@ -52,14 +50,14 @@
         }
 
         .container {
-            width: 100%;
-            height: 84vh;
+            width: 100vw;
+            height: 87.1vh;
             display: flex;
             justify-content: space-between;
             margin-top: 0.4%;
-            /* border: 2px solid red; */
             display: flex;
             flex-direction: column;
+          
         }
 
         .container1 {
@@ -68,8 +66,12 @@
             /* box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); */
             cursor: default;
             border-radius: 10px;
-            border: 2px solid whitesmoke;
-
+            /* border: 2px solid whitesmoke; */
+         
+            display:flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
 
         }
 
@@ -78,13 +80,35 @@
             height: 70vh;
             /* border: 3px solid green; */
             border-radius: 10px;
-            border: 2px solid whitesmoke;
+        
             overflow-y: auto;
-
-
-
-
         }
+        .pending_delivery{
+            height:40%;
+            width:100%;
+            background-color:#FF5733;
+            display:flex;
+            flex-direction:row;
+            justify-content:space-around;
+            align-items: center;
+            color:white;
+           
+        }
+        .pending_delivery marquee div{
+            display:flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+          
+            height:5vh;
+            padding:0px;
+            margin:0px;
+            width:100%;
+            color:white;
+         
+        }
+        
+        
 
         .form-row {
             display: flex;
@@ -94,10 +118,11 @@
             /* gap: 60px; */
             /* Space between fields */
             align-items: center;
-            margin-top: 2%;
-            margin-left: 2%;
             font-weight: bold;
             /* margin-bottom:1%; */
+           
+            width:100%;
+            height:55%;
 
 
         }
@@ -105,7 +130,7 @@
         .form-row input,
         .form-row button,
         #periodicity,.foodtype {
-            padding: 8px;
+            padding: 5px;
             font-size: 1rem;
             border-radius: 5px;
         }
@@ -484,8 +509,7 @@
   100% { transform: rotate(360deg); }
 }
 
-        
-        
+
 
 
 
@@ -508,9 +532,12 @@
             <div class="header-box" id="reports">Report</div>
             <div  class="header-box" id="subreports">Summary</div>
         </div>
-
+       
         <div class="container">
             <div class="container1">
+                <div class="pending_delivery">
+                   
+                </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label for="customer-id">Customer Id:</label>
@@ -549,7 +576,6 @@
                             <th>Delivery Number</th>
                             <th>Email</th>
                             <th>OrderDate</th>
-                            <th>Periodicity</th>
                             <th>Breakfast</th>
                             <th>Lunch</th>
                             <th>Dinner</th>
@@ -564,7 +590,10 @@
 
                 </table>
             </div>
+            
         </div>
+       
+       
 
 
         <div class="summary">
@@ -717,9 +746,45 @@
 
   
     
-function togetMonth(index){
-    return months[index -1];
+    function togetMonth(index){
+        return months[index -1];
+    }
+
+function todayordersummary(){
+    var payload = {
+        load:"todayordersummary"
+    }
+    $.ajax({
+        type:"POST",
+        url: "./webservices/reports.php",
+        data: JSON.stringify(payload),
+        dataType:"json",
+        success:function(response){
+            let tos = document.querySelector('.pending_delivery');
+            tos.innerHTML = "";
+            if(response.data.length > 0){
+                tos.innerHTML = `
+                <p><b>BreakFast:</b><span>${response.data[0]['bf']}</span></p>
+                <p><b>Lunch:</b><span>${response.data[0]['lunch']}</span></p>
+                <p><b>Dinner:</b><span>${response.data[0]['Dinner']}</span></p>
+                <p><b>Total Orders:</b><span>
+                    ${parseInt(response.data[0]['bf'] || 0) +
+                    parseInt(response.data[0]['lunch'] || 0) +
+                    parseInt(response.data[0]['Dinner'] || 0)}
+                </span></p>
+
+                <p><b>Delivered:</b><span>${response.data[0]['Delivered']}</span></p>
+                <p><b>Pending:</b><span>${response.data[0]['Pending']}</span></p>    `
+            }
+        },
+        error:function(err){
+            console.log(err);
+            alert("something wrong")
+        }
+        
+    })
 }
+todayordersummary();
 
 
    
@@ -801,9 +866,7 @@ function viewHistory(cid,psno,name,fd,td,tamt,piamt,peamt,clickedButton ){
  
     let summarytabs = document.querySelector('.sumamry_tabs');
     let allButtons = document.querySelectorAll('.view_history');
-    let bfamount = 0;
-    let lnamount = 0;
-    let dnamount = 0;
+  
     document.querySelector('.payment_list').style.display = "none";
     document.querySelector('.food_list').style.display = "none";
    
@@ -843,6 +906,9 @@ function viewHistory(cid,psno,name,fd,td,tamt,piamt,peamt,clickedButton ){
     let paymenthistory = document.querySelector('.payments_history')
 
     orderhistory.addEventListener('click',()=>{
+        let bfamount = 0;
+        let lnamount = 0;
+        let dnamount = 0;
         var payload = {
             customerid:cid,
             fromdate:document.querySelector('#s_fromdate').value,
@@ -903,7 +969,6 @@ function viewHistory(cid,psno,name,fd,td,tamt,piamt,peamt,clickedButton ){
                     <p>${itm.Quantity}</p>
                     <p>${itm.TotalAmount}</p>
                 `;
-
                 if (itm.type === "breakfast") {
                     bfamount += parseInt(itm.TotalAmount);
                     breakfastlist.appendChild(divele);
@@ -1024,6 +1089,7 @@ subreports.addEventListener('click',()=>{
     document.querySelector('#s_fromdate').setAttribute('min', firstdateStr);
     document.querySelector('#s_fromdate').setAttribute('value', firstdateStr); 
     selectedmonth.setAttribute('value',formattedDate)
+    selectedmonth.max = `${year}-${month}`
 
     document.querySelector('#s_todate').setAttribute('max', todaydate);
     document.querySelector('#s_todate').setAttribute('value', todaydate);
@@ -1053,12 +1119,14 @@ function monthly_summary(){
         success:function(response){
             console.log(response);
             if(response.data !== "NO DATA"){
+              
                 document.querySelector('.s_table').style.display = "inline-table";
                 let s_tbody = document.querySelector('.s_tbody');
                 s_tbody.innerHTML = "";
                 response.data.forEach((dt)=>{
+                let disable = (dt.total_amount - dt.paid_amount === 0) ? "disabled" : "enabled";
                 let trow = document.createElement('tr');
-
+                
                 trow.innerHTML = `
                 <td data-cid="${dt.customer_id}" data-psno="${dt.sno}" class="customer_name">${dt.CustomerName}</td>
                 <td>${dt.Email}</td>
@@ -1069,7 +1137,7 @@ function monthly_summary(){
                 <td>${dt.total_amount - dt.paid_amount}</td>
                 <td>${dt.total_amount}</td>
                 <td class="related_month">${year}-${togetMonth(month)}</td>
-                <td><input type="number"  oninput="payment_input(event)" class="paidamount_value"></td>
+                <td><input type="number"  oninput="payment_input(event)" class="paidamount_value" ${disable}></td>
                 <td><button onclick="payment_update(event)" class="payment_update_btn" disabled>
                 <i class="fa-solid fa-pen-to-square fa-beat-fade"></i>
                 </button></td>    
@@ -1122,7 +1190,7 @@ function payment_update(event){
     }
     else{
 
-        let confirmstatus = confirm(`Do you update the paid amount of customer:${ptrow.querySelector('.customer_name').textContent}`);
+        let confirmstatus = confirm(`Do you update the paid amount of customer:${ptrow.querySelector('.customer_name').textContent}\namount:${new_value}`);
 
         if(!confirmstatus){
             return;
@@ -1182,10 +1250,10 @@ function reportdetails(){
     let foodtype = document.querySelector('.foodtype').value
     let actualstatus;
 
-   if(!foodtype){
-       alert("Please select the foodtype")
-       return "";
-    }
+//    if(!foodtype){
+//        alert("Please select the foodtype")
+//        return "";
+//     }
 
     var payload = {
         load:"load_report",
@@ -1238,7 +1306,7 @@ function reportdetails(){
                     <td class="biltd" onmouseover="show_num(this, '${dt.BillingNumber}')"  onmouseout="hide_num(this, '${dt.BillingNumber}')">
                     ${dt.mail}<br/><span class="show_hide_num">BillingNumber:<br/>${dt.BillingNumber}</span></td>
                     <td>${dt.OrderDate}</td>
-                        <td>${dt.periodicity}</td>
+                  
                         <td>${dt.breakfast}</td>
                         <td>${dt.lunch}</td>
                             <td>${dt.dinner}</td>

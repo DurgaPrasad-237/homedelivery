@@ -1056,7 +1056,7 @@
             width:100%;
             display:none;
         }
-        .show_fdbtn{
+        .show_fdbtn,.savebutton{
             background-color: transparent;
             border: 2px solid #FFC857;
             color:#FFC857;
@@ -1065,16 +1065,17 @@
             align-self: center;
             justify-self:flex-end;
         }
-        .show_fdbtn:hover{
+        .show_fdbtn:hover,.savebutton:hover{
             background-color: #FFC857;
             color:white;
             cursor:pointer;
             transition: background-color 0.4s ease, color 0.4s ease;
         }
+       
         #summary-modal {
             display: none;
             position: fixed;
-            top: 20%;
+            top: 15%;
             left: 40%;
             width: 50%;
             background: white;
@@ -1083,7 +1084,7 @@
             z-index: 100;
             border-radius: 10px;
             max-height: 82vh;
-            height: 68vh;
+            height: 75vh;
         }
 
         .dialog-container th {
@@ -1122,7 +1123,7 @@
             border-radius: 10px;
             /* box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); */
             box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-            height: 50vh;
+            height: 64vh;
             overflow-y: scroll;
             position: relative;
             cursor: default;
@@ -1136,11 +1137,12 @@
 
         .button-container-b {
             display: flex;
-            justify-content: flex-start;
-            gap: 20px;
-            padding: 10px;
-            background-color: #f9f9f9;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px;
+            background-color: black;
             border-bottom: 2px solid #ddd;
+          
 
         }
 
@@ -1175,13 +1177,13 @@
         }
 
         .menu-button-b {
-            padding: 10px 14px;
+            padding: 5px;
             font-size: 14px;
-            border: 2px solid #000;
-            border-radius: 5px;
-            background-color: #fff;
             cursor: pointer;
             transition: all 0.3s ease;
+            background-color: #ffc7574a;
+            color: #FFC857;
+            border: 2px solid #ffc7574a;
         }
 
         .menu-button-b:hover {
@@ -1192,6 +1194,14 @@
         .menu-button-b:active {
             background-color: #bbb;
         }
+        .savebutton{
+
+            height:100%;
+        
+         
+        }
+ 
+        
 
         #insert-button,
         #cancel-button{
@@ -1215,6 +1225,121 @@
         #breakfast-box-b{
             display: none;
         }
+
+
+        #lunch-options-containers {
+    max-height: 300px; /* Set the maximum height for scrolling */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Disable horizontal scrolling */
+    border: 1px solid #ddd; /* Optional: Add a border for better visibility */
+    margin-top: 10px;
+    height: 28vh;
+  
+    
+}
+        #lunch-box-b{
+         
+            height:65vh;
+
+        }
+#lunch-options-containers::-webkit-scrollbar{
+    display: none;
+}
+
+
+/* Table styles */
+#lunch-table-l {
+    width: 100%;
+    border-collapse: collapse; /* Ensure cells share borders */
+    table-layout: fixed; /* Fix column widths for better layout control */
+}
+
+/* Sticky header styles */
+#lunch-table-l thead th {
+    position: sticky;
+    top: 0; /* Stick the header to the top of the container */
+    /* Optional: Background color for header */
+    z-index: 10; /* Ensure header stays on top */
+    text-align: left;
+    padding: 8px;
+    border-bottom: 2px solid #ccc; /* Add a bottom border for header */
+}
+
+/* Table body rows styling */
+#lunch-table-l tbody td {
+    padding: 8px;
+    border-bottom: 1px solid #ddd; /* Optional: Add row borders */
+}
+
+/* Optional: Fixed position for the entire lunch-box-b container */
+.breakfast-box h3{
+    margin:0px;
+}
+#lunch-table-l thead th:nth-child(3){
+    width:100px;
+}
+/* Scrollable container styles */
+.scrollable-table-container {
+    max-height: 510px; /* Set maximum height for the rows */
+    overflow-x: auto; /* Enable horizontal scrolling */
+   /* Enable vertical scrolling */
+    border: 1px solid #ddd; /* Optional border for visibility */
+    position: relative;
+}
+
+/* Table styling */
+#lunch-table {
+    width: 100%;
+    border-collapse: collapse; /* Ensure cells share borders */
+    min-width: 600px; /* Ensure horizontal scrolling triggers for wide tables */
+}
+
+/* Sticky header */
+#lunch-table thead th {
+    position: sticky;
+    top: 0; /* Keep header at the top during vertical scrolling */
+    z-index: 2; /* Ensure it stays above table rows */
+    text-align: left;
+    padding: 8px;
+    border-bottom: 2px solid #ccc; /* Optional: Add a bottom border */
+}
+
+/* Table rows */
+#lunch-table tbody td {
+    padding: 8px;
+    border-bottom: 1px solid #ddd; /* Optional: Row borders */
+}
+
+/* Optional: Fixed container for lunch-box */
+#lunch-box {
+    /* position: fixed;
+    top: 100px; /* Adjust based on your page layout */
+    left: 0px; /* Adjust based on your page layout */
+    /* z-index: 10; */
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow */
+    /* width: 65%;  */
+    width: 97.6%;
+    margin-left: 0%;
+}
+
+/* Scrollbar styling (optional) */
+.scrollable-table-container::-webkit-scrollbar {
+    height: 8px; /* Horizontal scrollbar height */
+    width: 8px; /* Vertical scrollbar width */
+    display: none;
+}
+
+.scrollable-table-container::-webkit-scrollbar-thumb {
+    background: #888; /* Scrollbar thumb color */
+    border-radius: 4px;
+}
+
+.scrollable-table-container::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Scrollbar thumb hover color */
+}
         /* .placeorderbtn{
             margin-left: 20vw;
         } */
@@ -1463,7 +1588,7 @@
             <div class="breakfast-box" id="lunch-box" style="display: none;">
                 <div class="bfhead">
                     <th>Lunch Type</th><label>
-                        <input type="radio" name="lunch-category" value="category1" onclick="headerfetch()">
+                        <input type="radio" name="lunch-category" value="category1" onclick="headerfetch()" disabled>
                         Category 1
                     </label>
                     <label>
@@ -1476,6 +1601,7 @@
 
                 <!-- Dynamic Options Container -->
                 <div id="lunch-options-container" style="display: none; margin-top: 10px;">
+                <div class="scrollable-table-container">
                     <table id="lunch-table">
                         <thead>
 
@@ -1484,6 +1610,7 @@
 
                         </tbody>
                     </table>
+                    </div>
                 </div>
             </div>
 
@@ -1634,6 +1761,8 @@
                         <input type="number" id="mealqtydb" value="0" readonly />
                         <input type="number" id="mealamtdb" value="0" readonly />
                     </button>
+                    <button class="savebutton" type="submit" onclick="placeorder(event)">Save</button>
+                    
                     
                 </div>
 
@@ -1703,11 +1832,11 @@
                         <tr>
                             <td>
                                 <label>
-                                    <input type="radio" name="lunch-category" value="category1" onclick="fetchalllunch()">
+                                    <input type="radio" name="lunch-category" value="category1" onclick="fetchalllunch()" disabled>
                                     Category 1
                                 </label>
                                 <label>
-                                    <input type="radio" name="lunch-category" value="category2">
+                                    <input type="radio" name="lunch-category" value="category2" disabled>
                                     Category 2
                                 </label>
                             </td>
@@ -1730,28 +1859,6 @@
                             </tbody>
                         </table>
                     <!-- </div> -->
-
-
-                    <div class="add-items">
-                        <button onclick="fetchadditems()">Add Items</button>
-                    </div>
-                    <div id="lunch-options-container1" style="display: none; margin-top: 10px;">
-                        <table id="lunch-table1-l">
-                            <thead>
-                                <tr>
-                                    <th>Item</th>
-                                    <th>Price</th>
-                                    <th>Quantity</th>
-
-                                </tr>
-                            </thead>
-                            <tbody>
-
-                            </tbody>
-                        </table>
-
-
-                    </div>
 
                 </div>
                 </div>
@@ -1804,10 +1911,7 @@
                 </div>
                 </div>
                
-                <div class="buttons">
-                    <button id="insert-button" type="submit" onclick="placeorder(event)">Save</button>
-                    <button id="cancel-button">Cancel</button>
-                </div>
+              
 
 
                     </div> 
@@ -1835,7 +1939,7 @@
         let addressarea = document.querySelector('.addresses_area')
     //    let buttonarea = document.querySelector('.button_area')
         let generatebtn = document.querySelector('.btngenerate');
-        let customerid = document.getElementById('customer_div_id')
+        let customerdivid = document.getElementById('customer_div_id');
         let customername = document.getElementById("customer_name");
         let primaryphone = document.getElementById("customer_phone");
         let email = document.getElementById("customer_email");
@@ -1851,13 +1955,16 @@
         let bsbtn = document.getElementById('bsbtn');
         let bcbtn = document.getElementById('bcbtn');
         let sameasadd = document.getElementById('input_checkbox');
-        let finaldeliveryaddress;
-        let intialdeliveryaddress;
+
+
         let regflat = document.getElementById('regflat')
         let regstreet = document.getElementById('regstreet')
         let regarea = document.getElementById('regarea')
         let reglink = document.getElementById('reglink')
         let regmobile = document.getElementById('regdmobile')
+        let finaldeliveryaddress;
+        let intialdeliveryaddress;
+        let customerid;
         let finalamount = 0;
         let finalquantity = 0;
         let existingOrders = [];
@@ -1866,6 +1973,8 @@
         let binitialamt = 0;
         let dinitialqty = 0;
         let dinitialamt = 0;
+        let linitialqty=0;
+        let linitialamt=0;
 
 
 
@@ -1962,7 +2071,7 @@
             customername.disabled = true;
             primaryphone.disabled = true;
             email.disabled = true;
-            customerid.style.display = "flex";
+            customerdivid.style.display = "flex";
         }
         //functio for display forms after click search button
         function displaydetails() {
@@ -2081,6 +2190,9 @@
 
 
         function todayorderdetails(customerid) {
+            let todaycontainer = document.querySelector('.todaycontainer');
+            
+            todaycontainer.innerHTML = " ";
             let finalamount = 0;
             let totalquantity = 0;
             var payload = {
@@ -2095,10 +2207,9 @@
                 data: JSON.stringify(payload),
                 dataType: "json",
                 success: function(response) {
-                    if (response.status === "Success") {
+                    console.log("dataresponse",response.data);
+                    if (response.data !== "Nodata") {
                         console.log("today", response.data);
-                        let todaycontainer = document.querySelector('.todaycontainer');
-                        todaycontainer.innerHTML = "";
                         response.data.forEach(itm => {
                             console.log(itm);
                             let type = (itm.food_type === "breakfast") ? 'BF' : (itm.food_type === "lunch") ? 'LN' : 'DN';
@@ -2140,6 +2251,14 @@
 
                         console.log(todaycontainer);
                     }
+                    else{
+                        document.querySelector('#mealqty').value = 0;
+                        document.querySelector('#mealamt').value = 0;
+                        document.querySelector('#mealqty1').value = 0;
+                        document.querySelector('#mealamount').value = 0;
+                        document.querySelector('#mealqtyd').value = 0;
+                        document.querySelector('#mealamtd').value = 0;
+                    }
                 },
                 error: function(err, xhr) {
                     alert("Something wrong")
@@ -2163,6 +2282,14 @@
             document.querySelector('.reg_address').style.display = "flex";
             document.querySelector('.btngenerate').style.display = "block";
             document.querySelector('.today_list').style.display = "none";
+            document.getElementById("breakfast-box").style.display = "none";
+            document.getElementById("lunch-box").style.display = "none";
+            document.getElementById("dinner-box").style.display = "none";
+            document.getElementById("insert-button").style.display = "none";
+            document.getElementById("edit-box").style.display = "none";
+            document.querySelector('.food_details').style.display = "none";
+            todayorderdetails(0);
+            
             enableinputs();
             customername.value = "";
             email.value = "";
@@ -2172,7 +2299,8 @@
 
         //function for register
         submit.addEventListener('click', () => {
-            if (!customername.value || !primaryphone.value || !email.value || !periodicity.value || !regflat.value || !regstreet.value ||
+           
+            if (!customername.value || !primaryphone.value || !email.value || !regflat.value || !regstreet.value ||
                 !regarea.value || !reglink.value || !regmobile.value
             ) {
                 alert("fill the required fields")
@@ -2190,19 +2318,23 @@
                 alert("enter valid flatnumber")
                 return "";
             }
+            if (!validatePhoneNumber(regmobile.value)) {
+                alert("not a valid delivery phone number")
+                return "";
+            }
             regaddress = regflat.value + "," + regstreet.value + "," + regarea.value;
 
             var payload = {
                 customername: customername.value,
                 primaryphone: primaryphone.value,
                 email: email.value,
-                periodicity: periodicity.value,
                 deliveryaddress: regaddress,
                 map: reglink.value,
                 deliveryphone: regmobile.value,
                 load: "register",
 
             }
+            console.log("regpayload",payload);
 
             $.ajax({
                 type: "POST",
@@ -2247,7 +2379,9 @@
 
         //fetching the customerdetails by id
         function fetchbyid(sinput) {
+            console.log("sinput",sinput,typeof(sinput));
             customerid = extractdigit(sinput);
+
             var load = "fetchbyid";
 
             var payload = {
@@ -2303,7 +2437,7 @@
 
 
                             displaydetails();
-                            setInterval(todayorderdetails(cust.CustomerID), 2000);
+                            todayorderdetails(cust.CustomerID);
                             // console.log(cust.CustomerID);
                             // console.log(customerid);
 
@@ -2361,10 +2495,11 @@
                             response.data.forEach(cust => {
                                 document.getElementById('customer_div_id').style.display = "flex";
                                 document.querySelector('.customer_id').value = cust.CustomerID;
+                                customerid = cust.CustomerID;
                                 customername.value = cust.CustomerName.trim();
                                 primaryphone.value = cust.Phone1
                                 email.value = cust.Email
-                                periodicity.value = cust.Periodicity.trim();
+                                // periodicity.value = cust.Periodicity.trim();
                                 intialdeliveryaddress = cust.DeliveryAddress + "," + cust.Phone3 + "," + cust.Map;
                                 console.log(cust.DeliveryAddress);
                                 if (cust.BillingAddress !== null) {
@@ -2447,10 +2582,11 @@
                             response.data.forEach(cust => {
                                 document.getElementById('customer_div_id').style.display = "flex";
                                 document.querySelector('.customer_id').value = cust.CustomerID;
+                                customerid = cust.CustomerID;
                                 customername.value = cust.CustomerName.trim();
                                 primaryphone.value = cust.Phone1
                                 email.value = cust.Email
-                                periodicity.value = cust.Periodicity.trim();
+                                // periodicity.value = cust.Periodicity.trim();
                                 intialdeliveryaddress = cust.DeliveryAddress + "," + cust.Phone3 + "," + cust.Map;
                                 console.log(cust.DeliveryAddress);
                                 if (cust.BillingAddress !== null) {
@@ -2502,6 +2638,8 @@
                 document.getElementById("billing_street").value = document.getElementById("address_street").value
                 document.getElementById("billing_area").value = document.getElementById("address_area").value
                 document.getElementById("billing_mobile").value = document.getElementById("address_mobile").value
+                document.querySelector('.bscbtn').style.display = "flex";
+                bedit.style.display = "none";
             } else {
                 // alert("false")
             }
@@ -2513,71 +2651,96 @@
             document.querySelector('.scbtn').style.display = "flex";
             dedit.style.display = "none";
             deliveryenabled();
-
-            dsbtn.addEventListener('click', () => {
-                const addressflat = document.getElementById("address_flat").value;
-                const addressstreet = document.getElementById("address_street").value;
-                const addressarea = document.getElementById("address_area").value
-                const deliverymobile = document.getElementById("address_mobile").value;
-                const addresslink = document.getElementById("address_link").value;
-
-                if (!validateFlatNumber(addressflat)) {
-                    alert("invalid flatno")
-                    return;
-                }
-
-                if (!addressflat || !addressstreet || !addressarea || !deliverymobile || !addresslink) {
-                    alert("fill the requried fields");
-                    return;
-                }
-
-                if (!validatePhoneNumber(deliverymobile)) {
-                    alert("enter valid mobile number");
-                    return;
-                }
-
-                var payload = {
-                    deliveryaddress: addressflat + "," + addressstreet + "," + addressarea,
-                    deliveryphone: deliverymobile,
-                    map: addresslink,
-                    customerid: customerid,
-                    load: "add_delivery_address"
-                }
-                console.log(payload);
-                $.ajax({
-                    type: "POST",
-                    url: "./webservices/register.php",
-                    data: JSON.stringify(payload),
-                    dataType: "json",
-                    success: function(response) {
-                        if (response.status === "Success") {
-                            alert("Successfully updated")
-                            deliverydisabled();
-                        } else {
-                            alert("Fail to add the address")
-                        }
-                    },
-                    error: function(err) {
-                        console.log(err);
-                    }
-                })
-
-
-            })
-            dcbtn.addEventListener('click', () => {
-                document.querySelector('.scbtn').style.display = "none";
-                dedit.style.display = "block";
-                deliverydisabled();
-            })
         })
+
+        dsbtn.addEventListener('click', () => {
+            const addressflat = document.getElementById("address_flat").value;
+            const addressstreet = document.getElementById("address_street").value;
+            const addressarea = document.getElementById("address_area").value
+            const deliverymobile = document.getElementById("address_mobile").value;
+            const addresslink = document.getElementById("address_link").value;
+
+            if (!validateFlatNumber(addressflat)) {
+                alert("invalid flatno")
+                return;
+            }
+
+            if (!addressflat || !addressstreet || !addressarea || !deliverymobile || !addresslink) {
+                alert("fill the requried fields");
+                return;
+            }
+
+            if (!validatePhoneNumber(deliverymobile)) {
+                alert("enter valid mobile number");
+                return;
+            }
+            deliverydisabled();
+            // checkaddress();
+            // var payload = {
+            //     deliveryaddress: addressflat + "," + addressstreet + "," + addressarea,
+            //     deliveryphone: deliverymobile,
+            //     map: addresslink,
+            //     // customerid: customerid,
+            //     load: "add_delivery_address"
+            //     // load: "insertnew",
+            //     // customername: document.getElementById('customer_name').value,
+            //     // email: document.getElementById('customer_email').value,
+            //     // primaryphone: document.getElementById('customer_phone').value,
+            //     // // periodicity: document.getElementById('payment_period').value,
+            //     // billingaddress: billingaddress,
+            //     // deliveryaddress: finaldeliveryaddress,
+            //     // deliverymobile: document.getElementById('address_mobile').value,
+            //     // billingmobile: document.getElementById('billing_mobile').value,
+            //     // map: document.getElementById('address_link').value
+            // }
+            // console.log(payload);
+            // $.ajax({
+            //     type: "POST",
+            //     url: "./webservices/dinner.php",
+            //     data: JSON.stringify(payload),
+            //     dataType: "json",
+            //     success: function(response) {
+            //         if (response.status === "success") {
+            //             alert("Successfully updated")
+            //             fetchbyid(`"${response.cid}"`);
+            //             deliverydisabled();
+            //         } else {
+            //             alert("Fail to add the address")
+            //         }
+            //     },
+            //     error: function(err) {
+            //         console.log(err);
+            //     }
+            // })
+
+
+        })
+
+        dcbtn.addEventListener('click', () => {
+            document.querySelector('.scbtn').style.display = "none";
+            dedit.style.display = "block";
+            deliverydisabled();
+        })
+
+
+
+
+
+
+
+
+
+
+
+
 
         //edit billing address
         bedit.addEventListener('click', () => {
             document.querySelector('.bscbtn').style.display = "flex";
             bedit.style.display = "none";
             billingenabled();
-
-            bsbtn.addEventListener('click', () => {
+        })
+        bsbtn.addEventListener('click', () => {
                 const billingflat = document.getElementById("billing_flat").value;
                 const billinstreet = document.getElementById("billing_street").value;
                 const billingarea = document.getElementById("billing_area").value
@@ -2610,7 +2773,8 @@
                     data: JSON.stringify(payload),
                     dataType: "json",
                     success: function(response) {
-                        if (response.status === "Success") {
+                        console.log(response);
+                        if (response.status === "success") {
                             alert("Successfully updated")
                             billingdisabled();
                         } else {
@@ -2623,13 +2787,11 @@
                 })
 
             })
-
             bcbtn.addEventListener('click', () => {
                 document.querySelector('.bscbtn').style.display = "none";
                 bedit.style.display = "block";
                 billingdisabled();
             })
-        })
 
 
 
@@ -2642,32 +2804,40 @@
         let foodidd = 0;
         let foodidl = 0;
         let catid = 0;
+        let addressflat
+        let addressstreet
+        let address_area
+        let deliverymobile
+        let addresslink
+        let baddressflat 
+        let baddressstreet
+        let billingmobile
+
+        function checkaddress(){
+            addressflat = document.getElementById("address_flat").value;
+            addressstreet = document.getElementById("address_street").value;
+            address_area = document.getElementById("address_area").value
+            deliverymobile = document.getElementById("address_mobile").value;
+            addresslink = document.getElementById("address_link").value;
+
+            baddressflat = document.getElementById("billing_flat").value;
+            baddressstreet = document.getElementById("billing_street").value;
+            baddressarea = document.getElementById("billing_area").value
+            billingmobile = document.getElementById("billing_mobile").value;
+
+            finaldeliveryaddress = addressflat + "," + addressstreet + "," + address_area + "," + deliverymobile + "," + addresslink;
+            billingaddress = baddressflat + "," + baddressstreet + "," + baddressarea;
+        }
+        
+
 
         async function placeorder(event) {
 
-            const addressflat = document.getElementById("address_flat").value;
-            const addressstreet = document.getElementById("address_street").value;
-            const addressarea = document.getElementById("address_area").value
-            const deliverymobile = document.getElementById("address_mobile").value;
-            const addresslink = document.getElementById("address_link").value;
-
-            const baddressflat = document.getElementById("billing_flat").value;
-            const baddressstreet = document.getElementById("billing_street").value;
-            const baddressarea = document.getElementById("billing_area").value
-            const billingmobile = document.getElementById("billing_mobile").value;
-
             const custid = document.querySelector(".customer_id").value;
 
+            checkaddress();
 
-            finaldeliveryaddress = addressflat + "," + addressstreet + "," + addressarea + "," + deliverymobile + "," + addresslink;
-            billingaddress = baddressflat + "," + baddressstreet + "," + baddressarea;
-
-            if (!custid) {
-                alert("No user selected")
-                return;
-            }
-
-            if (!addressflat || !addressstreet || !addressarea || !deliverymobile || !addresslink) {
+            if (!addressflat || !addressstreet || !address_area || !deliverymobile || !addresslink) {
                 alert("Please the fill the delivery address")
                 return ""
             }
@@ -2682,7 +2852,36 @@
 
 
             if (intialdeliveryaddress !== finaldeliveryaddress) {
-                finaldeliveryaddress = addressflat + "," + addressstreet + "," + addressarea
+                finaldeliveryaddress = addressflat + "," + addressstreet + "," + address_area
+                response = await getlastid(finaldeliveryaddress, billingaddress);
+                customerid = response.cid;
+                console.log(response);
+            }
+
+
+            
+
+            if (!custid) {
+                alert("No user selected")
+                return;
+            }
+
+            if (!addressflat || !addressstreet || !address_area || !deliverymobile || !addresslink) {
+                alert("Please the fill the delivery address")
+                return ""
+            }
+            if (!baddressflat || !baddressstreet || !baddressarea || !billingmobile) {
+                alert("Please the fill the billing address")
+                return ""
+            }
+
+            intialdeliveryaddress = intialdeliveryaddress.replace(/\s/g, "");
+            finaldeliveryaddress = finaldeliveryaddress.replace(/\s/g, "");
+
+
+
+            if (intialdeliveryaddress !== finaldeliveryaddress) {
+                finaldeliveryaddress = addressflat + "," + addressstreet + "," + address_area
                 response = await getlastid(finaldeliveryaddress, billingaddress);
                 // customerid = response.cid;
                 console.log(response);
@@ -2700,9 +2899,10 @@
 
             // console.log("cid", cid);
 
-            const bqty = calculateTotalBB();
-            const lqty = Number(document.getElementById("mealqtylb").value) || 0;
-            const dqty = calculateTotalDB();
+            const bqty = calculateTotalB();
+            const lqty = calculateTotalL();
+            console.log("lqtysss",lqty);
+            const dqty = calculateTotalD();
 
             if ((bqty + lqty + dqty) < 1) {
                 alert("Please select at least one item to proceed");
@@ -2720,18 +2920,18 @@
             console.log(dqty, "dqty")
 
             try {
-            if (bqty > 0) {
-            await submitForB(event); // Wait for submitForB to complete
-            }
-            if (lqty > 0) {
-            await nlunch(event); // Wait for lunchdetails to complete
-            }
-            if (dqty > 0) {
-            await submitForD(event); // Wait for submitForD to complete
-            }
-            console.log('All submissions completed successfully.');
+                if (bqty > 0) {
+                await submitForB(event); // Wait for submitForB to complete
+                }
+                if (lqty > 0) {
+                await nlunch(event); // Wait for lunchdetails to complete
+                }
+                if (dqty > 0) {
+                await submitForD(event); // Wait for submitForD to complete
+                }
+                console.log('All submissions completed successfully.');
             } catch (error) {
-            console.error('Error during submissions:', error);
+                console.error('Error during submissions:', error);
             }
         }
 
@@ -2741,7 +2941,7 @@
                 customername: document.getElementById('customer_name').value,
                 email: document.getElementById('customer_email').value,
                 primaryphone: document.getElementById('customer_phone').value,
-                periodicity: document.getElementById('payment_period').value,
+                // periodicity: document.getElementById('payment_period').value,
                 billingaddress: billingaddress,
                 deliveryaddress: finaldeliveryaddress,
                 deliverymobile: document.getElementById('address_mobile').value,
@@ -2771,7 +2971,7 @@
 var payload = {
     load: "fetchitems",
     day: dayName,
-    cid: customerid
+    cid: customerid,
 };
 
 $.ajax({
@@ -2789,13 +2989,14 @@ $.ajax({
 
         // Append data for the first table (first 15 rows)
         response.data.slice(0, 15).forEach((x, index) => {
+            let disabled = (x.Status === "2") ? "disabled" : "enabled";
             const row = $('<tr>');
             row.html(`
 <td>${x.Date}</td>
 <td>
 <input type='number' min='0' class='tableqty' id='tableqty-${x.Date.replaceAll('-', '')}' 
     data-optionid='${x.OptionID}' data-price='${x.Price}' data-index='${index}' data-category='${x.category}'
-    data-initial='${x.Quantity}' value='${x.Quantity}' readonly>
+    data-initial='${x.Quantity}' value='${x.Quantity}' ${disabled}>
 </td>
 <td><input type='text' class='reason' id='reason-${x.Date.replaceAll('-', '')}'></td>
 <td><button class="table-btn" onclick="update('${x.Date}', this,'${x.category}','${x.OptionID}','${x.Price}','${x.OrderID}')" disabled>Edit</button></td>
@@ -2805,13 +3006,14 @@ $.ajax({
 
         // Append data for the second table (next 15 rows)
         response.data.slice(15, 30).forEach((x, index) => {
+            let disabled = (x.Status === "2") ? "disabled" : "enabled";
             const row = $('<tr>');
             row.html(`
 <td>${x.Date}</td>
 <td>
 <input type='number' min='0' class='tableqty' id='tableqty-${x.Date.replaceAll('-', '')}' 
     data-optionid='${x.OptionID}' data-price='${x.Price}' data-index='${index}'  data-category='${x.category}'
-    data-initial='${x.Quantity}' value='${x.Quantity}' readonly>
+    data-initial='${x.Quantity}' value='${x.Quantity}' ${disabled}>
 </td>
 <td><input type='text' class='reason' id='reason-${x.Date.replaceAll('-', '')}'></td>
 <td><button class="table-btn" onclick="update('${x.Date}', this,'${x.category}','${x.OptionID}','${x.Price}','${x.OrderID}')" disabled>Edit</button></td>
@@ -2845,8 +3047,8 @@ $.ajax({
                 button.prop('disabled', true);
             }
         });
-        initialQuantitySumB = calculateTotalSum('.tableqty');
-        $('.tableqty').on('input', calculateTotalB); // Optional calculation
+        // initialQuantitySumB = calculateTotalSum('.tableqty');
+        // $('.tableqty').on('input', calculateTotalB); // Optional calculation
 
         $('#breakfast-contain').show();
     },
@@ -2857,6 +3059,7 @@ $.ajax({
 }
 
 function getall() {
+    console.log("helfha;lhfa;jh")
 var payload = {
     load: "getitems",
     day: dayName,
@@ -2869,7 +3072,7 @@ $.ajax({
     dataType: 'json',
     data: JSON.stringify(payload),
     success: function(response) {
-        console.log('getall', response);
+        console.log('getalll........', response);
 
         const table1Body = $('#d-table1 tbody');
         const table2Body = $('#d-table2 tbody');
@@ -2878,13 +3081,14 @@ $.ajax({
 
         // Append data for the first table (first 15 rows)
         response.data.slice(0, 15).forEach((x, index) => {
+            let disabled = (x.Status === "2") ? "disabled" : "enabled";
             const row = $('<tr>');
             row.html(`
         <td>${x.Date}</td>
         <td>
             <input type='number' min='0' class='tableqtyd' id='tableqtyd-${x.Date.replaceAll('-', '')}' 
                 data-optionid='${x.OptionID}' data-price='${x.Price}' data-index='${index}'  data-category='${x.category}'
-                data-initial='${x.Quantity}' value='${x.Quantity}' readonly>
+                data-initial='${x.Quantity}' value='${x.Quantity}' ${disabled}>
         </td>
         <td><input type='text'  class='reason' id='reason-${x.Date.replaceAll('-', '')}'></td>
         <td><button class="table-btn" onclick="update('${x.Date}', this,'${x.category}','${x.OptionID}','${x.Price}','${x.OrderID}')" disabled>Edit</button></td>
@@ -2894,13 +3098,14 @@ $.ajax({
 
         // Append data for the second table (next 15 rows)
         response.data.slice(15, 30).forEach((x, index) => {
+            let disabled = (x.Status === "2") ? "disabled" : "enabled";
             const row = $('<tr>');
             row.html(`
         <td>${x.Date}</td>
         <td>
             <input type='number' min='0' class='tableqtyd' id='tableqtyd-${x.Date.replaceAll('-', '')}' 
                 data-optionid='${x.OptionID}' data-price='${x.Price}' data-index='${index}'  data-category='${x.category}'
-                data-initial='${x.Quantity}' value='${x.Quantity}' readonly>
+                data-initial='${x.Quantity}' value='${x.Quantity}' ${disabled}>
         </td>
         <td><input type='text'  class='reason' id='reason-${x.Date.replaceAll('-', '')}'></td>
         <td><button class="table-btn" onclick="update('${x.Date}', this,'${x.category}','${x.OptionID}','${x.Price}','${x.OrderID}')" disabled>Edit</button></td>
@@ -2935,8 +3140,8 @@ $.ajax({
                 button.prop('disabled', true);
             }
         });
-        initialQuantitySumD = calculateTotalSum('.tableqtyd');
-        $('.tableqtyd').on('input', calculateTotalD); // Optional calculation for dinner total
+        // initialQuantitySumD = calculateTotalSum('.tableqtyd');
+        // $('.tableqtyd').on('input', calculateTotalD); // Optional calculation for dinner total
 
         $('#dinner-container').show();
     },
@@ -2945,6 +3150,7 @@ $.ajax({
     }
 });
 }
+
 
 
 
@@ -3064,6 +3270,7 @@ $.ajax({
 
 function fetchalll(thlength) {
     console.log("lundiids",lunchidsprice);
+    console.log("thlength",thlength);
     const payload = {
         load: "lunchdetails",
         cid: customerid // Ensure `customerid` is defined dynamically in your script
@@ -3138,7 +3345,7 @@ function fetchalll(thlength) {
                             type="text" 
                             class="reason-input" 
                             data-tdate="${formattedDate}"
-                            style="width:240px">
+                            style="width:180px">
                     </td>
                     <td>
                         <button class="edit-button" 
@@ -3340,7 +3547,7 @@ let itemName = headerCell ? headerCell.getAttribute('data-ItemName') : `Item ${o
                 buttonElement.disabled = true;
 
                 alert(response.message);
-
+                todayorderdetails(customerid);
                 // Update initial values to reflect the current state
                 inputs.forEach(input => {
                     input.setAttribute('data-initial-value', input.value);
@@ -3435,7 +3642,9 @@ function headerfetch() {
                     alert('Failed to fetch data.');
                 }
             });
-        }
+}
+
+
 
         function fetchorderb(event) {
             let todatecheck = $("#to-date-edit").val();
@@ -3603,7 +3812,7 @@ function headerfetch() {
         }
 
 
-        function update(Date, btn, category, optionid, price, orderid) {
+        async function update(Date, btn, category, optionid, price, orderid) {
 
 const row = $(btn).closest('tr');
 const tname = (category === "1") ? "#tableqty" : "#tableqtyd"
@@ -3613,8 +3822,33 @@ const currentValue = parseInt(input.val(), 10) || 0; // Current value
 const initialValue = parseInt(input.data('initial'), 10) || 0; 
 // const category =row.find(`#tableqtyd-${Date.replaceAll('-', '')}`).data('category');  
 // const optionid =row.find(`#tableqtyd-${Date.replaceAll('-', '')}`).data('optionid'); 
-const newQuantity = row.find(`${tname}-${Date.replaceAll('-', '')}`).val(); // Access the input field value
+const newQuantity = row.find(`${tname}-${Date.replaceAll('-', '')}`).val(); 
 const reason = row.find(`#reason-${Date.replaceAll('-', '')}`).val();
+
+        checkaddress();
+
+        if (!addressflat || !addressstreet || !address_area || !deliverymobile || !addresslink) {
+            alert("Please the fill the delivery address")
+            return ""
+        }
+        if (!baddressflat || !baddressstreet || !baddressarea || !billingmobile) {
+            alert("Please the fill the billing address")
+            return ""
+        }
+
+        intialdeliveryaddress = intialdeliveryaddress.replace(/\s/g, "");
+        finaldeliveryaddress = finaldeliveryaddress.replace(/\s/g, "");
+
+
+
+        if (intialdeliveryaddress !== finaldeliveryaddress) {
+            finaldeliveryaddress = addressflat + "," + addressstreet + "," + address_area
+            response = await getlastid(finaldeliveryaddress, billingaddress);
+            customerid = response.cid;
+            console.log("3818",response);
+        }
+
+
 if (!reason.trim() & ((newQuantity==0)||(initialValue!=0 & currentValue !== initialValue))) {
     alert("Please provide a reason for updating the quantity.");
     return;
@@ -3643,8 +3877,8 @@ if (!confirmation) {
 
 var payload = {
     load: "updateQuantity",
-    date: Date, // Pass the date
-    quantity: newQuantity,
+    date: Date, 
+    quantity: quantity,
     reason: reason.trim(),
     cid: customerid,
     foodtype: category,
@@ -3665,7 +3899,10 @@ $.ajax({
         console.log("updateresponse",response)
         input.data('initial', quantity);
         $(btn).prop('disabled', true);
-        alert(response.message); // Show the error message from the backend
+        fetchall();
+        getall();
+        alert(response.message); 
+        todayorderdetails(customerid);
 
     },
     error: function(error) {
@@ -3734,6 +3971,12 @@ $.ajax({
             document.getElementById("insert-button").style.display = "block";
             document.getElementById("edit-box").style.display = "none";
             document.querySelector('.food_details').style.display = "none";
+            const radioBtn = document.querySelector('input[name="breakfast-category"][value="category1"]');
+            if (radioBtn) {
+                radioBtn.checked = true;
+            }
+            headerfetch();
+
         }
 
         // function showDinner() {
@@ -3818,9 +4061,9 @@ $.ajax({
             let totalQuantity = 0;
             let bqty = 0;
 
-            const currentQuantitySum = calculateTotalSum('.tableqty');
+            const currentQuantitySum = calculateTotalSum('.tableqtyb');
             const today = new Date().toISOString().split('T')[0];
-            $('.tableqty').each(function() {
+            $('.tableqtyb').each(function() {
                 const row = $(this).closest('tr');
                 const rowDate = row.find('td:first').text(); // Assuming the Date is in the first column
                 const quantity = parseFloat($(this).val()) || 0;
@@ -3836,8 +4079,8 @@ $.ajax({
             bqty = currentQuantitySum === initialQuantitySumB ? 0 : 1;
 
             // Update totals in the UI
-            $('#mealamt').val(totalAmount.toFixed(2));
-            $('#mealqty').val(totalQuantity);
+            // $('#mealamt').val(totalAmount.toFixed(2));
+            // $('#mealqty').val(totalQuantity);
 
             return bqty;
         }
@@ -3851,22 +4094,19 @@ $.ajax({
             return sum;
         }
 
-        // Store the initial sum of quantities for dinner
-
-        // Function to calculate total and detect changes for dinner
         function calculateTotalD() {
             let totalAmount = 0;
             let totalQuantity = 0;
             let dqty = 0;
 
             // Calculate the sum of current quantities
-            const currentQuantitySum = calculateTotalSum('.tableqtyd');
+            const currentQuantitySum = calculateTotalSum('.tableqtydb');
 
             // Get today's date in the format used in the table
             const today = new Date().toISOString().split('T')[0];
 
             // Iterate through all .tableqtyd elements
-            $('.tableqtyd').each(function() {
+            $('.tableqtydb').each(function() {
                 const row = $(this).closest('tr');
                 const rowDate = row.find('td:first').text(); // Assuming the Date is in the first column
                 const quantity = parseFloat($(this).val()) || 0;
@@ -3882,11 +4122,16 @@ $.ajax({
             dqty = currentQuantitySum === initialQuantitySumD ? 0 : 1;
 
             // Update totals in the UI
-            $('#mealamtd').val(totalAmount.toFixed(2));
-            $('#mealqtyd').val(totalQuantity);
+            // $('#mealamtd').val(totalAmount.toFixed(2));
+            // $('#mealqtyd').val(totalQuantity);
 
             return dqty;
         }
+
+        // Store the initial sum of quantities for dinner
+
+        // Function to calculate total and detect changes for dinner
+        
 
 
 
@@ -4114,9 +4359,9 @@ $.ajax({
         }
 
         // Attach event listener to all quantity input fields dynamically
-        $(document).on('input', '#lunch-table tbody input[type="number"]', function() {
-            updateLunchTotal(); // Update total when any quantity changes
-        });
+        // $(document).on('input', '#lunch-table tbody input[type="number"]', function() {
+        //     updateLunchTotal(); // Update total when any quantity changes
+        // });
 
 
 
@@ -4144,9 +4389,9 @@ $.ajax({
         }
 
         // Attach event listener to dynamically update quantity for today's date
-        $(document).on('input', '#lunch-table tbody input[type="number"]', function () {
-            updateLunchQuantity();
-        });
+        // $(document).on('input', '#lunch-table tbody input[type="number"]', function () {
+        //     updateLunchQuantity();
+        // });
 
 
         window.onload = function() {
@@ -4255,11 +4500,14 @@ $.ajax({
         document.getElementById("mealamtb").value = binitialamt;
         document.getElementById("mealqtydb").value = dinitialqty;
         document.getElementById("mealamtdb").value = dinitialamt;
+        document.getElementById("mealqtylb").value = linitialqty;
+        document.getElementById("mealamountb").value = linitialamt;
 
         document.getElementById('summary-modal').style.display = 'none';
         document.getElementById('overlay').style.display = 'none';
         document.getElementById("breakfast-box-b").style.display = "none";
         document.getElementById("dinner-box-b").style.display = "none";
+     
         let today = new Date().toISOString().split('T')[0];
     
         document.getElementById('from-date-b').value = today;
@@ -4270,6 +4518,7 @@ $.ajax({
         document.getElementById('to-date-d').value = today;
         $('#breakfast-contain-b').hide();
         $('#dinner-container-b').hide();
+        $('#lunch-options-containers').hide();
         const breakfastRadioBtn = document.querySelector('input[name="breakfast-category-b"][value="categoryb1b"]');
         if (breakfastRadioBtn) {
         breakfastRadioBtn.checked = false;  
@@ -4280,15 +4529,13 @@ $.ajax({
         dinnerRadioBtn.checked = false; 
         }
        
+        const lunchRadioBtn = document.querySelector('input[name="lunch-category"][value="category1"]');
+        if (lunchRadioBtn) {
+            lunchRadioBtn.checked = false;  
+        }
+
     }
 
-
-
-    // function showBreakfastB() {
-    //     document.getElementById("breakfast-box-b").style.display = "block";
-    //     document.getElementById("lunch-box-b").style.display = "none";
-    //     document.getElementById("dinner-box-b").style.display = "none";
-    // }
     function showBreakfastB() {
         binitialqty = document.getElementById("mealqtyb").value;
         binitialamt = document.getElementById("mealamtb").value;
@@ -4303,10 +4550,18 @@ $.ajax({
 
 
     function showLunchB() {
-        document.getElementById("breakfast-box-b").style.display = "none";
-        document.getElementById("lunch-box-b").style.display = "block";
-        document.getElementById("dinner-box-b").style.display = "none";
-    }
+            linitialqty = document.getElementById('mealqtylb').value;
+            linitialamt = document.getElementById('mealamountb').value;
+            console.log("lunchquantity",linitialqty,"lunchamount",linitialamt);
+            document.getElementById("breakfast-box-b").style.display = "none";
+            document.getElementById("lunch-box-b").style.display = "block";
+            document.getElementById("dinner-box-b").style.display = "none";
+            const radioBtn = document.querySelector('input[name="lunch-category"][value="category1"]');
+            if (radioBtn) {
+                radioBtn.checked = true; 
+            }
+            fetchalllunch();
+        }
 
     // function showDinnerB() {
     //     document.getElementById("breakfast-box-b").style.display = "none";
@@ -4373,6 +4628,7 @@ $.ajax({
 
 
 
+        
         function fetchallb() {
             console.log("Fetching breakfast items...");
             bval = 1;
@@ -4411,8 +4667,8 @@ $.ajax({
                         chargesTableBody.append(row);
                     });
                     document.querySelector('.tableqtyb').value = document.getElementById('mealqtyb').value;
-
-                    $('.tableqtyb').on('input', calculateTotalBB);
+                    initialQuantitySumB = calculateTotalSum('.tableqtyb');
+                    $('.tableqtyb').on('input', calculateTotalB);
                     // Show the breakfast container after loading the data
                     $('#breakfast-contain-b').show();
                 },
@@ -4423,7 +4679,7 @@ $.ajax({
         }
 
         function getallb() {
-            console.log("Fetching Dinner items...");
+            console.log("Fetching Dinner items bbbbbb...");
             dval = 3;
             const currentDate = new Date();
             const dayOfWeek = currentDate.getDay();
@@ -4451,14 +4707,15 @@ $.ajax({
                         row.html(`
                    
                     <td>${x.Price}</td>
-                     <td><input type='number' class='tableqtydb' id='tableqtyb' data-price='${x.Price}' data-index='${index}' min='0' value='0'></td>
+                     <td><input type='number' class='tableqtydb' id='tableqtydb' data-price='${x.Price}' data-index='${index}' min='0' value='0'></td>
                 `);
 
                         foodidd = `${x.OptionID}`;
                         chargesTableBody.append(row);
                     });
                     document.querySelector('.tableqtydb').value = document.getElementById('mealqtydb').value;
-                    $('.tableqtydb').on('input', calculateTotalDB);
+                    initialQuantitySumD = calculateTotalSum('.tableqtydb');
+                    $('.tableqtydb').on('input', calculateTotalD);
                     // Show the breakfast container after loading the data
                     $('#dinner-container-b').show();
                 },
@@ -4588,7 +4845,7 @@ $.ajax({
 //     });
 // }
 async function submitForB(event) {
-            const quantity = $('#mealqtyb').val();
+            const quantity = $('#tableqtyb').val();
             const totalAmount = $('#mealamtb').val();
             const fromDate = $('#from-date-b').val();
             const toDate = $('#to-date-b').val();
@@ -4640,7 +4897,9 @@ async function submitForB(event) {
                     throw new Error(response.message);
                 }
                 alert(response.message);
+                todayorderdetails(customerid);
                 fetchall();
+                fetchallb();
             }).catch(error => {
                 console.error('Error in submitForB:', error);
                 throw error;
@@ -4649,8 +4908,9 @@ async function submitForB(event) {
 
 
 
+
         async function submitForD(event) {
-            const quantity = $('#mealqtydb').val();
+            const quantity = $('#tableqtydb').val();
             const totalAmount = $('#mealamtdb').val();
             const fromDate = $('#from-date-d').val();
             const toDate = $('#to-date-d').val();
@@ -4702,7 +4962,9 @@ async function submitForB(event) {
                     throw new Error(response.message);
                 }
                 alert(response.message);
+                todayorderdetails(customerid);
                 getall();
+                getallb();
             }).catch(error => {
                 console.error('Error in submitForD:', error);
                 throw error;
@@ -4711,9 +4973,9 @@ async function submitForB(event) {
 
  // Global array to store both fetched items
 
-// Function to fetch all lunch items
-allItems = []; // Global array to store both fetched items
-
+ allItems = []; // Global array to store both fetched items
+let initialLunchData = []; // To store the initial fetched array of values
+let currentLunchData = [];
 // Function to fetch all lunch items
 function fetchalllunch() {
     allItems = []; // Clear global array
@@ -4729,28 +4991,42 @@ function fetchalllunch() {
 
             if (response.status === 'success' && response.data) {
                 const chargesTableBody = $('#lunch-table-l tbody');
-                chargesTableBody.empty(); // Clear the table before adding new rows
+                chargesTableBody.empty(); // Clear the table
 
                 response.data.forEach(item => {
-                    const row = $('<tr>');
-                    row.html(`
-                        <td class="itemname">${item.ItemName}</td>
-                        <td class="price">${item.Price}</td>
-                        <td><input type="number" data-optionid1="${item.OptionID}" placeholder="0" min="0" style="width:100px"></td>
+                    const row = $(`
+                        <tr>
+                            <td class="itemname">${item.ItemName}</td>
+                            <td class="price">${item.Price}</td>
+                            <td>
+                                <input 
+                                    type="number" 
+                                    class='tableqtyl'
+                                    id='tableqtyl'
+                                    data-optionid1="${item.OptionID}" 
+                                    placeholder="0" 
+                                    min="0" 
+                                    style="width:100px">
+                            </td>
+                        </tr>
                     `);
                     chargesTableBody.append(row);
 
-                    // Add the item to the global array
+                    // Add item to global array
                     allItems.push({
                         itemname: item.ItemName,
                         price: item.Price,
-                        foodid: item.OptionID // Ensure this matches data-optionid
+                        foodid: item.OptionID,
+                        Quantity: item.quantity !== undefined && item.quantity !== null ? item.quantity : 0
+ 
                     });
                 });
 
+                fetchQuantitiesForCustomer(); // Fetch quantities for customer orders
+                $('.tableqtyl').on('input', calculateTotalL);
                 $("#lunch-options-containers").show();
             } else {
-                console.error('Error in response data:', response);
+                console.error('Error in response data:', response.message || 'Unknown error');
             }
         },
         error: function (error) {
@@ -4759,62 +5035,78 @@ function fetchalllunch() {
     });
 }
 
-// Function to fetch additional lunch items
-function fetchadditems() {
-    const payload = { load: 'fetchadditems' };
+
+let previouslunqty = 0; //global
+function fetchQuantitiesForCustomer() {
+    console.log("Fetching quantities for all items...");
+
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+
+    if (typeof customerid === 'undefined' || customerid === null) {
+        console.error("Customer ID is not defined.");
+        return;
+    }
+
+    const payload = {
+        load: "fetchQuantities",
+        cid: customerid, // Ensure customerid is dynamically set
+        date: formattedDate // Pass the specific date
+    };
+
+    console.log("Payload:", payload); // Debug payload
 
     $.ajax({
-        url: "./webservices/dinner.php",
+        url: './webservices/dinner.php',
         type: 'POST',
         dataType: 'json',
         contentType: 'application/json',
         data: JSON.stringify(payload),
         success: function (response) {
-            console.log("Additional Lunch Items Response:", response);
+            console.log("Quantities fetched for the specific date:", response);
 
             if (response.status === 'success' && response.data) {
-                const tableBody = $('#lunch-table1-l tbody');
-                tableBody.empty(); // Clear the table before adding new rows
+                const quantities = response.data;
 
-                response.data.forEach(item => {
-                    const row = $('<tr>');
-                    row.html(`
-                        <td class="itemname">${item.ItemName}</td>
-                        <td class="price">${item.Price}</td>
-                        <td><input type="number" data-optionid1="${item.OptionID}" placeholder="0" min="0" style="width:100px"></td>
-                    `);
-                    tableBody.append(row);
+                // Update table rows with fetched quantities using map
+                quantities.forEach(order => {
+                    const inputField = $(`input[data-optionid1="${order.OptionID}"]`);
+                    if (inputField.length > 0) {
+                        inputField.val(order.Quantity);
 
-                    // Add the item to the global array
-                    allItems.push({
-                        itemname: item.ItemName,
-                        price: item.Price,
-                        foodid: item.OptionID
-                    });
+                        // Update the corresponding item in allItems array
+                        const itemIndex = allItems.findIndex(item => item.foodid === order.OptionID);
+                        if (itemIndex !== -1) {
+                            allItems[itemIndex].Quantity = order.Quantity; // Add or update the Quantity field
+                        }
+                    }
                 });
 
-                $("#lunch-options-container1").show();
+                console.log("Quantities successfully updated in the table and allItems array.");
+                console.log("Updated allItems array:", allItems);
             } else {
-                console.error('Error in additional items response:', response);
+                console.error(response.message || 'No quantities found.');
             }
         },
         error: function (error) {
-            console.error('Error fetching additional lunch items:', error);
+            console.error("Error fetching quantities:", error);
         }
     });
 }
 
-// Add items button event
-$('#add-items').on('click', function () {
-    fetchadditems();
-});
-
 // Function to handle lunch order submission
+
 function nlunch(event) {
+
     event.preventDefault();
 
     const fromDate = $('#from-date-l').val();
     const toDate = $('#to-date-l').val();
+    // const customerid = 2; // Replace with actual customer ID
+    const lunchdata = []; // Replace with actual lunch data
+    const tdate = new Date().toISOString().split('T')[0];
+
+    console.log("lunchqity",linitialqty)
 
     let payload = {
         load: 'nlunch',
@@ -4824,55 +5116,85 @@ function nlunch(event) {
         items: []
     };
 
+    // Validate and populate dates
     if (fromDate && toDate) {
         const from = new Date(fromDate);
         const to = new Date(toDate);
+
         if (from > to) {
-            alert('Invalid date range.');
+            alert('Invalid date range. Please correct it.');
             return;
         }
-        let current = new Date(from);
-        while (current <= to) {
+
+        // Populate dates array with range
+        for (let current = new Date(from); current <= to; current.setDate(current.getDate() + 1)) {
             payload.dates.push(current.toISOString().split('T')[0]);
-            current.setDate(current.getDate() + 1);
         }
     } else {
-        payload.dates.push(new Date().toISOString().split('T')[0]);
+        alert('No dates provided. Defaulting to today.');
+        payload.dates.push(tdate); // Default to today's date
     }
 
+    // Collect quantities from the form
     allItems.forEach(item => {
         const quantity = $(`input[data-optionid1="${item.foodid}"]`).val() || 0;
-        if (quantity > 0) {
+        const parsedQuantity = parseInt(quantity, 10);
+
+        if (parsedQuantity > 0) {
             payload.items.push({
                 itemname: item.itemname,
                 price: item.price,
-                quantity: parseInt(quantity, 10),
+                quantity: parsedQuantity,
                 foodid: item.foodid
             });
         }
     });
-
-    if (payload.items.length === 0) {
-        alert("Please enter quantities for at least one lunch item.");
-        return;
-    }
+  
+   
+ 
+    // if (payload.items.length === 0) {
+    //     alert("Please enter quantities for at least one lunch item.");
+    //     return;
+    // }
 
     console.log('Payload:', payload);
 
-    $.ajax({
-        type: 'POST',
-        url: './webservices/dinner.php',
-        dataType: 'json',
-        data: JSON.stringify(payload),
-        success: function (response) {
-            console.log('Server Response:', response);
-            alert(response.message || 'Order placed successfully.');
-        },
-        error: function (xhr, status, error) {
-            console.error('Error response:', xhr.responseText);
+    // AJAX request to server
+  $.ajax({
+    type: 'POST',
+    url: './webservices/dinner.php',
+    dataType: 'json',
+    contentType: 'application/json',
+    data: JSON.stringify(payload),
+    success: function (response) {
+        console.log('Server Response:', response);
+        
+        if (response.code === '200') {
+            let alertMessage = `Order placed successfully\nFrom: ${response.fromDate}\nTo: ${response.toDate}\n`;
+
+            // Add item details to alert message (only once)
+            response.items.forEach(item => {
+                alertMessage += `${item.itemname}: ${item.quantity}\n`;
+            });
+
+            alert(alertMessage);
+        } else {
+            alert(response.message || 'Order could not be placed.');
         }
-    });
+        todayorderdetails(customerid);
+        headerfetch();
+        fetchalll();
+        fetchalllunch();
+
+    },
+    error: function (xhr, status, error) {
+        console.error('Error response:', xhr.responseText);
+        alert(`An error occurred: ${error}. Please try again later.`);
+    }
+});
+
 }
+
 
 
 // Function to update total amount
@@ -4889,9 +5211,9 @@ function updateLunchTotaldl() {
             }
         });
     }
-
+// totalAmount = 0;
     calculateTableTotal('#lunch-table-l');
-    calculateTableTotal('#lunch-table1-l');
+    // calculateTableTotal('#lunch-table1-l');
     $('#mealamountb').val(totalAmount.toFixed(2));
 }
 
@@ -4899,7 +5221,7 @@ function updateLunchTotaldl() {
 function updateLunchQuantitydl() {
     let totalQuantity = 0;
 
-    $('#lunch-table-l tbody input[type="number"], #lunch-table1-l tbody input[type="number"]').each(function() {
+    $('#lunch-table-l tbody input[type="number"]').each(function() {
         const quantity = parseInt($(this).val(), 10); // Parse the value as an integer
         if (!isNaN(quantity) && quantity > 0) {
             totalQuantity += quantity;
@@ -4910,10 +5232,10 @@ function updateLunchQuantitydl() {
 }
 
 // Attach the event listener to dynamically update the total amount and quantity
-$(document).on('input', '#lunch-table-l tbody input[type="number"], #lunch-table1-l tbody input[type="number"]', function() {
-    updateLunchTotaldl();
-    updateLunchQuantitydl();
-});
+// $(document).on('input', '#lunch-table-l tbody input[type="number"]', function() {
+//     updateLunchTotaldl();
+//     updateLunchQuantitydl();
+// });
 
 
     $('#from-date-b, #to-date-b').on('change', handleDateChangeB);
@@ -4927,7 +5249,8 @@ function handleDateChangeB() {
         load: 'datechange',
         fromdate: fromDateB,
         todate: toDateB,
-        foodtype:1
+        foodtype:1,
+        cid: customerid
     };
 
 
@@ -4944,6 +5267,7 @@ function handleDateChangeB() {
         } else {
             $('#tableqtyb').val(0);
         }
+        initialQuantitySumB = calculateTotalSum('.tableqtyb');
     },
     error: function(error) {
         console.error('Error:', error);
@@ -4960,7 +5284,8 @@ function handleDateChangeD() {
         load: 'datechange',
         fromdate: fromDateD,
         todate: toDateD,
-        foodtype:3
+        foodtype:3,
+        cid: customerid
     };
 
    
@@ -4974,10 +5299,11 @@ function handleDateChangeD() {
         console.log(data);
         
         if (data.status === 'success') {
-            $('#tableqtyb').val(data.data);
+            $('#tableqtydb').val(data.data);
         } else {
-            $('#tableqtyb').val(0);
+            $('#tableqtydb').val(0);
         }
+        initialQuantitySumD = calculateTotalSum('.tableqtydb');
     },
     error: function(error) {
         console.error('Error:', error);
@@ -4985,7 +5311,6 @@ function handleDateChangeD() {
 });
     }
 }
-
 
 // // Function to send lunch details
 // function nlunch(event) {
@@ -5062,6 +5387,168 @@ function handleDateChangeD() {
 //         }
 //     });
 // }
+$('#from-date-l, #to-date-l').on('change', function () {
+    const fromDate = $('#from-date-l').val();
+    const toDate = $('#to-date-l').val();
+
+    if (fromDate && toDate) {
+        handleDateChangeL(fromDate, toDate);
+    } else {
+        console.error("Both From Date and To Date are required.");
+    }
+});
+
+// Function to handle date range change
+function handleDateChangeL(fromDate, toDate) {
+    console.log(`Handling date range change: ${fromDate} to ${toDate}`);
+
+    if (typeof customerid === 'undefined' || customerid === null) {
+        console.error("Customer ID is not defined.");
+        return;
+    }
+
+    // Fetch quantities for both dates
+    fetchQuantities(fromDate, function (fromData) {
+        fetchQuantities(toDate, function (toData) {
+            // Compare quantities between the two dates
+            if (fromData && toData) {
+                updateQuantitiesIfMatched(fromData, toData);
+            } else {
+                console.error("Quantities not found or do not match.");
+                clearQuantities();
+            }
+        });
+    });
+}
+
+// Helper function to fetch quantities for a specific date
+function fetchQuantities(date, callback) {
+    const payload = {
+        load: "fetchQuantities",
+        cid: customerid,
+        date: date
+    };
+
+    $.ajax({
+        url: './webservices/dinner.php',
+        type: 'POST',
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify(payload),
+        success: function (response) {
+            if (response.status === 'success' && response.data) {
+                callback(response.data); // Pass data to the callback
+            } else {
+                console.error(`No quantities found for date: ${date}`);
+                callback(null); // No data
+            }
+        },
+        error: function (error) {
+            console.error(`Error fetching quantities for date: ${date}`, error);
+            callback(null); // Error
+        }
+    });
+}
+
+// Helper function to update quantities if they match
+function updateQuantitiesIfMatched(fromData, toData) {
+    let isMatch = true;
+
+    // Check if both datasets have the same OptionIDs and Quantities
+    fromData.forEach(fromItem => {
+        const toItem = toData.find(item => item.OptionID === fromItem.OptionID);
+        if (!toItem || fromItem.Quantity !== toItem.Quantity) {
+            isMatch = false;
+        }
+    });
+
+    if (isMatch) {
+        fromData.forEach(order => {
+            const inputField = $(`input[data-optionid1="${order.OptionID}"]`);
+            if (inputField.length > 0) {
+                inputField.val(order.Quantity); // Update with matching quantity
+                console.log("dlhaf",order.Quantity)
+            }
+        });
+        console.log("Quantities match and have been updated.");
+    } else {
+        console.log("Quantities do not match. Clearing fields.");
+        clearQuantities();
+    }
+}
+
+// Helper function to clear quantities in input fields
+function clearQuantities() {
+    $('input[data-optionid1]').each(function () {
+        $(this).val(''); // Clear the value
+    });
+}
+
+function calculateTotalL() {
+    let totalAmount = 0;
+    let totalQuantity = 0;
+
+    // Build the current data array
+    currentLunchData = [];
+    $('.tableqtyl').each(function () {
+        const quantity = parseFloat($(this).val()) || 0;
+        currentLunchData.push({
+            ItemName: $(this).data('itemname'),
+            Price: $(this).data('price'),
+            OptionID: $(this).data('optionid1'),
+            Quantity: quantity,
+        });
+
+        // Calculate totals for the UI
+        const price = parseFloat($(this).data('price')) || 0;
+        totalAmount += quantity * price;
+        totalQuantity += quantity;
+    });
+
+    // Compare initial and current data
+    const isChanged = detectArrayChanges(allItems, currentLunchData);
+
+    // Log or use the change status (1 for changes, 0 for no changes)
+    console.log("Lunch Data Changed:", isChanged ? 1 : 0);
+
+    // Update totals in the UI (if required)
+    // $('#lunchamt').val(totalAmount.toFixed(2));
+    // $('#lunchqty').val(totalQuantity);
+
+    return isChanged ? 1 : 0;
+}
+
+function detectArrayChanges(initial, current) {
+    console.log("Initial Data:", initial);
+    console.log("Current Data:", current);
+
+    // Ensure both arrays are of the same length, otherwise return 1 (changes detected)
+    if (initial.length !== current.length) {
+        return 1; // Different lengths mean changes
+    }
+
+    // Iterate through the arrays to compare each item
+    for (let i = 0; i < initial.length; i++) {
+        const initItem = initial[i];
+        const currItem = current[i];
+
+        // Only compare items where Quantity is defined
+        if (initItem.Quantity !== undefined && currItem.Quantity !== undefined) {
+            const initFoodId = String(initItem.foodid); // Convert to string for comparison
+            const currOptionId = String(currItem.OptionID); // Convert to string for comparison
+
+            // Compare food IDs and quantities (ensure both are numbers for consistency)
+            if (
+                initFoodId !== currOptionId || // Compare food IDs
+                Number(initItem.Quantity) !== Number(currItem.Quantity) // Compare quantities as numbers
+            ) {
+                return 1; // Found a difference (changes detected)
+            }
+        }
+    }
+
+    return 0; // No differences found (no changes)
+}
 
 </script>
 

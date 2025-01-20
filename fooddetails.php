@@ -17,6 +17,7 @@
             font-size: 12px;
             font-weight: bold;
             width:100%;
+           
         }
 
 
@@ -590,7 +591,7 @@
                                 <!-- <th>To
                                     Date
                                 </th> -->
-                                <th>Edit</th>
+                                <!-- <th>Edit</th> -->
                             </tr>
                         </thead>
                         <tbody id="typesTableBody">
@@ -645,7 +646,7 @@
                 <h3>Lunch Items</h3>
                 <div class="input_lun">
                     <input placeholder="Enter Lunch Item" maxlength="20">
-                    <button onclick="add_lunch_item()">Edit</button>
+                    <button onclick="add_lunch_item()">Save</button>
                 </div>
                 <div>
                     <table class="lun_table">
@@ -676,6 +677,8 @@
     <script>
         let editingId = null;
         let  bf_food_items = [];
+        let itemsno;
+        let weeksno;
 
 $(document).ready(function() {
     fetchBackendData(); // Initial fetch when page loads
@@ -736,13 +739,13 @@ function displaybf(){
                 bf_add_item_table.innerHTML = ""
                 response.data.forEach(itm=>{
                     let trow = document.createElement('tr');
-                    let activestatus = (itm.activity === "1") ? `<button class="deactive_bf" onclick="activebf('${itm.OptionID}','${itm.activity}')">Deactive</button>`
-                    :`<button class="active_bf" onclick="activebf('${itm.OptionID}','${itm.activity}')">Active</button>`
+                    let activestatus = (itm.activity === "1") ? `<button class="deactive_bf" onclick="activebf('${itm.OptionID}','${itm.activity}')">Deactivate</button>`
+                    :`<button class="active_bf" onclick="activebf('${itm.OptionID}','${itm.activity}')">Activate</button>`
                     trow.innerHTML = `
                     <td>${itm.itemName}</td>
                     <td style="width:30%">${activestatus}</td>
                     `
-                    bf_food_items.push({ bfid: `${itm.OptionID}`, itemname: `${itm.itemName}`});
+                    bf_food_items.push({ bfid: `${itm.OptionID}`, itemname: `${itm.itemName}`,activity:`${itm.activity}`});
                     bf_add_item_table.appendChild(trow);
                 })
                 fetchBreakFast_Dinner();
@@ -815,17 +818,21 @@ function fetchBreakFast_Dinner() {
 
              
                 bf_food_items.forEach(bfitm => {
-                    let option = document.createElement('option');
+                   
+                        let option = document.createElement('option');
                  
-                    option.value = bfitm.bfid;
-                    option.textContent = bfitm.itemname;
+                        option.value = bfitm.bfid;
+                        option.textContent = bfitm.itemname;
+                    
+                        let disabledStatus = (bfitm.activity === "0") ? true : false;
+                        option.disabled = disabledStatus;
+                    
+                        if (itm.OptionID === bfitm.bfid) {
+                            option.selected = true;
+                        }
 
-                 
-                    if (itm.OptionID === bfitm.bfid) {
-                        option.selected = true;
-                    }
-
-                    dp.appendChild(option);
+                        dp.appendChild(option);
+                    
                 });
 
               
@@ -865,12 +872,19 @@ function breakfastfooditems(){
         return
     }
 
+    if(!itemsno){
+        alert("Item not changed");
+        return;
+    }
+   
+
     var payload = {
         load:"setbreakfast",
         OptionID:itemsno,
         weeksno:weeksno,
         from_date:document.querySelector(`.fromdate_${weeksno}`).value
     }
+    
 
     $.ajax({
         type: 'POST',
@@ -904,10 +918,13 @@ function add_lunch_item(){
         dataType: 'json',
         data: JSON.stringify(payload),
         success:function(response){
-            console.log(response);
+            console.log("lun",response);
             if(response.status === "success"){
                 alert("Food item added");
                 load_lunchItem();
+            }
+            if(response.status === "duplicate"){
+                alert("record already exist");
             }
         }
         ,error:function(err){
@@ -936,8 +953,8 @@ function load_lunchItem(){
                 let lun_table = document.querySelector('.lun_table tbody');
                 lun_table.innerHTML = "";
                 response.data.forEach(itm=>{
-                    let activity = (itm.activity === "1") ? `<button onclick="activateDeactivate('${itm.OptionID}','${itm.activity}')">Deactivate</button>` 
-                    : `<button onclick="activateDeactivate('${itm.OptionID}','${itm.activity}')">Activate</button>`
+                    let activity = (itm.activity === "1") ? `<button class="deactive_ln" onclick="activateDeactivate('${itm.OptionID}','${itm.activity}')">Deactivate</button>` 
+                    : `<button class="active_ln" onclick="activateDeactivate('${itm.OptionID}','${itm.activity}')">Activate</button>`
                     let trow = document.createElement('tr');
                     trow.innerHTML = `
                         <td class="lunch_name"><input value="${itm.ItemName}" disabled/></td>
@@ -960,6 +977,7 @@ function activateDeactivate(OptionID,activity){
         OptionID:OptionID,
         activity:(activity === "1") ? 0 : 1
     }
+    console.log("activepayload",payload);
     $.ajax({
         type:"POST",
         url: "./webservices/fooddetails1.php",
@@ -1013,9 +1031,10 @@ function loadFoodPrices(){
                     <td>${item.item_name}</td>
                     <td>${item.price}</td>
                     <td>${fromDate}</td>
-                    <td><center><button class="edit-buttonfd">Edit</button></center></td>
+         
                 `);
                 typesTableBody.append(row);
+                // <td><center><button class="edit-buttonfd">Edit</button></center></td>
             });
            }
            else{
@@ -1267,6 +1286,10 @@ function submitForm() {
         alert("Fields can't be empty");
         return;
     }
+    let confirmmsg = confirm(`Do you really want to change the price \nItemName:${ItemName}\nfromdate:${from_date}`);
+    if(!confirmmsg){
+        return;
+    }
 
     const payload = {
         category: category,
@@ -1288,8 +1311,14 @@ function submitForm() {
         data: JSON.stringify(payload),
         success: function(response) {
             console.log(response);
-            alert(response.message);
-            loadFoodPrices();
+            // if(response.message === "record exist in same date"){
+            //     alert("already record exist in same date");
+            //     return;
+            // }
+            if(response.status == "success"){
+                alert("Update Successfully")
+                loadFoodPrices();
+            }   
             // fetchBackendData(); // Refresh the table
             // $('#category').val(''); // Clear input fields
             // $('#ItemName').val('');
@@ -1305,12 +1334,13 @@ function submitForm() {
 }
 
         function cancelOperation() {
-            $('#OptionID').val(''); // Clear input fields
+            // $('#OptionID').val(''); // Clear input fields
             $('#category').val('');
-            $('#ItemName').val('');
+            $('#food_items-dp').val('');
             $('#Price').val('');
             $('#from_date').val('');
             $('#to_date').val('');
+            $('#typesTableBody').empty();
 
             editingId = null; // Reset editing ID
         }
