@@ -1382,7 +1382,8 @@ function lunchdetails($conn)
     i.ItemName AS ItemName,
     o.Quantity AS Quantity,
     i.Price AS Price,
-    o.OrderID AS OrderID
+    o.OrderID AS OrderID,
+    o.Status AS Status
 FROM 
     orders o
 INNER JOIN 

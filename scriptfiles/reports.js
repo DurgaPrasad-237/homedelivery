@@ -39,17 +39,17 @@ $.ajax({
         tos.innerHTML = "";
         if(response.data.length > 0){
             tos.innerHTML = `
-            <div><img src="./images/idly.png" height="50px" width="50px">BreakFast:<span>${response.data[0]['bf']}</span></div>
-            <div><img src="./images/meal.png" height="50px" width="50px">Lunch:<span>${response.data[0]['lunch']}</span></div>
-           <div><img src="./images/dosa.png" height="50px" width="50px">Dinner:<span>${response.data[0]['Dinner']}</span></div>
-            <div><img src="./images/total.png" height="40px" width="40px">TotalOrders:<span>
+            <div><img src="./images/idly.png" height="30px" width="30px">BreakFast:<span>${response.data[0]['bf']}</span></div>
+            <div><img src="./images/meal.png" height="30px" width="30px">Lunch:<span>${response.data[0]['lunch']}</span></div>
+           <div><img src="./images/dosa.png" height="30px" width="30px">Dinner:<span>${response.data[0]['Dinner']}</span></div>
+            <div><img src="./images/total.png" height="25px" width="25px">TotalOrders:<span>
                 ${parseInt(response.data[0]['bf'] || 0) +
                 parseInt(response.data[0]['lunch'] || 0) +
                 parseInt(response.data[0]['Dinner'] || 0)}
             </span></div>
 
-          <div><img id="movingImage" src="./images/delivery.png" height="50px" width="50px">Delivered:<span>${response.data[0]['Delivered']}</span></div>
-           <div><img id="scalingpending" src="./images/Pending.png" height="40px" width="40px">Pending:<span>${response.data[0]['Pending']}</span></div>   `
+          <div><img id="movingImage" src="./images/delivery.png" height="30px" width="30px">Delivered:<span>${response.data[0]['Delivered']}</span></div>
+           <div><img id="scalingpending" src="./images/Pending.png" height="25px" width="25px">Pending:<span>${response.data[0]['Pending']}</span></div>   `
         }
     },
     error:function(err){

@@ -36,12 +36,12 @@ let finalamount = 0;
 let finalquantity = 0;
 let existingOrders = [];
 let lunchidsprice = [];
-let binitialqty = 0;
-let binitialamt = 0;
-let dinitialqty = 0;
-let dinitialamt = 0;
-let linitialqty=0;
-let linitialamt=0;
+
+let prevdeliveryflat,prevbillingflat;
+let prevdeliverystreet,prevbillingstreet;
+let prevdeliveryarea,prevbillingarea;
+let prevdeliverymobile,prevbillingmobile;
+let prevdeliverylink;
 
 
 
@@ -154,12 +154,24 @@ function displaydetails() {
 }
 
 //address billing disabled
-function billingdisabled() {
+function billingdisabled(status) {
     document.getElementById("billing_flat").disabled = true;
     document.getElementById("billing_street").disabled = true
     document.getElementById("billing_area").disabled = true
     document.getElementById("billing_mobile").disabled = true
     document.querySelector('.bscbtn').style.display = "none";
+
+    if(status !== "success"){
+        document.getElementById("billing_flat").value = prevbillingflat || ""
+        document.getElementById("billing_street").value = prevbillingstreet || ""
+        document.getElementById("billing_area").value = prevbillingarea || ""
+        document.getElementById("billing_mobile").value = prevbillingmobile || ""
+    }
+    // else{
+
+    // }
+   
+
     bedit.style.display = "block";
 }
 //address billing enabled
@@ -185,8 +197,15 @@ function deliverydisabled() {
     document.getElementById("address_street").disabled = true
     document.getElementById("address_area").disabled = true
     document.getElementById("address_mobile").disabled = true
-    document.getElementById("address_link").disabled = false
+    document.getElementById("address_link").disabled = true;
     document.querySelector('.scbtn').style.display = "none";
+
+    document.querySelector('#address_flat').value = prevdeliveryflat
+    document.querySelector('#address_street').value = prevdeliverystreet
+    document.querySelector('#address_area').value =  prevdeliveryarea
+    document.querySelector('#address_mobile').value =  prevdeliverymobile
+    document.querySelector('#address_link').value =  prevdeliverylink
+
     dedit.style.display = "block";
 }
 
@@ -275,7 +294,7 @@ function todayorderdetails(customerid) {
         data: JSON.stringify(payload),
         dataType: "json",
         success: function(response) {
-            console.log("dataresponse",response.data);
+            console.log("dataresponsetodayorderdetails",response.data);
             if (response.data !== "Nodata") {
                 console.log("today", response.data);
                 response.data.forEach(itm => {
@@ -320,12 +339,27 @@ function todayorderdetails(customerid) {
                 console.log(todaycontainer);
             }
             else{
-                document.querySelector('#mealqty').value = 0;
-                document.querySelector('#mealamt').value = 0;
-                document.querySelector('#mealqty1').value = 0;
-                document.querySelector('#mealamount').value = 0;
-                document.querySelector('#mealqtyd').value = 0;
-                document.querySelector('#mealamtd').value = 0;
+
+                let bulkvalues = document.querySelectorAll(
+                    '#mealqty,#mealamt,#mealqtyl,#mealamount,#mealqtyd,#mealamtd,#mealqtyb,#mealqtylb,#mealamtb,#mealqtyb,#mealamountb,#mealqtydb,#mealamtdb'
+                )
+             
+                bulkvalues.forEach(val=>{
+                  val.value = 0;
+                })
+
+                // document.querySelector('#mealqty').value = 0;
+                // document.querySelector('#mealamt').value = 0;
+                // document.querySelector('#mealqtyl').value = 0;
+                // document.querySelector('#mealamount').value = 0;
+                // document.querySelector('#mealqtyd').value = 0;
+                // document.querySelector('#mealamtd').value = 0;
+                // document.querySelector('#mealqtyb').value = 0;
+                // document.querySelector('#mealamtb').value = 0;
+                // document.querySelector('#mealqtyb').value = 0;
+                // document.querySelector('#mealamountb').value = 0;
+                // document.querySelector('#mealqtydb').value = 0;
+                // document.querySelector('#mealamtdb').value = 0;
             }
         },
         error: function(err, xhr) {
@@ -481,6 +515,11 @@ function fetchbyid(sinput) {
                         document.getElementById("billing_area").value = baddressarray[2]
                         document.getElementById("billing_mobile").value = cust.Phone2
 
+                        prevbillingarea =  baddressarray[2];
+                        prevbillingflat = baddressarray[0];
+                        prevbillingmobile = cust.Phone2;
+                        prevbillingstreet = baddressarray[1];
+
                     } else {
                         document.getElementById("billing_flat").value = ""
                         document.getElementById("billing_street").value = ""
@@ -494,6 +533,16 @@ function fetchbyid(sinput) {
                         document.getElementById("address_area").value = daddressarray[2]
                         document.getElementById("address_mobile").value = cust.Phone3
                         document.getElementById('address_link').value = cust.Map;
+
+                                                
+                        prevdeliveryflat =  daddressarray[0];
+                        prevdeliverystreet = daddressarray[1];
+                        prevdeliveryarea =  daddressarray[2];
+                        prevdeliverymobile = cust.Phone3;
+                        prevdeliverylink =  cust.Map;
+
+
+                        
                     } else {
                         document.getElementById("address_flat").value = ""
                         document.getElementById("address_street").value = ""
@@ -576,6 +625,11 @@ function fetchbyname(sinput) {
                             document.getElementById("billing_street").value = baddressarray[1]
                             document.getElementById("billing_area").value = baddressarray[2]
                             document.getElementById("billing_mobile").value = cust.Phone2
+
+                            prevbillingarea =  baddressarray[2];
+                            prevbillingflat = baddressarray[0];
+                            prevbillingmobile = cust.Phone2;
+                            prevbillingstreet = baddressarray[1];
                         }
 
                         if (cust.DeliveryAddress !== null) {
@@ -586,6 +640,12 @@ function fetchbyname(sinput) {
                             document.getElementById("address_area").value = daddressarray[2]
                             document.getElementById("address_mobile").value = cust.Phone3
                             document.getElementById('address_link').value = cust.Map;
+
+                            prevdeliveryflat =  daddressarray[0];
+                            prevdeliverystreet = daddressarray[1];
+                            prevdeliveryarea =  daddressarray[2];
+                            prevdeliverymobile = cust.Phone3;
+                            prevdeliverylink =  cust.Map;
                         }
 
 
@@ -663,6 +723,11 @@ function fetchbymobile(sinput) {
                             document.getElementById("billing_street").value = baddressarray[1]
                             document.getElementById("billing_area").value = baddressarray[2]
                             document.getElementById("billing_mobile").value = cust.Phone2
+
+                            prevbillingarea =  baddressarray[2];
+                            prevbillingflat = baddressarray[0];
+                            prevbillingmobile = cust.Phone2;
+                            prevbillingstreet = baddressarray[1];
                         }
 
                         if (cust.DeliveryAddress !== null) {
@@ -673,6 +738,12 @@ function fetchbymobile(sinput) {
                             document.getElementById("address_area").value = daddressarray[2]
                             document.getElementById("address_mobile").value = cust.Phone3
                             document.getElementById('address_link').value = cust.Map;
+
+                            prevdeliveryflat =  daddressarray[0];
+                            prevdeliverystreet = daddressarray[1];
+                            prevdeliveryarea =  daddressarray[2];
+                            prevdeliverymobile = cust.Phone3;
+                            prevdeliverylink =  cust.Map;
                         }
 
 
@@ -843,8 +914,12 @@ bsbtn.addEventListener('click', () => {
             success: function(response) {
                 console.log(response);
                 if (response.status === "success") {
+                    prevbillingarea = document.getElementById("billing_area").value;
+                    prevbillingflat = document.getElementById("billing_flat").value;
+                    prevbillingmobile =  document.getElementById("billing_mobile").value
+                    prevbillingstreet =  document.getElementById("billing_street").value
                     alert("Successfully updated")
-                    billingdisabled();
+                    billingdisabled(response.status);
                 } else {
                     alert("Fail to add the address")
                 }
@@ -858,7 +933,7 @@ bsbtn.addEventListener('click', () => {
     bcbtn.addEventListener('click', () => {
         document.querySelector('.bscbtn').style.display = "none";
         bedit.style.display = "block";
-        billingdisabled();
+        billingdisabled("fail");
     })
 
 
@@ -1337,113 +1412,115 @@ console.error('Error fetching data:', error);
 // }
 
 function fetchalll(thlength) {
-console.log("lundiids",lunchidsprice);
-console.log("thlength",thlength);
-const payload = {
-load: "lunchdetails",
-cid: customerid // Ensure `customerid` is defined dynamically in your script
-};
+    console.log("lundiids",lunchidsprice);
+    console.log("thlength",thlength);
+    const payload = {
+        load: "lunchdetails",
+        cid: customerid // Ensure `customerid` is defined dynamically in your script
+    };
 
-$.ajax({
-url: './webservices/dinner.php',
-type: 'POST',
-dataType: 'json',
-contentType: 'application/json',
-data: JSON.stringify(payload),
-success: function(response) {
-    console.log("Fetched data:", response,response.length);
+    $.ajax({
+        url: './webservices/dinner.php',
+        type: 'POST',
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify(payload),
+        success: function(response) {
+            console.log("Fetched data:", response,response.length);
 
-    const chargesTableBody = document.querySelector('#lunch-table tbody');
-    chargesTableBody.innerHTML = ''; // Clear existing rows
+            const chargesTableBody = document.querySelector('#lunch-table tbody');
+            chargesTableBody.innerHTML = ''; // Clear existing rows
 
-    const today = new Date(); // Get today's date
-    const daysInMonth = 30; // Number of days to display
+            const today = new Date(); // Get today's date
+            const daysInMonth = 30; // Number of days to display
 
-    // Group data by date if available
-    const groupedData = response.status === 'success' && response.data
-        ? response.data.reduce((acc, item) => {
-            acc[item.Date] = acc[item.Date] || [];
-            acc[item.Date].push(item);
-            return acc;
-        }, {})
-        : {};
+            // Group data by date if available
+            const groupedData = response.status === 'success' && response.data
+                ? response.data.reduce((acc, item) => {
+                    acc[item.Date] = acc[item.Date] || [];
+                    acc[item.Date].push(item);
+                    return acc;
+                }, {})
+                : {};
 
-    // Loop through the days to populate the table
-    for (let i = 0; i < daysInMonth; i++) {
-        const currentDate = new Date(today);
-        currentDate.setDate(today.getDate() + i);
-        const formattedDate = currentDate.toISOString().split('T')[0];
+            // Loop through the days to populate the table
+            for (let i = 0; i < daysInMonth; i++) {
+                const currentDate = new Date(today);
+                currentDate.setDate(today.getDate() + i);
+                const formattedDate = currentDate.toISOString().split('T')[0];
 
-        const row = document.createElement('tr'); // Create a new row
+                const row = document.createElement('tr'); // Create a new row
 
-        // Check if there's an existing order for this date
-        const rowData = groupedData[formattedDate] || [];
+                // Check if there's an existing order for this date
+                const rowData = groupedData[formattedDate] || [];
 
-        let count = 0;
-        row.innerHTML = `
-            <td>${formattedDate}</td>
-            
-            ${Array.from({ length: thlength }).map((_, index) => {
-                count = (count > thlength) ? 1 : count + 1;
+                let count = 0;
+                row.innerHTML = `
+                    <td>${formattedDate}</td>
+                    
+                    ${Array.from({ length: thlength }).map((_, index) => {
+                        count = (count > thlength) ? 1 : count + 1;
 
-                const matchingItem = rowData.find(item => item.OptionID === lunchidsprice[count - 1].id);
-                const quantity = matchingItem ? matchingItem.Quantity : 0;
-                const price = matchingItem ? matchingItem.Price : lunchidsprice[count - 1].price;
+                        const matchingItem = rowData.find(item => item.OptionID === lunchidsprice[count - 1].id);
+                        const quantity = matchingItem ? matchingItem.Quantity : 0;
+                        const price = matchingItem ? matchingItem.Price : lunchidsprice[count - 1].price;
+                        
+                        return `
+                            <td>
+                                <input 
+                                    type="number" 
+                                    class="tableqty" 
+                                    data-tdate="${formattedDate}" 
+                                    data-optionid="${lunchidsprice[count - 1].id}"
+                                    data-price="${price}"
+                                    value="${quantity}" 
+                                    data-initial-value="${quantity}" 
+                                    placeholder="0" 
+                                    style="width:38px"
+                                    min="0"
+                                    oninput="updateEditButtonState(this.closest('tr'))">
+                            </td>
+                        `;
+                    }).join('')}
 
-                return `
                     <td>
                         <input 
-                            type="number" 
-                            class="tableqty" 
-                            data-tdate="${formattedDate}" 
-                            data-optionid="${lunchidsprice[count - 1].id}"
-                            data-price="${price}"
-                            value="${quantity}" 
-                            data-initial-value="${quantity}" 
-                            placeholder="0" 
-                            style="width:38px"
-                            min="0"
-                            oninput="updateEditButtonState(this.closest('tr'))">
+                            type="text" 
+                            class="reason-input" 
+                            data-tdate="${formattedDate}"
+                            style="width:180px">
+                    </td>
+                    <td>
+                        <button class="edit-button" 
+                                data-tdate="${formattedDate}" 
+                                onclick="updateOrder(this)" 
+                                ${rowData.length === 0 ? 'disabled' : ''}">
+                            Edit
+                        </button>
                     </td>
                 `;
-            }).join('')}
+                // Calculate the initial sum for this row
+    const inputs = row.querySelectorAll('.tableqty');
+    const initialSum = Array.from(inputs).reduce((sum, input) => {
+        return sum + parseInt(input.value || 0, 10);
+    }, 0);
+    row.setAttribute('data-initial-sum', initialSum); // Store in `data-initial-sum`
 
-            <td>
-                <input 
-                    type="text" 
-                    class="reason-input" 
-                    data-tdate="${formattedDate}"
-                    style="width:180px">
-            </td>
-            <td>
-                <button class="edit-button" 
-                        data-tdate="${formattedDate}" 
-                        onclick="updateOrder(this)" 
-                        ${rowData.length === 0 ? 'disabled' : ''}>
-                    Edit
-                </button>
-            </td>
-        `;
-        // Calculate the initial sum for this row
-const inputs = row.querySelectorAll('.tableqty');
-const initialSum = Array.from(inputs).reduce((sum, input) => {
-return sum + parseInt(input.value || 0, 10);
-}, 0);
-row.setAttribute('data-initial-sum', initialSum); // Store in `data-initial-sum`
-
-        chargesTableBody.appendChild(row);
-
-        // Initialize Edit button state
-        updateEditButtonState(row);
+                chargesTableBody.appendChild(row);
+                
+                // Initialize Edit button state
+                updateEditButtonState(row);
+            }
+            if (response.status === 'success' && response.data) {
+        disableFieldsBasedOnStatus(response.data);
     }
-
-    document.querySelector("#lunch-options-container").style.display = "block";
-},
-error: function(error) {
-    console.error("Error fetching data:", error);
-    document.querySelector("#lunch-options-container").style.display = "block";
-}
-});
+            document.querySelector("#lunch-options-container").style.display = "block";
+        },
+        error: function(error) {
+            console.error("Error fetching data:", error);
+            document.querySelector("#lunch-options-container").style.display = "block";
+        }
+    });
 }
 
 
@@ -2468,12 +2545,12 @@ window.onload = function() {
     function initializeDatePair(fromDateId, toDateId) {
         const fromDateField = document.getElementById(fromDateId);
         const toDateField = document.getElementById(toDateId);
-
+    
         fromDateField.value = formattedDate;
         fromDateField.min = formattedDate;
         toDateField.value = formattedDate;
         toDateField.min = formattedDate;
-
+    
         fromDateField.addEventListener('change', function() {
             const selectedFromDate = fromDateField.value;
             toDateField.min = selectedFromDate;
@@ -2482,11 +2559,13 @@ window.onload = function() {
             }
         });
     }
-
+    
     initializeDatePair('from-date-b', 'to-date-b');
     initializeDatePair('from-date-l', 'to-date-l');
     initializeDatePair('from-date-d', 'to-date-d');
 };
+
+
 
 
 
@@ -2564,12 +2643,6 @@ function openSummaryModal(event) {
 function closeSummaryModal(event) {
 event.preventDefault();
 // Hide the modal
-document.getElementById("mealqtyb").value = binitialqty;
-document.getElementById("mealamtb").value = binitialamt;
-document.getElementById("mealqtydb").value = dinitialqty;
-document.getElementById("mealamtdb").value = dinitialamt;
-document.getElementById("mealqtylb").value = linitialqty;
-document.getElementById("mealamountb").value = linitialamt;
 
 document.getElementById('summary-modal').style.display = 'none';
 document.getElementById('overlay').style.display = 'none';
@@ -2605,8 +2678,6 @@ if (lunchRadioBtn) {
 }
 
 function showBreakfastB() {
-binitialqty = document.getElementById("mealqtyb").value;
-binitialamt = document.getElementById("mealamtb").value;
 document.getElementById("breakfast-box-b").style.display = "block";
 document.getElementById("lunch-box-b").style.display = "none";
 document.getElementById("dinner-box-b").style.display = "none";
@@ -2618,13 +2689,10 @@ if (radioBtn) {
 
 
 function showLunchB() {
-    linitialqty = document.getElementById('mealqtylb').value;
-    linitialamt = document.getElementById('mealamountb').value;
-    console.log("lunchquantity",linitialqty,"lunchamount",linitialamt);
     document.getElementById("breakfast-box-b").style.display = "none";
     document.getElementById("lunch-box-b").style.display = "block";
     document.getElementById("dinner-box-b").style.display = "none";
-    const radioBtn = document.querySelector('input[name="lunch-category-b"][value="category1"]');
+    const radioBtn = document.querySelector('input[name="lunch-category"][value="category1"]');
     if (radioBtn) {
         radioBtn.checked = true; 
     }
@@ -2637,8 +2705,6 @@ function showLunchB() {
 //     document.getElementById("dinner-box-b").style.display = "block";
 // }
 function showDinnerB() {
-dinitialqty = document.getElementById("mealqtydb").value;
-dinitialamt = document.getElementById("mealamtdb").value;
 document.getElementById("breakfast-box-b").style.display = "none";
 document.getElementById("lunch-box-b").style.display = "none";
 document.getElementById("dinner-box-b").style.display = "block";
@@ -2648,59 +2714,10 @@ if (radioBtn) {
         }
     }
 
-function calculateTotalBB() {
-    let totalAmount = 0;
-    let totalQuantity = 0;
-
-    $('.tableqtyb').each(function() {
-        const quantity = parseFloat($(this).val()) || 0;
-        const price = parseFloat($(this).data('price')) || 0;
-        totalAmount += quantity * price;
-        totalQuantity += quantity;
-    });
-
-    $('#mealamtb').val(totalAmount.toFixed(2));
-    $('#mealqtyb').val(totalQuantity);
-
-    return totalQuantity;
-}
-
-function calculateTotalDB() {
-    let totalAmount = 0;
-    let totalQuantity = 0;
-
-    $('.tableqtydb').each(function() {
-        const quantity = parseFloat($(this).val()) || 0;
-        const price = parseFloat($(this).data('price')) || 0;
-        totalAmount += quantity * price;
-        totalQuantity += quantity;
-
-    });
-
-    $('#mealamtdb').val(totalAmount.toFixed(2));
-    $('#mealqtydb').val(totalQuantity);
-
-    return totalQuantity;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 function fetchallb() {
     console.log("Fetching breakfast items...");
     bval = 1;
-    
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().split('T')[0];
     const dayOfWeek = currentDate.getDay();
@@ -2736,11 +2753,14 @@ function fetchallb() {
                 foodidb = `${x.OptionID}`;
                 chargesTableBody.append(row);
             });
+            let todaydate = new Date().toISOString().split('T')[0];
+            document.getElementById('from-date-b').value = todaydate;
+            document.getElementById('to-date-b').value = todaydate;
             document.querySelector('.tableqtyb').value = document.getElementById('mealqtyb').value;
             initialQuantitySumB = calculateTotalSum('.tableqtyb');
             $('.tableqtyb').on('input', calculateTotalB);
             let field = document.getElementById('tableqtyb');
-            statuscheck(formattedDate,formattedDate,bval,field);
+            statuscheck(fromDate,fromDate,bval,field);
             // Show the breakfast container after loading the data
             $('#breakfast-contain-b').show();
         },
@@ -2789,11 +2809,14 @@ function getallb() {
                 foodidd = `${x.OptionID}`;
                 chargesTableBody.append(row);
             });
+            let todaydate = new Date().toISOString().split('T')[0];
+            document.getElementById('from-date-d').value = todaydate;
+            document.getElementById('to-date-d').value = todaydate;
             document.querySelector('.tableqtydb').value = document.getElementById('mealqtydb').value;
             initialQuantitySumD = calculateTotalSum('.tableqtydb');
             $('.tableqtydb').on('input', calculateTotalD);
             let field = document.getElementById('tableqtydb');
-            statuscheck(formattedDate,formattedDate,dval,field);
+            statuscheck(fromDate,fromDate,dval,field);
             // Show the breakfast container after loading the data
             $('#dinner-container-b').show();
         },
@@ -3056,65 +3079,77 @@ let initialLunchData = []; // To store the initial fetched array of values
 let currentLunchData = [];
 // Function to fetch all lunch items
 function fetchalllunch() {
-allItems = []; // Clear global array
-const payload = { load: 'fetch' };
+    allItems = []; // Clear global array
+    const foodtype = 2;
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().split('T')[0];
+    const payload = { load: 'fetch' };
+    const fromDate = $('#from-date-l').val();
 
-$.ajax({
-url: "./webservices/dinner.php",
-type: 'POST',
-dataType: 'json',
-data: JSON.stringify(payload),
-success: function (response) {
-    console.log("All Lunch Items Response:", response);
+    $.ajax({
+        url: "./webservices/dinner.php",
+        type: 'POST',
+        dataType: 'json',
+        data: JSON.stringify(payload),
+        success: function (response) {
+            console.log("All Lunch Items Response:", response);
 
-    if (response.status === 'success' && response.data) {
-        const chargesTableBody = $('#lunch-table-l tbody');
-        chargesTableBody.empty(); // Clear the table
+            if (response.status === 'success' && response.data) {
+                const chargesTableBody = $('#lunch-table-l tbody');
+                chargesTableBody.empty(); // Clear the table
 
-        response.data.forEach(item => {
-            const row = $(`
-                <tr>
-                    <td class="itemname">${item.ItemName}</td>
-                    <td class="price">${item.Price}</td>
-                    <td>
-                        <input 
-                            type="number" 
-                            class='tableqtyl'
-                            id='tableqtyl'
-                            data-optionid1="${item.OptionID}" 
-                            placeholder="0" 
-                            min="0" 
-                            style="width:100px">
-                    </td>
-                </tr>
-            `);
-            chargesTableBody.append(row);
+                response.data.forEach(item => {
+                    const row = $(`
+                        <tr>
+                            <td class="itemname">${item.ItemName}</td>
+                            <td class="price">${item.Price}</td>
+                            <td>
+                                <input 
+                                    type="number" 
+                                    class='tableqtyl'
+                                    id='tableqtyl'
+                                    data-optionid1="${item.OptionID}" 
+                                    placeholder="0" 
+                                    min="0" 
+                                    style="width:100px">
+                            </td>
+                        </tr>
+                    `);
+                    chargesTableBody.append(row);
 
-            // Add item to global array
-            allItems.push({
-                itemname: item.ItemName,
-                price: item.Price,
-                foodid: item.OptionID,
-                Quantity: item.quantity !== undefined && item.quantity !== null ? item.quantity : 0
-
-            });
-        });
-
-        fetchQuantitiesForCustomer(); // Fetch quantities for customer orders
-        $('.tableqtyl').on('input', calculateTotalL);
-        $("#lunch-options-containers").show();
-    } else {
-        console.error('Error in response data:', response.message || 'Unknown error');
-    }
-},
-error: function (error) {
-    console.error('Error fetching lunch items:', error);
-}
-});
+                    // Add item to global array
+                    allItems.push({
+                        itemname: item.ItemName,
+                        price: item.Price,
+                        foodid: item.OptionID,
+                        Quantity: item.quantity !== undefined && item.quantity !== null ? item.quantity : 0
+ 
+                    });
+                });
+                let todaydate = new Date().toISOString().split('T')[0];
+                document.getElementById('from-date-l').value = todaydate;
+                document.getElementById('to-date-l').value = todaydate;
+                fetchQuantitiesForCustomer(); // Fetch quantities for customer orders
+                $('.tableqtyl').on('input', calculateTotalL);
+                let alertshown = 0;
+                 document.querySelectorAll('.tableqtyl').forEach(field => {
+                    statuscheck(fromDate, fromDate, foodtype, field,alertshown);
+                    alertshown = 1;
+                });
+                $("#lunch-options-containers").show();
+            } else {
+                console.error('Error in response data:', response.message || 'Unknown error');
+            }
+        },
+        error: function (error) {
+            console.error('Error fetching lunch items:', error);
+        }
+    });
 }
 
 
 let previouslunqty = 0; //global
+
 function fetchQuantitiesForCustomer() {
 console.log("Fetching quantities for all items...");
 
@@ -3184,7 +3219,6 @@ const toDate = $('#to-date-l').val();
 const lunchdata = []; // Replace with actual lunch data
 const tdate = new Date().toISOString().split('T')[0];
 
-console.log("lunchqity",linitialqty)
 
 let payload = {
 load: 'nlunch',
@@ -3321,8 +3355,16 @@ $('#from-date-d, #to-date-d').on('change', handleDateChangeD);
 
 // Function for the first date pair (B)
 function handleDateChangeB() {
-const fromDateB = $('#from-date-b').val();
-const toDateB = $('#to-date-b').val();
+
+    const fromDateB = $('#from-date-b').val();
+    let toDateB = $('#to-date-b').val();
+    if(fromDateB > toDateB){
+        toDateB = fromDateB;
+    }
+
+console.log("fromdate",fromDateB)
+console.log("todate",toDateB)
+
 const foodtype = 1;
 let field = document.getElementById('tableqtyb');
 const payload = { 
@@ -3332,6 +3374,7 @@ todate: toDateB,
 foodtype:foodtype,
 cid: customerid
 };
+console.log("datechangeb",payload);
 
 
 if (fromDateB && toDateB) {
@@ -3359,10 +3402,15 @@ console.error('Error:', error);
 
 
 function handleDateChangeD() {
-const fromDateD = $('#from-date-d').val();
-const toDateD = $('#to-date-d').val();
+    const fromDateD = $('#from-date-d').val();
+    let toDateD = $('#to-date-d').val();
+    if(fromDateD > toDateD){
+        toDateD = fromDateD;
+    }
 const foodtype = 3;
 let field = document.getElementById('tableqtydb');
+
+
 
 const payload = { 
 load: 'datechange',
@@ -3397,38 +3445,40 @@ console.error('Error:', error);
 }
 }
 
-function statuscheck(fromdate,todate,foodtype,field){
-
-const payload = { 
-load: 'statuscheck',
-fromdate: fromdate,
-todate: todate,
-foodtype:foodtype,
-cid: customerid
-};
-console.log("payload",payload);
-
-if (fromdate && todate) {
-$.ajax({
-url: './webservices/dinner.php',
-type: 'POST',
-dataType: 'json',
-data: JSON.stringify(payload),
-success: function(data) {
-console.log(data);
-if(data.status!=="error" && data.data[0].Status==2){
-    alert(`Order has been already delivered for the following date: ${fromdate}.\nPlease select any other date.`);
-    field.disabled = true;
-}
-else{
-    field.disabled = false;
-}
-},
-error: function(error) {
-console.error('Error:', error);
-}
-});
-}
+function statuscheck(fromdate,todate,foodtype,field,alertcount){
+    const payload = { 
+        load: 'statuscheck',
+        fromdate: fromdate,
+        todate: todate,
+        foodtype:foodtype,
+        cid: customerid
+    };
+    console.log("payload",payload);
+    
+    if (fromdate && todate) {
+        $.ajax({
+        url: './webservices/dinner.php',
+        type: 'POST',
+        dataType: 'json',
+        data: JSON.stringify(payload),
+        success: function(data) {
+        console.log(data);
+        if(data.status!=="error" && data.data[0].Status==2){
+            if(alertcount != 1 ||(foodtype != 2)){
+                alert(`Order has been already delivered for the following date: ${fromdate}.\nPlease select any other date.`);
+            }
+           
+            field.disabled = true;
+        }
+        else{
+            field.disabled = false;
+        }
+    },
+    error: function(error) {
+        console.error('Error:', error);
+    }
+        });
+    }
 }
 
 // // Function to send lunch details
@@ -3519,25 +3569,36 @@ console.error("Both From Date and To Date are required.");
 
 // Function to handle date range change
 function handleDateChangeL(fromDate, toDate) {
-console.log(`Handling date range change: ${fromDate} to ${toDate}`);
-
-if (typeof customerid === 'undefined' || customerid === null) {
-console.error("Customer ID is not defined.");
-return;
-}
-
-// Fetch quantities for both dates
-fetchQuantities(fromDate, function (fromData) {
-fetchQuantities(toDate, function (toData) {
-    // Compare quantities between the two dates
-    if (fromData && toData) {
-        updateQuantitiesIfMatched(fromData, toData);
-    } else {
-        console.error("Quantities not found or do not match.");
-        clearQuantities();
+    fromDate = $('#from-date-l').val();
+    toDate = $('#to-date-l').val();
+    if(fromDate > toDate){
+        toDate = fromDate;
     }
-});
-});
+    console.log(`Handling date range change: ${fromDate} to ${toDate}`);
+    let foodtype = 2;
+    let alertshown = 0;
+    document.querySelectorAll('.tableqtyl').forEach(field => {
+    statuscheck(fromDate, toDate, foodtype, field,alertshown);
+    alertshown = 1;
+    });
+
+    if (typeof customerid === 'undefined' || customerid === null) {
+        console.error("Customer ID is not defined.");
+        return;
+    }
+
+    // Fetch quantities for both dates
+    fetchQuantities(fromDate, function (fromData) {
+        fetchQuantities(toDate, function (toData) {
+            // Compare quantities between the two dates
+            if (fromData && toData) {
+                updateQuantitiesIfMatched(fromData, toData);
+            } else {
+                console.error("Quantities not found or do not match.");
+                clearQuantities();
+            }
+        });
+    });
 }
 
 // Helper function to fetch quantities for a specific date
@@ -3667,4 +3728,15 @@ if (initItem.Quantity !== undefined && currItem.Quantity !== undefined) {
 }
 
 return 0; // No differences found (no changes)
+}
+
+function disableFieldsBasedOnStatus(data) {
+    const inputs = document.querySelectorAll('.tableqty');
+    inputs.forEach(input => {
+        const tdate = input.getAttribute('data-tdate');
+        const matchingEntry = data.find(item => item.Date === tdate && item.Status === "2");
+        if (matchingEntry) {
+            input.disabled = true; 
+        }
+    });
 }
