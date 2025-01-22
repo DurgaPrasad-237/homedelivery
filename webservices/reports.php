@@ -229,7 +229,7 @@ function send_completed($conn){
             $mail->setFrom('nani04841@gmail.com', 'Homdedelivery');;
             $mail->addAddress($email);
             $mail->Subject = 'Order Delivered';
-            $mail->Body = "Mr.$customername Your $foodtype order on $orderdate has been delivered.";
+            $mail->Body = "Mr/Ms.$customername Your $foodtype order on $orderdate has been delivered.";
 
             $mail->send();
             $jsonresponse = array('code' => '200','status' => "Success");
@@ -276,18 +276,6 @@ if ($foodtype == "") {
     }
 }
 
-// Generate the SELECT clause for aggregation or direct values
-$y = ($periodicity == "2" || $periodicity == "") 
-    ? "
-        CASE WHEN ft.Type = 'Breakfast' THEN o.TotalAmount ELSE 0 END AS breakfast,
-        SUM(CASE WHEN ft.Type = 'Lunch' THEN o.TotalAmount ELSE 0 END) AS lunch,
-        CASE WHEN ft.Type = 'Dinner' THEN o.TotalAmount ELSE 0 END AS dinner,
-        SUM(o.TotalAmount) AS totalamount,"
-    : "
-        SUM(CASE WHEN ft.Type = 'Breakfast' THEN o.TotalAmount ELSE 0 END) AS breakfast,
-        SUM(CASE WHEN ft.Type = 'Lunch' THEN o.TotalAmount ELSE 0 END) AS lunch,
-        SUM(CASE WHEN ft.Type = 'Dinner' THEN o.TotalAmount ELSE 0 END) AS dinner,
-        SUM(o.TotalAmount) AS totalamount,";
 
 // Final SQL query
 $selectsql = "
@@ -296,10 +284,12 @@ $selectsql = "
         c.CustomerName AS name,
         c.Phone3 AS BillingNumber,
         c.Email AS mail,
-        p.period AS periodicity,
         o.OrderDate,
         c.Phone2 AS DeliveryNumber,
-        $y
+        SUM(CASE WHEN ft.Type = 'Breakfast' THEN o.TotalAmount ELSE 0 END) AS breakfast,
+        SUM(CASE WHEN ft.Type = 'Lunch' THEN o.TotalAmount ELSE 0 END) AS lunch,
+        SUM(CASE WHEN ft.Type = 'Dinner' THEN o.TotalAmount ELSE 0 END) AS dinner,
+        SUM(o.TotalAmount) AS totalamount,
         s.Status AS status
     FROM 
         orders o
@@ -309,11 +299,9 @@ $selectsql = "
         foodtype ft ON o.FoodTypeID = ft.Sno
     JOIN 
         status s ON o.Status = s.Sno
-    JOIN 
-        periodicity p ON c.Periodicity = p.sno
     $x
     GROUP BY 
-        c.CustomerID, c.CustomerName, c.Phone3, c.Email, p.period, o.OrderDate, 
+        c.CustomerID, c.CustomerName, c.Phone3, c.Email, o.OrderDate, 
         c.Phone2, s.Status
     ORDER BY 
         o.OrderDate ASC

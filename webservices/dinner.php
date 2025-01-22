@@ -98,6 +98,30 @@ else if($load == "datechange"){
 else if($load == "fetchQuantities"){
     fetchQuantities($conn);
 }
+else if($load == "statuscheck"){
+    statuscheck($conn);
+}
+
+function statuscheck($conn){
+    global $fromdate,$todate,$foodtype,$cid;
+    $selectQuery = "SELECT Status FROM orders WHERE FoodTypeID = '$foodtype' AND OrderDate BETWEEN '$fromdate' AND '$todate' AND CustomerID = '$cid'";
+    $result = getdata($conn, $selectQuery);
+
+    if (count($result) > 0) {
+        echo json_encode([
+            'code' => '200',
+            'status' => 'success',
+            'data' => $result
+        ]);
+    } else {
+        echo json_encode([
+            'code' => '204',
+            'status' => 'error',
+            'message' => 'Fetched'
+        ]);
+    }
+
+}
 
 
 function fetchQuantities($conn) {
