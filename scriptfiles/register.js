@@ -327,7 +327,7 @@ function todayorderdetails(customerid) {
                 totaldiv.innerHTML = `
                         <h3>TL</h3>
                         <p class="fqty">${totalquantity}</p>
-                        <p class="famt">${finalamount}</p>
+                        <p class="famt">${parseFloat(finalamount).toFixed(2)}</p>
                     
               `
                 todaycontainer.append(totaldiv);
