@@ -10,8 +10,8 @@
 
 <body>
     <header class="head">
-        <div class="register" id="register">Register</div>
-        <div class="Report"><a href="reports.php">Report</a></div>
+        <div class="register" id="register"><img src="images/person.png" height="25px" width="25px"/>Register</div>
+        <div class="Report"><img src="images/report.png" width="25px" height="25px"><a href="reports.php">Report</a></div>
         <div class="date-container">
             <div class="date" id="formatted-date"></div>
             <div class="day" id="day-name"></div>
@@ -20,6 +20,47 @@
     <section class="main_container">
 
         <div class="register_form_wrapper">
+            <div class="delivery_address_block">
+
+           <i class="fa-solid fa-xmark fa-beat-fade" onclick="closenewD()"></i>
+           <div class="div_a_block">
+                <div>
+                    <label>Customer Name:</label>
+                    <input id="da_name" placeholder="Name" disabled/>
+                </div>
+                <div>
+                    <label>Mobile Number:</label>
+                    <input id="da_mobile_number" placeholder="Mobile Number" disabled/>
+                </div>
+                <div>
+                    <label>Email</label>
+                    <input id="da_mail" placeholder="Email" disabled/>
+                </div>
+                <p>Address</p>
+                <div>
+                    <label>Flat No:</label>
+                    <input id="da_flatno" placeholder="Flatno/houseno" />
+                </div>
+                <div>
+                    <label>Area</label>
+                    <input id="da_area" placeholder="Area" />
+                </div>
+                <div>
+                    <label>Street</label>
+                    <input id="da_street" placeholder="Street" />
+                </div>
+                <div>
+                    <label>Delivery Ph</label>
+                    <input id="da_deph" placeholder="Delivery Ph" />
+                </div>
+                <div>
+                    <label>Add Link</label>
+                    <input id="da_link" placeholder="Link" />
+                </div>
+                <button onclick="addNewdelivery()">Save</button>
+           </div>
+
+            </div>
             <div class="register_form">
                 <div class="search_area">
                     <select id="search_method">
@@ -117,7 +158,7 @@
 
                 <div class="addresses_area">
                     <div class="delivery_area" id="delivery_area">
-                        <h3>Delivery Address</h3>
+                        <h3>Delivery Address <span><i class="fa-solid fa-plus" onclick="addnewDelivery()" title="Add new Address"></i></span></h3>
                         <div class="address_input_area">
                             <input placeholder="flatno/houseno" class="address_input" id="address_flat" disabled>
                             <input placeholder="Street" class="address_input" id="address_street" disabled>
@@ -266,7 +307,7 @@
 
 
                 <!-- Dynamic Options Container -->
-                <div id="lunch-options-container" style="display: none; margin-top: 10px;">
+                <div id="lunch-options-container" style="display: none;">
                 <div class="scrollable-table-container">
                     <table id="lunch-table">
                         <thead>
@@ -498,7 +539,7 @@
                         <tr>
                             <td>
                                 <label>
-                                    <input type="radio" name="lunch-category" value="category1" onclick="fetchalllunch()" disabled checked>
+                                    <input type="radio" name="lunch-category-1" value="category1-1" onclick="fetchalllunch()" disabled checked>
                                     Category 1
                                 </label>
                                 <label>
@@ -510,7 +551,7 @@
                     </table>
 
                     <!-- Dynamic Options Container -->
-                    <div id="lunch-options-containers" style="display: none; margin-top: 10px;">
+                    <div id="lunch-options-containers" style="display: none;">
                         <table id="lunch-table-l">
                             <thead>
                                 <tr>

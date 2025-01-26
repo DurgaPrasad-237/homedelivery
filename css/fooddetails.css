@@ -523,3 +523,15 @@ cursor: pointer;
 .active_bf,.active_ln{ 
 background-color: green;
 }
+#fdedtbtn{
+    padding:5px;
+    background-color: #f50f1a;
+    border:2px solid #f50f1a;
+    color:white;
+    border-radius: 10px;
+    width:5vw;
+    cursor: pointer;
+}
+#fdedtbtn:hover{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}

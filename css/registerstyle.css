@@ -27,6 +27,7 @@ body {
     overflow: auto;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     background-color: #FFC857;
+    position:relative;
 }
 
 .register_form {
@@ -1211,7 +1212,7 @@ width: 50px; /* First column */
 
 
 
-#insert-button,
+/* #insert-button, */
 #cancel-button{
     background-color: #557e8f;
     color: white;
@@ -1347,4 +1348,55 @@ border-radius: 4px;
 
 .scrollable-table-container::-webkit-scrollbar-thumb:hover {
 background: #555; /* Scrollbar thumb hover color */
+}
+
+.delivery_address_block{
+height:48vh;width:93%;position:absolute;top: 72%;
+left: 50%;
+transform: translate(-50%, -50%);background-color:white;
+padding:5px;
+display:none;
+border-radius: 10px;
+}
+.fa-beat-fade{
+    margin-left:95%;margin-top:3%
+}
+.div_a_block{
+    display:flex;flex-direction:column;justify-content:space-around;align-items:center;height:85%;
+}
+.div_a_block div{
+    width:90%;display:flex;flex-direction:row;justify-content:space-between
+}
+.div_a_block div input{
+    border:none;
+    border-bottom: 2px solid black;
+    width:60%;
+    outline:none;
+}
+.div_a_block button{
+    width:90%;
+    margin-top:5px;
+}
+.div_a_block p{
+    margin:0px;
+    font-weight: bold;
+}
+.fa-plus{
+    font-size: 18px;
+    margin-left:10px;
+    cursor:pointer;
+}
+.multiple_list table th{
+    background-color: #471d0e;
+}
+.tablebody{
+    background-color: white;
+    color:black;
+}
+.register,.Report{
+   display:flex;
+   flex-direction: row;
+   justify-content: space-around;
+   align-items: center;
+   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }

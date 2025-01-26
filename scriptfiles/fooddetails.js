@@ -327,6 +327,7 @@ error:function(error){
 
 //function for load food prices
 function loadFoodPrices(){
+let intial = false;
 var payload = {
 OptionID:document.querySelector('#food_items-dp').value,
 load:"load_foodprices",
@@ -347,17 +348,21 @@ success:function(response){
         response.data.forEach(item => {
         const fromDate = new Date(item.fromdate).toISOString().split('T')[0];  // Convert to YYYY-MM-DD format
         // const toDate = new Date(item.to_date).toISOString().split('T')[0];  // Convert to YYYY-MM-DD format
+        let disabled_status = (intial)?"disabled":"enabled";
 
         const row = $('<tr>');
+        
         row.html(`
             <td>${item.type}</td>
             <td>${item.item_name}</td>
-            <td>${item.price}</td>
+            <td> <input ${disabled_status} type="number" min="0" data-prev="${item.price}" oninput="priceChange(${item.log_sno})" class="price_${item.log_sno}" value="${item.price}"/> </td>
             <td>${fromDate}</td>
+            <td><center><button disabled id="fdedtbtn" class="edit_buttonfd_${item.log_sno}" onclick="foodPriceEdit('${item.log_sno}','${item.OptionID}')">Edit</button></center></td>
  
         `);
         typesTableBody.append(row);
         // <td><center><button class="edit-buttonfd">Edit</button></center></td>
+        intial = true;
     });
    }
    else{
@@ -370,6 +375,60 @@ error:function(err){
     console.log(err);
 }
 })
+}
+
+function priceChange(sno){
+
+    let intialprice = document.querySelector(`.price_${sno}`).dataset.prev;
+    let finalprice = document.querySelector(`.price_${sno}`).value;
+
+    let disabledstatus = (parseInt(intialprice) === parseInt(finalprice)) ? true : false;
+ 
+    document.querySelector(`.edit_buttonfd_${sno}`).disabled = disabledstatus;
+}
+
+
+function foodPriceEdit(sno,optionid){
+   
+   if(document.querySelector(`.price_${sno}`).value === ""){
+        alert("Price required");
+        return;
+   }
+
+   let check = confirm(`Do you really want to update price?`);
+   if(!check){
+        document.querySelector(`.edit_buttonfd_${sno}`).disabled = true;
+        document.querySelector(`.price_${sno}`).value = document.querySelector(`.price_${sno}`).dataset.prev;
+        return;
+    }
+
+   var payload = {
+        logsno:sno,
+        OptionID:optionid,
+        Price: document.querySelector(`.price_${sno}`).value,
+        load:"updatePrice"
+   }
+   $.ajax({
+    type:"POST",
+    url: "./webservices/fooddetails1.php",
+    dataType: 'json',
+    data: JSON.stringify(payload),
+    success:function(response){
+        if(response.status === "success"){
+            alert("Update price successfully");
+            
+        }
+        else{
+            alert('Price not Updated');
+           
+        }
+        loadFoodPrices();
+    },
+    error:function(err){
+        console.log(err);
+        alert("Something wrong")
+    }
+   })
 }
 
 
@@ -634,10 +693,10 @@ dataType: 'json',
 data: JSON.stringify(payload),
 success: function(response) {
     console.log(response);
-    // if(response.message === "record exist in same date"){
-    //     alert("already record exist in same date");
-    //     return;
-    // }
+    if(response.message === "Record Exist"){
+        alert("already record exist in same date");
+        return;
+    }
     if(response.status == "success"){
         alert("Update Successfully")
         loadFoodPrices();

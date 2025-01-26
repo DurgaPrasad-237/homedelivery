@@ -62,7 +62,7 @@
                                 <!-- <th>To
                                     Date
                                 </th> -->
-                                <!-- <th>Edit</th> -->
+                                <th>Edit</th>
                             </tr>
                         </thead>
                         <tbody id="typesTableBody">

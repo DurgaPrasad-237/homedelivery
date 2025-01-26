@@ -19,6 +19,7 @@ $action= $data["action"] ?? "";
 $activity = $data['activity'] ?? "";
 $item= $data["item"] ?? "";
 $weeksno = $data["weeksno"] ?? "";
+$logsno = $data['logsno'] ?? "";
 if ($load == "add") {
     addcom($conn,$category, $ItemName, $Price, $from_date, $to_date);
 } else if ($load == "get") {
@@ -69,6 +70,9 @@ else if($load == "setbreakfast"){
 else if($load == "activiyBF"){
     activityBF($conn);
 }
+else if($load == "updatePrice"){
+    updatePrice($conn);
+}
 // else if($load == 'setbreakfast'){
 //     setBreakFast($conn);
     
@@ -83,6 +87,31 @@ else if($load == "activiyBF"){
 //     loaditems($conn);
 // }
 
+//update the price of the items
+       
+function updatePrice($conn){
+    global $logsno,$OptionID,$Price;
+    $updatefdquery = "UPDATE `fooddetails` SET `Price`='$Price' WHERE OptionID = '$OptionID'";
+    $resultquery = setData($conn,$updatefdquery);
+    if($resultquery == "Record created"){
+        $updatequery = "UPDATE `fooddetails_log` SET `price`='$Price' WHERE log_sno = '$logsno'";
+        $logresult = setData($conn,$updatequery);
+        if($logresult == "Record created"){
+            $jsonresponse = array('code'=>'200','status'=>'success');
+        }
+        else{
+            $jsonresponse = array('code'=>'500','status'=>'fail','msg'=>"failed to add in food log table");
+        }
+    }
+    else{
+        $jsonresponse = array('code'=>'500','status'=>'fail','msg'=>"failed to add in fooddetail table");
+    }
+    echo json_encode($jsonresponse);
+ 
+}
+
+
+//activity of breakfast
 function activityBF($conn){
     global $activity,$OptionID;
     $updatesql = "UPDATE `fooddetails` SET `activity`='$activity' WHERE `OptionID` = $OptionID";
@@ -380,12 +409,12 @@ function loadfdby_category($conn){
 //loadin prices of food details
 function loadFoodPrices($conn){
     global $OptionID,$from_date;
-    $selectquery = "SELECT foodtype.type,fooddetails_log.item_name,fooddetails_log.price,fooddetails_log.fromdate,fooddetails.OptionID from fooddetails_log
+    $selectquery = "SELECT fooddetails_log.log_sno,foodtype.type,fooddetails_log.item_name,fooddetails_log.price,fooddetails_log.fromdate,fooddetails.OptionID from fooddetails_log
     join fooddetails on fooddetails_log.fd_oid = fooddetails.OptionID
     join foodtype on fooddetails.category = foodtype.sno
     WHERE 
     fooddetails_log.fromdate IS NOT NULL 
-    AND fooddetails_log.fromdate != '0000-00-00' and fooddetails_log.fd_oid = $OptionID";
+    AND fooddetails_log.fromdate != '0000-00-00' and fooddetails_log.fd_oid = $OptionID order by fooddetails_log.fromdate desc";
 
     $resultquery = getData($conn,$selectquery);
     if(count($resultquery) > 0){
@@ -400,28 +429,33 @@ function loadFoodPrices($conn){
 //set the prices
 function setFoodPrices($conn){
     global $Price,$OptionID,$from_date,$ItemName,$p_from_date;
+
     $checkdate = "SELECT * FROM `fooddetails_log` WHERE `fromdate`='$from_date' and `fd_oid` = '$OptionID'";
     $resultcheck = getData($conn,$checkdate);
-    if(count($resultcheck) > 0){
-        $updateprice = "UPDATE `fooddetails` SET `Price`='$Price',
-        `from_date`='$from_date' WHERE OptionID = $OptionID";
-        $resultupdate = setData($conn,$updateprice);
 
-        if($resultupdate == "Record created"){
-            $updatelog = "UPDATE `fooddetails_log` SET `price`='$Price',`fromdate`='$from_date' WHERE `fd_oid`='$OptionID'";
-            $resultupdatelog = setData($conn,$updatelog);
-            if($resultupdatelog == "Record created"){
-                $jsonresponse = array('code' => '200', 'status' => 'success','message'=>"Record Updated");
-            }
-            else{
-                $jsonresponse = array('code' => '500', 'status' => 'fail','message'=>"Fail To Record Update in fooddetail log");
-            }
-        }
-        else{
-            $jsonresponse = array('code' => '500', 'status' => 'fail','message'=>"Fail To Record Update in fooddetail");
-        }
-  
+    if(count($resultcheck) > 0){
+        $jsonresponse = array('code' => '200', 'status' => 'success','message'=>"Record Exist");
     }
+    // if(count($resultcheck) > 0){
+    //     $updateprice = "UPDATE `fooddetails` SET `Price`='$Price',
+    //     `from_date`='$from_date' WHERE OptionID = $OptionID";
+    //     $resultupdate = setData($conn,$updateprice);
+
+    //     if($resultupdate == "Record created"){
+    //         $updatelog = "UPDATE `fooddetails_log` SET `price`='$Price',`fromdate`='$from_date' WHERE `fd_oid`='$OptionID'";
+    //         $resultupdatelog = setData($conn,$updatelog);
+    //         if($resultupdatelog == "Record created"){
+    //             $jsonresponse = array('code' => '200', 'status' => 'success','message'=>"Record Updated");
+    //         }
+    //         else{
+    //             $jsonresponse = array('code' => '500', 'status' => 'fail','message'=>"Fail To Record Update in fooddetail log");
+    //         }
+    //     }
+    //     else{
+    //         $jsonresponse = array('code' => '500', 'status' => 'fail','message'=>"Fail To Record Update in fooddetail");
+    //     }
+  
+    // }
     else{
         $updatequery = "UPDATE `fooddetails` SET `Price`='$Price',
         `from_date`='$from_date' WHERE OptionID = $OptionID";

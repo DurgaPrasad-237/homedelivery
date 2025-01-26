@@ -192,7 +192,7 @@ function deliveryenabled() {
 }
 
 //address delivery enabled
-function deliverydisabled() {
+function deliverydisabled(status) {
     document.getElementById("address_flat").disabled = true;
     document.getElementById("address_street").disabled = true
     document.getElementById("address_area").disabled = true
@@ -200,12 +200,13 @@ function deliverydisabled() {
     document.getElementById("address_link").disabled = true;
     document.querySelector('.scbtn').style.display = "none";
 
-    document.querySelector('#address_flat').value = prevdeliveryflat
-    document.querySelector('#address_street').value = prevdeliverystreet
-    document.querySelector('#address_area').value =  prevdeliveryarea
-    document.querySelector('#address_mobile').value =  prevdeliverymobile
-    document.querySelector('#address_link').value =  prevdeliverylink
-
+    if(status !== "Success"){
+        document.querySelector('#address_flat').value = prevdeliveryflat
+        document.querySelector('#address_street').value = prevdeliverystreet
+        document.querySelector('#address_area').value =  prevdeliveryarea
+        document.querySelector('#address_mobile').value =  prevdeliverymobile
+        document.querySelector('#address_link').value =  prevdeliverylink
+    }
     dedit.style.display = "block";
 }
 
@@ -299,44 +300,49 @@ function todayorderdetails(customerid) {
                 console.log("today", response.data);
                 response.data.forEach(itm => {
                     console.log(itm);
-                    let type = (itm.food_type === "breakfast") ? 'BF' : (itm.food_type === "lunch") ? 'LN' : 'DN';
-                    finalamount += parseInt(itm.price);
-                    totalquantity += parseInt(itm.quantity)
-                    let div = document.createElement('div');
-                    div.setAttribute('class', 'today_order');
-                    div.innerHTML = `
-                        <h3>${type}</h3>
-                        <p class="qty">${itm.quantity}</p>
-                        <p class="amt">${itm.price}</p>
-                `
-                    let iqty = (itm.food_type === 'breakfast') ? "mealqty" : (itm.food_type === 'lunch') ? "mealqtyl" : "mealqtyd";
-                    let iamt = (itm.food_type === 'breakfast') ? "mealamt" : (itm.food_type === 'lunch') ? "mealamount" : "mealamtd";
-                    let iqtyb = (itm.food_type === 'breakfast') ? "mealqtyb" : (itm.food_type === 'lunch') ? "mealqtylb" : "mealqtydb";
-                    let iamtb = (itm.food_type === 'breakfast') ? "mealamtb" : (itm.food_type === 'lunch') ? "mealamountb" : "mealamtdb";
+                    if(itm.quantity > 0){
+                        let type = (itm.food_type === "breakfast") ? 'BF' : (itm.food_type === "lunch") ? 'LN' : 'DN';
+                        finalamount += parseInt(itm.price);
+                        totalquantity += parseInt(itm.quantity)
+                        let div = document.createElement('div');
+                        div.setAttribute('class', 'today_order');
+                        div.innerHTML = `
+                            <h3>${type}</h3>
+                            <p class="qty">${itm.quantity}</p>
+                            <p class="amt">${itm.price}</p>
+                    `
+                        let iqty = (itm.food_type === 'breakfast') ? "mealqty" : (itm.food_type === 'lunch') ? "mealqtyl" : "mealqtyd";
+                        let iamt = (itm.food_type === 'breakfast') ? "mealamt" : (itm.food_type === 'lunch') ? "mealamount" : "mealamtd";
+                        let iqtyb = (itm.food_type === 'breakfast') ? "mealqtyb" : (itm.food_type === 'lunch') ? "mealqtylb" : "mealqtydb";
+                        let iamtb = (itm.food_type === 'breakfast') ? "mealamtb" : (itm.food_type === 'lunch') ? "mealamountb" : "mealamtdb";
+                        
+                        document.getElementById(`${iqty}`).value = itm.quantity;
+                        document.getElementById(`${iamt}`).value = itm.price;
+                        document.getElementById(`${iqtyb}`).value = itm.quantity;
+                        document.getElementById(`${iamtb}`).value = itm.price;
+                        
                     
-                    document.getElementById(`${iqty}`).value = itm.quantity;
-                    document.getElementById(`${iamt}`).value = itm.price;
-                    document.getElementById(`${iqtyb}`).value = itm.quantity;
-                    document.getElementById(`${iamtb}`).value = itm.price;
-                    
-                 
-                    todaycontainer.append(div);
+                        todaycontainer.append(div);
+                    }    
                 })
                 let totaldiv = document.createElement('div');
                 totaldiv.setAttribute('class', 'totaltoday');
-                totaldiv.innerHTML = `
-                        <h3>TL</h3>
-                        <p class="fqty">${totalquantity}</p>
-                        <p class="famt">${parseFloat(finalamount).toFixed(2)}</p>
-                    
-              `
-                todaycontainer.append(totaldiv);
+                if(totalquantity > 0){
+                    totaldiv.innerHTML = `
+                    <h3>TL</h3>
+                    <p class="fqty">${totalquantity}</p>
+                    <p class="famt">${parseFloat(finalamount).toFixed(2)}</p>
+                
+                    `
+                    todaycontainer.append(totaldiv);
+                }
+               
 
-                console.log("finalamount", todaycontainer)
+                // console.log("finalamount", todaycontainer)
 
 
 
-                console.log(todaycontainer);
+                // console.log(todaycontainer);
             }
             else{
 
@@ -369,6 +375,7 @@ function todayorderdetails(customerid) {
     })
 
 }
+
 
 
 
@@ -789,8 +796,113 @@ sameasadd.addEventListener('click', () => {
 dedit.addEventListener('click', () => {
     document.querySelector('.scbtn').style.display = "flex";
     dedit.style.display = "none";
+    // document.querySelector('#da_name').value = customername.value;
+    // document.querySelector('#da_mobile_number').value = primaryphone.value;
+    // document.querySelector('#da_mail').value = email.value;
+
+    // document.querySelector('.delivery_address_block').style.display = "block";
     deliveryenabled();
 })
+
+//add new delivery
+function addnewDelivery(){
+    document.querySelector('#da_name').value = customername.value;
+    document.querySelector('#da_mobile_number').value = primaryphone.value;
+    document.querySelector('#da_mail').value = email.value;
+
+    document.querySelector('.delivery_address_block').style.display = "block";
+}
+
+
+//close new delivery addresss block
+function closenewD(){
+    document.querySelector('.delivery_address_block').style.display = "none";
+}
+//add new dlivery address
+function addNewdelivery(){
+
+    let billingaddress = 
+    `${
+        document.querySelector('#billing_flat').value +","+
+        document.querySelector('#billing_street').value +","+
+        document.querySelector('#billing_area').value}`;
+
+    let deliveryaddress = 
+    `${
+        document.querySelector('#da_flatno').value +","+
+        document.querySelector('#da_area').value +","+
+        document.querySelector('#da_street').value}`
+
+    if(
+        ! document.querySelector('#da_flatno').value ||
+        ! document.querySelector('#da_area').value ||
+        ! document.querySelector('#da_street').value ||
+        ! document.getElementById('da_deph').value ||
+        ! document.getElementById('da_link').value
+    ){
+        alert("enter the required fields");
+        return;
+    }
+
+    if(
+        ! document.querySelector('#billing_flat').value ||
+        ! document.querySelector('#billing_street').value ||
+        ! document.querySelector('#billing_area').value ||
+        ! document.getElementById('billing_mobile').value
+    ){
+        alert("enter the billing fields");
+        return;
+    }
+
+    if (!validateFlatNumber(document.querySelector('#da_flatno').value)) {
+        alert("invalid flatno")
+        return;
+    }
+
+    if (!validatePhoneNumber(document.getElementById('da_deph').value)) {
+        alert("enter valid delivery mobile number");
+        return;
+    }
+    
+
+
+    var payload = {
+        load: "insertnew",
+        customername: document.getElementById('customer_name').value,
+        email: document.getElementById('customer_email').value,
+        primaryphone: document.getElementById('customer_phone').value,
+        // periodicity: document.getElementById('payment_period').value,
+        billingaddress: billingaddress,
+        deliveryaddress: deliveryaddress,
+        deliverymobile: document.getElementById('da_deph').value,
+        billingmobile: document.getElementById('billing_mobile').value,
+        map: document.getElementById('da_link').value
+    }
+
+    return $.ajax({
+        url: './webservices/dinner.php',
+        type: 'POST',
+        dataType: 'json',
+        data: JSON.stringify(payload),
+        success: function(response) {
+            console.log(response);
+            if(response.status === "success"){
+                alert("Successfully Added")
+                closenewD();
+                fetchbyid(`"${response.cid}"`);
+            }
+           
+
+        },
+        error: function(error) {
+            console.error('Error fetching data:', error);
+        }
+    });
+
+
+
+   
+}
 
 dsbtn.addEventListener('click', () => {
     const addressflat = document.getElementById("address_flat").value;
@@ -813,44 +925,51 @@ dsbtn.addEventListener('click', () => {
         alert("enter valid mobile number");
         return;
     }
-    deliverydisabled();
+    // deliverydisabled();
     // checkaddress();
-    // var payload = {
-    //     deliveryaddress: addressflat + "," + addressstreet + "," + addressarea,
-    //     deliveryphone: deliverymobile,
-    //     map: addresslink,
-    //     // customerid: customerid,
-    //     load: "add_delivery_address"
-    //     // load: "insertnew",
-    //     // customername: document.getElementById('customer_name').value,
-    //     // email: document.getElementById('customer_email').value,
-    //     // primaryphone: document.getElementById('customer_phone').value,
-    //     // // periodicity: document.getElementById('payment_period').value,
-    //     // billingaddress: billingaddress,
-    //     // deliveryaddress: finaldeliveryaddress,
-    //     // deliverymobile: document.getElementById('address_mobile').value,
-    //     // billingmobile: document.getElementById('billing_mobile').value,
-    //     // map: document.getElementById('address_link').value
-    // }
-    // console.log(payload);
-    // $.ajax({
-    //     type: "POST",
-    //     url: "./webservices/dinner.php",
-    //     data: JSON.stringify(payload),
-    //     dataType: "json",
-    //     success: function(response) {
-    //         if (response.status === "success") {
-    //             alert("Successfully updated")
-    //             fetchbyid(`"${response.cid}"`);
-    //             deliverydisabled();
-    //         } else {
-    //             alert("Fail to add the address")
-    //         }
-    //     },
-    //     error: function(err) {
-    //         console.log(err);
-    //     }
-    // })
+    var payload = {
+        deliveryaddress: addressflat + "," + addressstreet + "," + addressarea,
+        deliveryphone: deliverymobile,
+        map: addresslink,
+        customerid: customerid,
+        load: "add_delivery_address"
+        // load: "insertnew",
+        // customername: document.getElementById('customer_name').value,
+        // email: document.getElementById('customer_email').value,
+        // primaryphone: document.getElementById('customer_phone').value,
+        // // periodicity: document.getElementById('payment_period').value,
+        // billingaddress: billingaddress,
+        // deliveryaddress: finaldeliveryaddress,
+        // deliverymobile: document.getElementById('address_mobile').value,
+        // billingmobile: document.getElementById('billing_mobile').value,
+        // map: document.getElementById('address_link').value
+    }
+    console.log("deliveryaddress",payload);
+    $.ajax({
+        type: "POST",
+        url: "./webservices/register.php",
+        data: JSON.stringify(payload),
+        dataType: "json",
+        success: function(response) {
+            if (response.status === "Success") {
+                alert("Successfully updated")
+                // fetchbyid(`"${response.cid}"`);
+                document.getElementById("address_flat").value = addressflat;
+                document.getElementById("address_street").value = addressstreet;
+                document.getElementById("address_area").value = addressarea
+                document.getElementById("address_mobile").value = deliverymobile;
+                document.getElementById("address_link").value = addresslink;
+            
+
+                deliverydisabled(response.status);
+            } else {
+                alert("Fail to add the address")
+            }
+        },
+        error: function(err) {
+            console.log(err);
+        }
+    })
 
 
 })
@@ -858,7 +977,7 @@ dsbtn.addEventListener('click', () => {
 dcbtn.addEventListener('click', () => {
     document.querySelector('.scbtn').style.display = "none";
     dedit.style.display = "block";
-    deliverydisabled();
+    deliverydisabled("fail");
 })
 
 
@@ -1091,7 +1210,7 @@ async function getlastid(finaldeliveryaddress, billingaddress) {
         billingmobile: document.getElementById('billing_mobile').value,
         map: document.getElementById('address_link').value
     };
-    console.log("NObody can scratch me", payload);
+
 
     return $.ajax({
         url: './webservices/dinner.php',

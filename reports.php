@@ -27,9 +27,15 @@
         </div>
 
         <div class="header">
-            <div class="header-box"><a href="register.php">Register</a></div>
-            <div class="header-box" id="reports">Report</div>
-            <div  class="header-box" id="subreports">Summary</div>
+                <div class="header-box">
+                    <img  src="images/person.png" height="25px" width="25px"/><a href="register.php">Register</a>
+                </div>
+                <div class="header-box" id="reports">
+                    <img src="images/report.png" height="25px" width="25px" />Report
+                </div>
+                <div  class="header-box" id="subreports">
+                    <img src="images/summary.png" height="25px" width="25px" />Summary
+                </div>
         </div>
        
         <div class="container">
