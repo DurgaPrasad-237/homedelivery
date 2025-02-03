@@ -8,7 +8,7 @@ body {
     height: 10vh;
     width: 100%;
     border: hidden;
-    background-color: #FFC857;
+    background-color: #F5EFEA;
 }
 
 .main_container {
@@ -26,7 +26,7 @@ body {
     flex-direction: column;
     overflow: auto;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-    background-color: #FFC857;
+    background-color: #F5EFEA;
     position:relative;
 }
 
@@ -91,6 +91,7 @@ body {
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; */
     margin-top: 1vh;
     border-radius: 10px;
+   
 
 }
 
@@ -98,15 +99,17 @@ body {
     width: 70%;
     margin-top: 0vh;
     ;
-    /* border: 2px solid black; */
 }
 
 .input_row {
     /* border:2px solid black; */
-    width: 80%;
+    width: 90%;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+}
+.input_row label{
+    margin:auto auto;
 }
 
 .customer_id,
@@ -196,7 +199,7 @@ body {
 }
 
 .editbtn {
-    background-color: rgba(201, 137, 18, 0.707);
+    background-color:#F3681E;
     color: white;
     border: none;
     padding: 5px;
@@ -237,7 +240,7 @@ body {
 
 .register,
 .Report {
-    border: 2px solid white;
+    border: 2px solid #F3681E;
     padding: 10px;
     margin-left: 5vh;
     width: 10vw;
@@ -248,6 +251,7 @@ body {
     text-decoration: none;
     transition: all 0.3s ease;
     font-weight: bold;
+    background-color: #F3681E;
     /* Smooth transitions */
 }
 
@@ -312,8 +316,8 @@ body {
     background-color: #fff;
     cursor: pointer;
     transition: all 0.3s ease;
-    background-color: #ffc7574a;
-    color:#FFC857;
+    background-color:#f3681e74;
+    color:white;
     border:2px solid #ffc7574a;
     display:flex;
     flex-direction: row;
@@ -967,7 +971,7 @@ table-layout: auto;
 .bfhead {
     display: flex;
     flex-direction: row;
-    background-color: #e4a300;
+    background-color: #F3681E;
     padding: 10px;
     align-items: center;
     gap: 50px;
@@ -1056,28 +1060,28 @@ width: 50px; /* First column */
 }
 .show_fdbtn,.savebutton{
     background-color: transparent;
-    border: 2px solid #FFC857;
-    color:#FFC857;
+    border: 2px solid #F3681E;
+    color:#F3681E;
     width:100px;
     height:40px;
     align-self: center;
     justify-self:flex-end;
 }
 .show_fdbtn:hover,.savebutton:hover{
-    background-color: #FFC857;
+    background-color: #F3681E;
     color:white;
     cursor:pointer;
     transition: background-color 0.4s ease, color 0.4s ease;
 }
 .savebutton{
-    background-color: #FFC857;
+    background-color: #F3681E;
     color:white;
     font-size: 18px;
     font-weight: bold;
     border-radius: 5px;
 }
 .savebutton:hover{
-    background-color: #fdbc39;
+    background-color: #F3681E;
     border:2px solid #a3710c;
 }
 

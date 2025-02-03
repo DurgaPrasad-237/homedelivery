@@ -85,16 +85,32 @@ let firstday = `${year}-${month}-01`;
 let lastDayDate = new Date(year, month, 0);
 let lastDay = `${year}-${month}-${lastDayDate.getDate()}`
 
-if(year !== tyear && month !== tmonth){
-    document.querySelector('#s_todate').setAttribute('max', lastDay);
-    document.querySelector('#s_todate').setAttribute('value', lastDay);
-}
-else{
-    document.querySelector('#s_todate').setAttribute('max', todaymonthyear);
-    document.querySelector('#s_todate').setAttribute('value', todaymonthyear);
-}
+// console.log("fromdate",firstday);
+// console.log("lastdate",lastDay);
+
+// console.log("year->",year,"month->",month,"tyear->",tyear,"tmonth->",tmonth);
+console.log(year !== tyear && month !== tmonth);
+
+console.log("selected",monthyear);
+console.log("firstdate",`${year}-${month}-01`);
+console.log("lastdate",`${year}-${month}-${lastDayDate.getDate()}`);
+
 document.querySelector('#s_fromdate').setAttribute('min', firstday);
 document.querySelector('#s_fromdate').setAttribute('value', firstday); 
+
+document.querySelector('#s_todate').setAttribute('max', lastDay);
+document.querySelector('#s_todate').setAttribute('value', lastDay);
+
+// if(year !== tyear && month !== tmonth){
+//     document.querySelector('#s_todate').setAttribute('max', lastDay);
+//     document.querySelector('#s_todate').setAttribute('value', lastDay);
+// }
+// else{
+//     document.querySelector('#s_todate').setAttribute('max', todaymonthyear);
+//     document.querySelector('#s_todate').setAttribute('value', todaymonthyear);
+// }
+// document.querySelector('#s_fromdate').setAttribute('min', firstday);
+// document.querySelector('#s_fromdate').setAttribute('value', firstday); 
 
 
 })
@@ -399,8 +415,11 @@ $.ajax({
             let s_tbody = document.querySelector('.s_tbody');
             s_tbody.innerHTML = "";
             response.data.forEach((dt)=>{
+               
             let disable = (dt.total_amount - dt.paid_amount === 0) ? "disabled" : "enabled";
             let trow = document.createElement('tr');
+
+            // let paidamount = (dt.paid_amount === "")
             
             trow.innerHTML = `
             <td data-cid="${dt.customer_id}" data-psno="${dt.sno}" class="customer_name">${dt.CustomerName}</td>

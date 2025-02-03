@@ -1482,6 +1482,9 @@ function getadditems($conn)
 function fetchitems($conn)
 {
     global $day, $cid;
+     //setting time zone
+    $setTimezoneQuery = "SET time_zone = '+05:30';";
+    mysqli_query($conn, $setTimezoneQuery);
     $selectQuery = "WITH RECURSIVE days AS (
     SELECT CURDATE() AS day
     UNION ALL
@@ -1585,6 +1588,9 @@ function fetchitems($conn)
 function getitems($conn)
 {
     global $day, $cid;
+    //setting time zone
+    $setTimezoneQuery = "SET time_zone = '+05:30';";
+    mysqli_query($conn, $setTimezoneQuery);
     $selectQuery = "WITH RECURSIVE days AS (
     SELECT CURDATE() AS day
     UNION ALL

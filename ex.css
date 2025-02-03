@@ -1,3 +1,201 @@
 body{
-    background-color: #FFC857
+    background-color: #918f8fac;
+    background: rgba(50, 49, 49, 0.63);
 }
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flat Irregular Shape with Image Animation</title>
+  <style> 
+    /* Blue container (firstdiv) */
+    .firstdiv {
+    
+      width: 500px; /* Width of the flat circle */
+      height: 450px; /* Height is smaller to make it flat */
+      margin-top: 150px;
+      margin-left: 100px;
+      border-top-left-radius: 60%;
+      border-top-right-radius: 40%;
+      border-bottom-right-radius: 50%;
+      border-bottom-left-radius: 20%;
+      background-color: transparent; /* Background color for visibility */
+      position: relative; /* Make it a positioned container */
+      overflow:hidden;
+    }
+
+    /* Red container (seconddiv) inside the blue container */
+    .seconddiv {
+      border: 2px solid red;
+      width: 500px;
+      height: 200px;
+      background-color: red;
+      border-top-left-radius: 60%;
+      border-top-right-radius: 40%;
+      border-bottom-right-radius: 50%;
+      border-bottom-left-radius: 20%;
+      position: absolute; /* Position the red box inside the blue container */
+      bottom:0px; /* Align it to the bottom of the blue shape */
+
+    }
+
+    /* Image inside the irregular shape */
+    img {
+      position: absolute;
+      bottom: -400px; /* Initially position the image below the shape */
+      left: 50%;
+      transform: translateX(-50%); /* Center the image */
+      height: 400px;
+      width: 300px;
+      border-radius: 50%; /* Make image circular if desired */
+      animation: moveImage 3s ease-out forwards; /* Animation to move image */
+     
+    }
+
+    /* Keyframes animation for image */
+    @keyframes moveImage {
+      0% {
+        bottom: -400px; /* Start below the shape */
+      }
+     
+      100% {
+        bottom: 20px; /* Make the top part overflow */
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="firstdiv">
+    <!-- The red box inside the blue shape -->
+    <div class="seconddiv"></div>
+    <img src="https://static.toiimg.com/thumb/msid-109675308,width-1280,height-720,imgsize-49070,resizemode-6,overlay-toi_sw,pt-32,y_pad-40/photo.jpg">
+</div>
+
+</body>
+</html>
+
+
+
+
+
+
+/* divs */
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flat Irregular Shape with Image Animation</title>
+  <style> 
+    .mainbox {
+        border: 2px solid black;
+        height: 500px;
+        width: 550px;
+        display: flex;
+        flex-wrap: wrap;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Ensure each box takes up 50% width and height of the container */
+    .firstbox, .secondbox, .thirdbox, .forthbox {
+        width: 50%;
+        height: 50%;
+        position: absolute;
+        opacity: 0; /* Start with invisible */
+    }
+
+    /* Keyframe animations */
+    @keyframes fromLeft {
+        0% {
+            left: -100%;
+            opacity: 0;
+        }
+        100% {
+            left: 0;
+            opacity: 1;
+        }
+    }
+
+    @keyframes fromRight {
+        0% {
+            left: 100%;
+            opacity: 0;
+        }
+        100% {
+            left: 50%;
+            opacity: 1;
+        }
+    }
+
+    @keyframes bfromLeft {
+        0% {
+            left: -100%;
+            top: 100%; 
+            opacity: 0;
+        }
+        100% {
+            left: 0;
+            top: 50%; /* End in the bottom half */
+            opacity: 1;
+        }
+    }
+
+    @keyframes bfromRight {
+        0% {
+            left: 100%;
+            top: 100%; /* Start from below the container */
+            opacity: 0;
+        }
+        100% {
+            left: 50%;
+            top: 50%; /* End in the bottom half */
+            opacity: 1;
+        }
+    }
+
+    /* First box (lightblue) comes from left */
+    .firstbox {
+        background-color: lightblue;
+        animation: fromLeft 1s ease-out forwards;
+        animation-delay: 0s; /* First box comes from left */
+    }
+
+    /* Second box (lightgreen) comes from right */
+    .secondbox {
+        background-color: lightgreen;
+        animation: fromRight 1s ease-out forwards;
+        animation-delay: 1s; /* Second box comes from right */
+    }
+
+    /* Third box (lightcoral) comes from bottom left */
+    .thirdbox {
+        background-color: lightcoral;
+        animation: bfromLeft 1s ease-out forwards;
+        animation-delay: 2s; /* Third box comes from bottom left */
+    }
+
+    /* Fourth box (lightyellow) comes from bottom right */
+    .forthbox {
+        background-color: lightyellow;
+        animation: bfromRight 1s ease-out forwards;
+        animation-delay: 3s; /* Fourth box comes from bottom right */
+    }
+  </style>
+</head>
+<body>
+
+<div class="mainbox">
+    <div class="firstbox"></div>
+    <div class="secondbox"></div>
+    <div class="thirdbox"></div>
+    <div class="forthbox"></div>
+</div>
+
+</body>
+</html>

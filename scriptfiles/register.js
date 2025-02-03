@@ -50,43 +50,7 @@ $(document).ready(intialload())
 
 
 
-//function for load periodicity
-function loadperiodicity() {
 
-    var payload = {
-        load: "loadperiodicity"
-    }
-
-    $.ajax({
-        type: "POST",
-        url: "./webservices/register.php",
-        data: JSON.stringify(payload),
-        dataType: "json",
-        success: function(response) {
-            if (response.status === "Success") {
-                periodarr = response.data;
-                console.log(periodarr);
-                let selectElement = document.querySelector('.payment_period');
-                let selectperiod = document.getElementById('selectionperiod')
-                selectElement.innerHTML = "<option>select</option>";
-                periodarr.forEach(per => {
-                    const option = document.createElement('option');
-                    option.value = per.sno;
-                    option.textContent = per.period;
-
-                    // Append the option to the select element
-                    selectElement.appendChild(option);
-                })
-                console.log(selectElement);
-
-            }
-        },
-        error: function(err) {
-            console.log(err);
-        }
-    })
-
-}
 
 //function showfooddetails
 function showfooddetails(){
@@ -101,8 +65,6 @@ function intialload() {
     document.querySelector('.addresses_area').style.display = "none";
  //   document.querySelector('.button_area').style.display = "none";
     form_tdylist.style.display = "none";
-    loadperiodicity();
-
 }
 
 
@@ -404,6 +366,11 @@ register.addEventListener('click', () => {
     email.value = "";
     primaryphone.value = "";
 
+    let regadd = document.querySelectorAll(".reg_address input");
+    regadd.forEach(x=>{
+        x.value = "";
+    })
+
 })
 
 //function for register
@@ -469,6 +436,14 @@ submit.addEventListener('click', () => {
 //search customer
 searchbtn.addEventListener('click', () => {
 
+    let address_input = document.querySelectorAll('.billing_area .address_input_area input');
+   address_input.forEach(x=>{
+    x.value = "";   
+   })
+    
+
+    console.log("h",address_input);
+    
 
     const searchmethod = searchtype.value;
 

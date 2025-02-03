@@ -91,20 +91,20 @@
                 <div class="form_tdylist">
                     <div class="customerform" id="customerform">
                         <div class="input_row" id="customer_div_id">
-                            <label>ID:</label>
+                            <label><span><i class="fa-solid fa-id-card"></i></span></label>
                             <input disabled class="customer_id">
                         </div>
                         <div class="input_row">
-                            <label>Name:</label>
-                            <input disabled class="customer_Name" id="customer_name">
+                            <label><span><i class="fa-solid fa-user"></i></span></label>
+                            <input disabled class="customer_Name" id="customer_name" placeholder="Enter Name">
                         </div>
                         <div class="input_row">
-                            <label>Phone:</label>
-                            <input disabled class="customer_Phone" id="customer_phone">
+                            <label><span><i class="fa-solid fa-phone"></i></span></label>
+                            <input disabled class="customer_Phone" id="customer_phone" placeholder="Enter PH.Number">
                         </div>
                         <div class="input_row">
-                            <label>Email:</label>
-                            <input disabled class="customer_Email" id="customer_email">
+                            <label><span><i class="fa-solid fa-envelope"></i></span></label>
+                            <input disabled class="customer_Email" id="customer_email" placeholder="Enter Mail">
                         </div>
                         <!-- <div class="input_row" id="selectionperiod">
                             <label>Period:</label>

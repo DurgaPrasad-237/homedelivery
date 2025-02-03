@@ -256,23 +256,23 @@ function loadReport($conn){
     $x = "";
 if ($foodtype == "") {
     if ($periodicity == "" && $cid == "") {
-        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND o.Status != '0'";
+        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND o.Status <> '0'";
     } elseif ($periodicity !== "" && $cid == "") {
-        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND c.Periodicity = '$periodicity' AND o.Status != 0";
+        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND c.Periodicity = '$periodicity' AND o.Status <> 0";
     } elseif ($periodicity == "" && $cid !== "") {
-        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND c.CustomerID = '$cid' AND o.Status != 0";
+        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND c.CustomerID = '$cid' AND o.Status <> 0";
     } else {
-        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND c.CustomerID = '$cid' AND c.Periodicity = '$periodicity' AND o.Status != 0";
+        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND c.CustomerID = '$cid' AND c.Periodicity = '$periodicity' AND o.Status <> 0";
     }
 } else {
     if ($periodicity == "" && $cid == "") {
-        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND o.FoodTypeID = '$foodtype' AND o.Status != 0";
+        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND o.FoodTypeID = '$foodtype' AND o.Status <> '0'";
     } elseif ($periodicity !== "" && $cid == "") {
-        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND c.Periodicity = '$periodicity' AND o.FoodTypeID = '$foodtype' AND o.Status != 0";
+        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND c.Periodicity = '$periodicity' AND o.FoodTypeID = '$foodtype' AND o.Status <> 0";
     } elseif ($periodicity == "" && $cid !== "") {
-        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND c.CustomerID = '$cid' AND o.FoodTypeID = '$foodtype' AND o.Status != 0";
+        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND c.CustomerID = '$cid' AND o.FoodTypeID = '$foodtype' AND o.Status <> 0";
     } else {
-        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND c.CustomerID = '$cid' AND c.Periodicity = '$periodicity' AND o.FoodTypeID = '$foodtype' AND o.Status != 0";
+        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND c.CustomerID = '$cid' AND c.Periodicity = '$periodicity' AND o.FoodTypeID = '$foodtype' AND o.Status <> 0";
     }
 }
 
