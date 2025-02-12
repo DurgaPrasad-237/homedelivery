@@ -267,7 +267,7 @@ thead {
     font-size: 12px;
 }
 .summary_head button{
-    padding:5px;
+    padding:2px;
     width:5vw;
     background-color: transparent;
     border:3px solid #FFC857;
@@ -275,7 +275,6 @@ thead {
     color:#FFC857;
     cursor: pointer;
     font-weight: 600;
-    width:10vw
 }
 .summary_head button:hover{
     background-color: #FFC857;
@@ -610,3 +609,112 @@ display:none;
     background-color: white;
     color: #FFC857;
 }
+.editamt_td{
+    display:flex;
+    flex-direction: row;
+}
+.calendar-only {
+    position: relative;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 20px;
+}
+.calendar-only::-webkit-date
+
+/* Hide the text inside the input */
+.calendar-only::-webkit-calendar-picker-indicator {
+    opacity: 1;
+    cursor: pointer;
+}
+
+.calendar-only::-webkit-datetime-edit,
+.calendar-only::-webkit-inner-spin-button,
+.calendar-only::-webkit-clear-button {
+    display: none;
+}
+
+.pending_reports{
+    display:flex;
+    flex-direction: column;
+}
+.pending_months{
+    display:flex;
+    flex-direction: row;
+    width:99.7%;
+    justify-content: space-between;
+}
+.pending_months span{
+    font-size: 15px;
+    width:7.70%;
+    color:black;
+    border:none;
+   text-align: center;
+   border:2px solid #FFC857;
+   cursor:pointer;
+   background-color: #FFC857;
+   color:white;
+   font-weight: bold;
+}
+#yearSelect{
+    width:100%;
+}
+span.active{
+    background-color: white;
+    color:#FFC857;
+    font-weight: bold;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+.fa-circle-info{
+    cursor:pointer;
+    position: relative;
+}
+.descinfo{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    height:auto;
+    width:20vw;
+    position: absolute;
+    padding:10px;
+    background-color: white;
+    display:none;
+    z-index: 999;
+    right:8vw;
+}
+.descinfo p{
+    margin:0px;
+    padding:0px;
+    font-size: 16px;
+}
+.desctd{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width:100%;
+    background-color:#471d0e;
+    color:white;
+    padding:2px;
+}
+.desctd p{
+    width:33%;
+
+}
+.descbd p{
+    width:100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 16px;
+    margin-bottom: 1vh;
+}
+.descbd p span{
+    width:33%;
+}
+/* .descbd p:nth-last-child(even){
+    background-color: rgb(57, 57, 57);
+    color:white;
+}
+.descbd p:nth-last-child(odd){
+    background-color: rgb(180, 178, 178);
+    color:black;
+} */

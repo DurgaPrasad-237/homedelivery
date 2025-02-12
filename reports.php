@@ -121,6 +121,7 @@
                     <input type="month" id="selected_month">
                     </div>
                     <button onclick="monthly_summary()">Submit</button>
+                    <button onclick="pendingreports()">Pending Reports</button>
                 </div>
                 <div class="s_table-container">
                     <table class="s_table">
@@ -149,6 +150,45 @@
                             <!-- Repeat rows for demonstration -->
                         </tbody>
                     </table>
+
+                    <!-- pending reports -->
+                    <div class="pending_reports">
+                       <div class="pending_months">
+                            <span><select id="yearSelect">
+                            </select></span>
+                            <span onclick="loadPendingMonthReport(this)">JAN</span>
+                            <span onclick="loadPendingMonthReport(this)">FEB</span>
+                            <span onclick="loadPendingMonthReport(this)">MAR</span>
+                            <span onclick="loadPendingMonthReport(this)">APR</span>
+                            <span onclick="loadPendingMonthReport(this)">MAY</span>
+                            <span onclick="loadPendingMonthReport(this)">JUN</span>
+                            <span onclick="loadPendingMonthReport(this)">JUL</span>
+                            <span onclick="loadPendingMonthReport(this)">AUG</span>
+                            <span onclick="loadPendingMonthReport(this)">SEP</span>
+                            <span onclick="loadPendingMonthReport(this)">OCT</span>
+                            <span onclick="loadPendingMonthReport(this)">NOV</span>
+                            <span onclick="loadPendingMonthReport(this)">DEC</span>
+                            <span onclick="pendingreports()"class="active">All</span>
+                       </div>
+                       <table>
+                            <thead> 
+                                <tr>
+                                <th>CustomerName</th>
+                                <th>Email</th>
+                                <th>Billing Number</th>
+                                <th>Total Amount</th>
+                                <th>Paid Amount</th>
+                                <th>Pending Amount</th>   
+                                <th>Info</th>
+                                </tr>
+                            </thead>
+                            <tbody class="pending_months_report_body">
+                                
+                            </tbody>
+                        
+
+                       </table>
+                    </div>
                 </div>
 
             </div>

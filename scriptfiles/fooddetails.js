@@ -323,10 +323,73 @@ error:function(error){
 })
 }
 
+function loadFoodPrices() {
+    var payload = {
+        OptionID: document.querySelector('#food_items-dp').value,
+        load: "load_foodprices",
+    };
+    console.log("payload", payload);
+    $.ajax({
+        type: "POST",
+        url: "./webservices/fooddetails1.php",
+        dataType: 'json',
+        data: JSON.stringify(payload),
+        success: function (response) {
+            console.log(response.data);
+            if (response.data !== "No Data") {
+                document.querySelector('.no_price').style.display = "none";
+
+                // Filter the data to find the record with the nearest date in the past or today
+                const currentDate = new Date();
+                let nearestRecord = null;
+
+                response.data.forEach(item => {
+                    const fromDate = new Date(item.fromdate);
+                    if (fromDate <= currentDate) { // Ensure the date is in the past or today
+                        if (!nearestRecord || fromDate > new Date(nearestRecord.fromdate)) {
+                            nearestRecord = item; // Update the nearest record
+                        }
+                    }
+                });
+
+                const typesTableBody = $('#typesTableBody');
+                typesTableBody.empty();
+
+                if (nearestRecord) {
+                    const fromDateFormatted = new Date(nearestRecord.fromdate).toISOString().split('T')[0];
+                    const row = $('<tr>');
+                    row.html(`
+                        <td>${nearestRecord.price}</td>
+                        <td>${fromDateFormatted}</td>
+                        <td>
+                            <button class="view_history"  style="width: 50px;display: flex; align-items: center; justify-content: center;justify-self:center;  padding: 0; border: none; background-color: #f0f0f0; border-radius: 4px;">
+                                <i class="fa-solid fa-eye fa-beat-fade" onclick="loadhistory(this)" style="font-size: 18px;"></i>
+                            </button>
+                        </td>
+                    `);
+                    typesTableBody.append(row);
+                }
+            } else {
+                const typesTableBody = $('#typesTableBody');
+                typesTableBody.empty();
+                document.querySelector('.no_price').style.display = "block";
+            }
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    });
+}
 
 
-//function for load food prices
-function loadFoodPrices(){
+
+
+
+// function for load food prices
+function loadhistory(x){ 
+      console.log("loadhistory",x);
+      console.log("1112323233232",x.classList.contains('fa-eye'));
+      
 let intial = false;
 var payload = {
 OptionID:document.querySelector('#food_items-dp').value,
@@ -343,30 +406,49 @@ success:function(response){
    if(response.data !== "No Data"){
     document.querySelector('.no_price').style.display = "none";
     console.log(response.data);
-        const typesTableBody = $('#typesTableBody');
+        const tablehead =  document.getElementById('tablehead');
+        const typesTableBody = $('#typesTableBody1');
         typesTableBody.empty();
-        response.data.forEach(item => {
-        const fromDate = new Date(item.fromdate).toISOString().split('T')[0];  // Convert to YYYY-MM-DD format
-        // const toDate = new Date(item.to_date).toISOString().split('T')[0];  // Convert to YYYY-MM-DD format
-        let disabled_status = (intial)?"disabled":"enabled";
+        if(x.classList.contains('fa-eye')){
+            x.classList.add('fa-eye-slash')
+            x.classList.remove('fa-eye')
 
-        const row = $('<tr>');
+            response.data.forEach(item => {
+                const fromDate = new Date(item.fromdate).toISOString().split('T')[0];  // Convert to YYYY-MM-DD format
+                // const toDate = new Date(item.to_date).toISOString().split('T')[0];  // Convert to YYYY-MM-DD format
+                let disabled_status = (intial)?"disabled":"enabled";
         
-        row.html(`
-            <td>${item.type}</td>
-            <td>${item.item_name}</td>
-            <td> <input ${disabled_status} type="number" min="0" data-prev="${item.price}" oninput="priceChange(${item.log_sno})" class="price_${item.log_sno}" value="${item.price}"/> </td>
-            <td>${fromDate}</td>
-            <td><center><button disabled id="fdedtbtn" class="edit_buttonfd_${item.log_sno}" onclick="foodPriceEdit('${item.log_sno}','${item.OptionID}')">Edit</button></center></td>
- 
-        `);
-        typesTableBody.append(row);
-        // <td><center><button class="edit-buttonfd">Edit</button></center></td>
-        intial = true;
-    });
+                const row = $('<tr>');
+                
+                row.html(`
+                 
+                    <td> <input ${disabled_status} type="number" min="0" data-prev="${item.price}" oninput="priceChange(${item.log_sno})" class="price_${item.log_sno}" value="${item.price}"  style="width:70px;text-align:center"/> </td>
+                    <td>${fromDate}</td>
+                    <td><center><button disabled id="fdedtbtn" class="edit_buttonfd_${item.log_sno}" onclick="foodPriceEdit('${item.log_sno}','${item.OptionID}')">Edit</button></center></td>
+         
+                `);
+                typesTableBody.append(row);
+                // <td><center><button class="edit-buttonfd">Edit</button></center></td>
+                intial = true;
+            });
+            $('#tablehead').show();
+            
+         }
+       
+         else{
+           x.classList.add('fa-eye')
+           x.classList.remove('fa-eye-slash')
+           $('#tablehead').hide();
+           
+        //    document.querySelector('order-history').innerHTML=""
+   
+         }
+       
    }
    else{
-    const typesTableBody = $('#typesTableBody');
+    document.getElementById('tablehead').style.display="none";
+    $('#tablehead').hide();
+    const typesTableBody = $('#typesTableBody1');
     typesTableBody.empty();
     document.querySelector('.no_price').style.display = "block";
    }
@@ -376,6 +458,56 @@ error:function(err){
 }
 })
 }
+
+
+// function loadhistory(){
+//     var payload = {
+//     OptionID:document.querySelector('#food_items-dp').value,
+//     load:"load_foodprices",
+//     }
+//     console.log("paydload",payload);
+//     $.ajax({
+//     type:"POST",
+//     url: "./webservices/fooddetails1.php",
+//     dataType: 'json',
+//     data: JSON.stringify(payload),
+//     success:function(response){
+//         console.log(response.data);
+//        if(response.data !== "No Data"){
+//         document.querySelector('.no_price').style.display = "none";
+//         console.log(response.data);
+//             const typesTableBody = $('#typesTableBody1');
+//             typesTableBody.empty();
+//             response.data.forEach(item => {
+//             const fromDate = new Date(item.fromdate).toISOString().split('T')[0];  // Convert to YYYY-MM-DD format
+//             // const toDate = new Date(item.to_date).toISOString().split('T')[0];  // Convert to YYYY-MM-DD format
+    
+//             const row = $('<tr>');
+//             row.html(`
+               
+//                 <td>${item.price}</td>
+//                 <td>${fromDate}</td>
+                
+     
+//             `);
+//             typesTableBody.append(row);
+//             // <td><center><button class="edit-buttonfd">Edit</button></center></td>
+//         });
+//        }
+//        else{
+//         const typesTableBody = $('#typesTableBody1');
+//         typesTableBody.empty();
+//         document.querySelector('.no_price').style.display = "block";
+//        }
+//     },
+//     error:function(err){
+//         console.log(err);
+//     }
+//     })
+//     }
+    
+
+
 
 function priceChange(sno){
 

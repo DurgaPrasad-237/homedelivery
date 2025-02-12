@@ -50,26 +50,46 @@
 
 
                 </div>
+                <div class="total">
                 <div class="existing-categories">
                     <table class="category-table">
                         <thead>
                             <tr>
-                                <th>Category</th>
-                                <th>Item Name</th>
+                                <!-- <th>Category</th>
+                                <th>Item Name</th> -->
                                 <th>Price</th>
                                 <th>From
                                     Date</th>
                                 <!-- <th>To
                                     Date
                                 </th> -->
-                                <th>Edit</th>
+                                <!-- <th>Edit</th> -->
+                                 <th></th>
                             </tr>
                         </thead>
-                        <tbody id="typesTableBody">
+                        <tbody id="typesTableBody" >
                             <!-- Dynamic content will be inserted here -->
                         </tbody>
                     </table>
                     <p class="no_price">Price not yet inserted</p>
+                </div>
+                <div class="order-history">
+                <table class="category-table" id="table-head">
+                        <thead id="tablehead" style="display: none;">
+                            <tr>
+                                <!-- <th>Category</th>
+                                <th>Item Name</th> -->
+                                <th>Price</th>
+                                <th>From
+                                    Date</th>
+                                <th>Edit</th>
+                            </tr>
+                        </thead>
+                        <tbody id="typesTableBody1">
+                            <!-- Dynamic content will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
                 </div>
             </div>
 

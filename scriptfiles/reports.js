@@ -18,6 +18,28 @@ let todate;
 let paidamount;
 let pendingamount;
 let totalamount;
+let pending_months_span = document.querySelectorAll('.pending_months span:nth-child(n+2)');
+let infocircle;
+
+
+
+
+
+const yearSelect = document.getElementById("yearSelect");
+const currentYear = new Date().getFullYear();
+
+//dropdown of year
+for (let i = currentYear; i >= 2020; i--) {
+    let option = document.createElement("option");
+    option.value = i;
+    option.text = i;
+    yearSelect.appendChild(option);
+}
+
+yearSelect.addEventListener('change',()=>{
+    pendingmonths();
+})
+
 
 
 
@@ -129,6 +151,21 @@ const year = d_date.getFullYear();
 
 // Format the date as DD-MM-YYYY
 return `${day}-${month}-${year}`;
+}
+
+//another date formation starting with year
+function year_date_format(date) {
+    console.log('date:', date);
+    
+    const d_date = new Date(date);
+    
+    // Extract day, month, and year
+    const day = d_date.getDate().toString().padStart(2, '0'); 
+    const month = (d_date.getMonth() + 1).toString().padStart(2, '0');
+    const year = d_date.getFullYear();
+    
+    // Format the date as DD-MM-YYYY
+    return `${year}-${month}-${day}`;
 }
 
 
@@ -358,6 +395,7 @@ s_tbody.innerHTML = "";
 subreports.addEventListener('click',()=>{
 document.querySelector('.container').style.display = "none";
 document.querySelector('.summary').style.display = "flex";
+document.querySelector('.pending_reports').style.display = "none";
 
 let reporttbody = document.querySelector('.report_tbody');
 reporttbody.innerHTML = "";
@@ -387,7 +425,211 @@ document.querySelector('#s_todate').setAttribute('value', todaydate);
 
 })
 
+//find reports
+function pendingreports(){
+   document.querySelector('.s_table').style.display = "none";
+   document.querySelector('.pending_reports').style.display = "flex";
+   pendingmonths();
 
+   //first date of the previous month
+   let today = new Date();
+   let firstDayPrevMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+   firstDayPrevMonth = year_date_format(firstDayPrevMonth);
+
+   var payload = {
+    previousmonth:firstDayPrevMonth,
+    load:"pendings"
+   }
+   console.log(payload);
+
+   $.ajax({
+        type: "POST",
+        url: "./webservices/reports.php",
+        data: JSON.stringify(payload),
+        dataType: "json",
+        success:function(response){
+            console.log(response);
+            if(response.data.length > 0){
+                
+                let tbodyr = document.querySelector('.pending_months_report_body');
+                tbodyr.innerHTML = "";
+
+                response.data.forEach(itm=>{
+                   let trrow = document.createElement('tr');
+                   trrow.innerHTML = `
+                    <td>${itm.CustomerName}</td>
+                    <td>${itm.Email}</td>
+                    <td>${itm.Phone2}</td>
+                    <td>${itm.total_amount}</td>
+                    <td>${itm.total_paid}</td>
+                    <td>${itm.total_unpaid}</td>
+                    <td><i onmouseover="displayinfo(${itm.CustomerID})" onmouseout="hideinfo(${itm.CustomerID})" class="fa-solid fa-circle-info fa-beat-fade"></i>
+                    <div class="descinfo">
+                        <div class="desctd">
+                            <p>Month</p>
+                            <p>Amount</p>
+                            <p>Pending</p>
+                        </div>
+                        <div class="descbd">
+                        
+                        </div>
+                    </div>
+                    </td> 
+                   `
+                   tbodyr.appendChild(trrow);
+                })
+         
+
+
+            }
+            else{
+                alert("No pending")
+                let tbodyr = document.querySelector('.pending_months_report_body');
+                tbodyr.innerHTML = ""
+            }
+        },
+        error:function(err){
+            alert("Something Wrong");
+            console.log(err);
+        }
+   })
+}
+
+
+//circle info
+function displayinfo(cid){
+     var payload = {
+        customerid:cid,
+        load:"infopendings",
+     }
+
+     $.ajax({
+        type: "POST",
+        url: "./webservices/reports.php",
+        data: JSON.stringify(payload),
+        dataType: "json",
+        success:function(response){
+            console.log(response);
+            let descinfo = document.querySelector(`.descinfo`);
+            descinfo.style.display = 'block';
+
+            let descbd = document.querySelector('.descbd');
+            descbd.innerHTML = "";
+            response.data.forEach(itm=>{
+                let pr = document.createElement('p');
+                pr.innerHTML = `<span>${itm.monthyear}</span><span>${itm.total_amount}</span><span>${itm.unpaid_amount}</span>`;
+                descbd.appendChild(pr);
+            })
+        },
+        error:function(err){
+            alert("Somethig Error");
+            console.log(err);
+        }
+     })
+}
+function hideinfo(cid){
+    let descinfo = document.querySelector(`.descinfo`);
+    descinfo.style.display = 'none';
+}
+
+
+//months
+function pendingmonths(){
+    let i = 0;
+    let star
+    pending_months_span.forEach(spn => {
+        let todaydate = new Date();
+        //this for ignore last span
+        if(i < 12){
+            spn.setAttribute('data-month',++i);
+            spn.setAttribute('data-year',todaydate.getFullYear());
+        }
+
+
+       
+        if(parseInt(spn.dataset.month) === parseInt(todaydate.getMonth() + 1)  && parseInt(spn.dataset.year) === parseInt(yearSelect.value)){  
+            if(!spn.textContent.includes('*')){
+                spn.textContent += "*";
+            }
+          
+        } 
+        else{
+            console.log("else")
+            spn.textContent = spn.textContent.replace(/\*/g, "");;
+        }  
+    });
+}
+
+//load pendingreport
+function loadPendingMonthReport(tbtn){
+    pending_months_span.forEach(el => el.classList.remove("active"));
+    tbtn.classList.add('active');
+
+
+    let fromdate = new Date(`${yearSelect.value}-${tbtn.dataset.month}-01`)
+    let todate = new Date(fromdate.getFullYear(),fromdate.getMonth() + 1 , 1);
+
+    fromdate = year_date_format(fromdate);
+    todate = year_date_format(todate);
+
+    let thismonth_status = tbtn.textContent.includes('*');
+    if(thismonth_status){
+        todate = new Date();
+        todate = year_date_format(todate);
+    }
+
+    var payload = {
+        load:"load_pending_month_report",
+        fromdate:fromdate,
+        todate:todate,
+        thismonth:thismonth_status
+    }
+
+
+    $.ajax({
+        type: "POST",
+        url: "./webservices/reports.php",
+        data: JSON.stringify(payload),
+        dataType: "json",
+        success:function(response){
+            console.log("months",response);
+            if(response.data.length > 0){
+             
+                let tbodyr = document.querySelector('.pending_months_report_body');
+                tbodyr.innerHTML = "";
+
+                response.data.forEach(itm=>{
+                   let trrow = document.createElement('tr');
+                   trrow.innerHTML = `
+                    <td>${itm.CustomerName}</td>
+                    <td>${itm.Email}</td>
+                    <td>${itm.Phone2}</td>
+                    <td>${itm.total_amount}</td>
+                    <td>${itm.total_paid}</td>
+                    <td>${itm.total_unpaid}</td>
+                    <td>-</i>
+                    
+                   `
+                   tbodyr.appendChild(trrow);
+                })
+                infocircle = document.querySelector('.fa-circle-info');
+            }
+            else{
+                alert("No pending")
+                let tbodyr = document.querySelector('.pending_months_report_body');
+                tbodyr.innerHTML = ""
+            }
+        },
+        error:function(err){
+            console.log(err);
+        }
+    })
+}
+
+   
+
+
+//monthly summary
 function monthly_summary(){
 document.querySelector('.sumamry_tabs').style.display = "none";
 document.querySelector('.payment_list').style.display = "none";
@@ -412,6 +654,7 @@ $.ajax({
         if(response.data !== "NO DATA"){
           
             document.querySelector('.s_table').style.display = "inline-table";
+            document.querySelector('.pending_reports').style.display = "none";
             let s_tbody = document.querySelector('.s_tbody');
             s_tbody.innerHTML = "";
             response.data.forEach((dt)=>{
@@ -431,7 +674,7 @@ $.ajax({
             <td>${dt.total_amount - dt.paid_amount}</td>
             <td>${dt.total_amount}</td>
             <td class="related_month">${year}-${togetMonth(month)}</td>
-            <td><input type="number"  oninput="payment_input(event)" class="paidamount_value" ${disable}></td>
+            <td class="editamt_td"><input type="number"  oninput="payment_input(event)" class="paidamount_value" ${disable}><span><input type="date" class="calendar-only"></span></td>
             <td><button onclick="payment_update(event,${dt.total_amount - dt.paid_amount})" class="payment_update_btn" disabled>
             <i class="fa-solid fa-pen-to-square fa-beat-fade"></i>
             </button></td>    
@@ -453,6 +696,10 @@ $.ajax({
 
 })
 }
+
+
+
+
 
 //function for store the previous value and enable the btn
 function payment_input(event){
@@ -491,10 +738,18 @@ if(previous_paid_amount === new_value){
 else{
 
     let confirmstatus = confirm(`Do you update the paid amount of customer:${ptrow.querySelector('.customer_name').textContent}\namount:${new_value}`);
+    let calendaronly = ptrow.querySelector('.calendar-only').value;
 
     if(!confirmstatus){
         return;
     }
+    console.log("h",calendaronly);
+    if(!calendaronly){
+        alert("select the date also");
+        return;
+    }
+
+   
 
 
     console.log(parseInt(previous_paid_amount) + parseInt(new_value));
@@ -509,7 +764,8 @@ else{
      todate:ptrow.querySelector('.p_todate').dataset.todate,
      load:"update_payment",
      relatedmonth:ptrow.querySelector('.related_month').textContent,
-     todaydate:todaydate.toISOString().split('T')[0]
+     todaydate:todaydate.toISOString().split('T')[0],
+     paiddate:calendaronly
    }
 
    console.log("update",payload);
@@ -814,7 +1070,7 @@ $.ajax({
     data: JSON.stringify(payload),
     dataType: "json",
     success:function(response){
-        console.log(response)
+        console.log("d",response);
        if(response.status === "Success"){
         alert("Successfully Updated")
         document.querySelector('.loader').style.display = "none"

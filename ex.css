@@ -27,7 +27,7 @@ body{
     }
 
     /* Red container (seconddiv) inside the blue container */
-    .seconddiv {
+    .seconddiv:nth {
       border: 2px solid red;
       width: 500px;
       height: 200px;
@@ -38,6 +38,7 @@ body{
       border-bottom-left-radius: 20%;
       position: absolute; /* Position the red box inside the blue container */
       bottom:0px; /* Align it to the bottom of the blue shape */
+      
 
     }
 

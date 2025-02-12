@@ -242,7 +242,7 @@ function nlunch($conn) {
             setData($conn, $logQuery);
 
             // Process payment
-            payments($cid, $date, $conn);
+            // payments($cid, $date, $conn);
         }
     }
 
@@ -300,7 +300,7 @@ function updatelunch($conn)
                                  VALUES ('$cid', '$orderid', '$quantity', '$totalamount', '$foodtype', '$reason')";
                     setData($conn, $logQuery);
 
-                   $result = payments($cid,$date,$conn);
+                //    $result = payments($cid,$date,$conn);
 
                     $jsonresponse = ['code' => '200', 'status' => 'success', 'message' => 'Order Updated Successfully'];
                 }
@@ -312,7 +312,7 @@ function updatelunch($conn)
                     $logQuery = "INSERT INTO logs(CustomerID, OrderID, Quantity, Price, FoodType) 
                     VALUES ('$cid', '$orderid', '$ld[quantity]', '$totalamount', '$foodtype')";
                     setData($conn, $logQuery);
-                    $result = payments($cid,$date,$conn);
+                    // $result = payments($cid,$date,$conn);
                     $jsonresponse = array('code' => '500', 'status' => 'success', 'message' => "Order Placed Succesfully", $date, $foodtype, $resultorderid, $insertquery);
                 } else {
                     $jsonresponse = array('code' => '500', 'status' => 'error', 'message' => "no data there", $date, $foodtype, $resultorderid, $datalunch);
@@ -337,7 +337,7 @@ function updatelunch($conn)
             $logQuery = "INSERT INTO logs(CustomerID, OrderID, Quantity, Price, FoodType) 
                          VALUES ('$cid', '$orderid', '$quantity', '$totalamount', '$foodtype')";
             setData($conn, $logQuery);
-            $result = payments($cid,$date,$conn);
+            // $result = payments($cid,$date,$conn);
         }
         $jsonresponse = ['code' => '200', 'status' => 'success', 'message' => 'Order Placed Successfully'];
     }
@@ -676,7 +676,7 @@ function setitemsb($conn)
             $logQuery = "INSERT INTO `logs`(`CustomerID`, `OrderID`, `Quantity`, `Price`, `FoodType`) 
                          VALUES ('$cid','$orderid','$quantity','$totalamount' * '$quantity','$ordertype')";
             setData($conn, $logQuery);
-            $result = payments($cid,$date,$conn); 
+            // $result = payments($cid,$date,$conn); 
             $jsonResponse = array('code' => '200', 'status' => 'success', 'message' => "Record updated successfully", 'sql' => "$orderid");
         } else {
             $jsonResponse = array('code' => '304', 'status' => 'warning', 'message' => "No changes made to the existing record");
@@ -760,7 +760,7 @@ function setitemsb($conn)
             $logQuery = "INSERT INTO `logs`(`CustomerID`, `OrderID`, `Quantity`, `Price`, `FoodType`) 
                          VALUES ('$cid', '$orderid', '$quantity', '" . ($totalamount * $quantity) . "', '$ordertype')";
             setData($conn, $logQuery);
-            $result = payments($cid,$date,$conn);
+            // $result = payments($cid,$date,$conn);
             $insertedDates[] = $date;
         }
     }
@@ -839,7 +839,7 @@ function setitemsd($conn)
             $insertedDates[] = $date;
         }
 
-        $result = payments($cid,$date,$conn);
+        // $result = payments($cid,$date,$conn);
     }
 
     // Prepare single JSON response
@@ -1040,7 +1040,7 @@ function updateQuantity($conn)
             $logQuery = "INSERT INTO `logs`(`CustomerID`, `OrderID`, `Quantity`, `Price`, `FoodType`, `Reason`) 
                          VALUES ('$cid','$orderid','$quantity','$price' * '$quantity','$foodtype','$reason')";
             setData($conn, $logQuery);
-            $result = payments($cid,$date,$conn); 
+            // $result = payments($cid,$date,$conn); 
             $jsonResponse = array('code' => '200', 'status' => 'success', 'message' => "Record updated successfully", 'sql' => "$orderid");
         } else {
             $jsonResponse = array('code' => '304', 'status' => 'warning', 'message' => "No changes made to the existing record");
@@ -1071,7 +1071,7 @@ function updateQuantity($conn)
             // Log the insertion
             $logQuery = "INSERT INTO `logs`(`CustomerID`, `OrderID`, `Quantity`, `Price`, `FoodType`, `Reason`) VALUES ('$cid','$orderid','$quantity','$price' * '$quantity','$foodtype','$reason')";
             setData($conn, $logQuery);
-            $result = payments($cid,$date,$conn); 
+            // $result = payments($cid,$date,$conn); 
             $jsonResponse = array('code' => '201', 'status' => 'success', 'message' => "New record added successfully");
         } else {
             $jsonResponse = array('code' => '500', 'status' => 'error', 'message' => "Failed to add the new record");
@@ -1156,68 +1156,6 @@ function payments($cid,$orderdate,$conn){
             }
         }
     }
-    
-    // if ($query == 'update') {
-    //     $total_payment_query = "
-    //         SELECT SUM(orders.TotalAmount) AS TotalAmount
-    //         FROM orders
-    //         JOIN foodtype ON orders.FoodTypeID = foodtype.sno
-    //         JOIN customers ON orders.CustomerID = customers.CustomerID
-    //         WHERE orders.OrderDate BETWEEN '$fromdate' AND '$todate' 
-    //           AND orders.CustomerID = $cid";
-    
-    //     // Fetch the total payment amount
-    //     $result_tp = getData($conn, $total_payment_query);
-    //     $total_payment = $result_tp[0]['TotalAmount'] ?? 0;
-    
-    //     $updatepayments = "
-    //         UPDATE payments 
-    //         SET total_amount = $total_payment
-    //         WHERE from_date = '$fromdate' 
-    //           AND to_date = '$todate' 
-    //           AND customer_id = $cid";
-        
-    //     // Execute the update query
-    //     $result_update = setData($conn, $updatepayments);
-
-    //     if($result_update == "Record created"){
-    //         return "success";
-    //     }
-    //     else{
-    //         return "fail";
-    //     }
-    
-    // } else {
-    //     $total_payment_query = "
-    //         SELECT SUM(orders.TotalAmount) AS TotalAmount
-    //         FROM orders
-    //         JOIN foodtype ON orders.FoodTypeID = foodtype.sno
-    //         JOIN customers ON orders.CustomerID = customers.CustomerID
-    //         WHERE orders.OrderDate BETWEEN '$fromdate' AND '$todate' 
-    //           AND orders.CustomerID = $cid";
-    
-    //     // Fetch total payment
-    //     $result_tp = getData($conn, $total_payment_query);
-    
-    //     if (count($result_tp) > 0) {
-    //         $total_payment = $result_tp[0]['TotalAmount'] ?? 0;
-    
-    //         $insertquery = "
-    //             INSERT INTO payments (customer_id, from_date, to_date, total_amount)
-    //             VALUES ($cid, '$fromdate', '$todate', $total_payment)";
-            
-    //         // Execute the insert query
-    //         $result_insert = setData($conn, $insertquery);
-
-    //         if($result_insert == "Record created"){
-    //             return "success";
-    //         }
-    //         else{
-    //             return "fail";
-    //         }
-    //     }
-    // }
-    
 }
 
 

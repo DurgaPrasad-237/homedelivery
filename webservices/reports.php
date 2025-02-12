@@ -27,6 +27,9 @@ $paymentsno = $data['paymentsno'] ?? "";
 $todaydate = $data['todaydate'] ?? "";
 $new_value = $data['new_value'] ?? "";
 $relatedmonth = $data['relatedmonth'] ?? "";
+$paiddate = $data['paiddate'] ?? "";
+$previousmonth = $data['previousmonth'] ?? "";
+$thismonth = $data['thismonth'] ?? "";
 
 if($load == "load_report"){
     loadReport($conn);
@@ -55,6 +58,111 @@ else if($load == "paymenthistory"){
 else if($load == "todayordersummary"){
     todayOrderSummary($conn);
 }
+else if($load == "pendings"){
+    pendings($conn);
+}
+else if($load == "load_pending_month_report"){
+    loadPendingMonthsReport($conn);
+}
+else if($load == "infopendings"){
+    infopendings($conn);
+}
+
+function infopendings($conn){
+    global $cid;
+    $sql = "SELECT from_date,total_amount,unpaid_amount FROM `payments` WHERE customer_id = $cid and unpaid_amount > 0";
+    $result = getData($conn,$sql);
+    $modifiedResult = [];
+    if(count($result) > 0){
+        foreach($result as $rs){
+            $dateObj = DateTime::createFromFormat('Y-m-d', $rs['from_date']);
+            $formattedDate = strtoupper($dateObj->format('M-Y'));
+
+            $modifiedResult[] = [
+                'monthyear'    => $formattedDate,
+                'total_amount'  => $rs['total_amount'],
+                'unpaid_amount' => $rs['unpaid_amount']
+            ];
+        }
+        $jsonresponse = array('code' => '200','status' => "Success",'data'=>$modifiedResult);
+    }
+    echo json_encode($jsonresponse); 
+}
+
+//loadPendingMonthsReport
+function loadPendingMonthsReport($conn){
+    global $fromdate,$todate,$thismonth;
+        $selectquery = "SELECT 
+            customers.CustomerName AS CustomerName,
+            customers.CustomerID AS CustomerID,
+            customers.Email AS Email,
+            customers.Phone2,
+            SUM(payments.unpaid_amount) AS total_unpaid, 
+            SUM(payments.total_amount) AS total_amount, 
+            SUM(payments.paid_amount) AS total_paid
+            FROM payments
+            JOIN customers ON payments.customer_id = customers.CustomerID
+            WHERE payments.customer_id IN (
+            -- Get customers who had unpaid records in Dec 2024
+            SELECT DISTINCT payments.customer_id 
+            FROM payments 
+            WHERE payments.unpaid_amount > 0
+            AND payments.from_date >= '$fromdate' 
+            AND payments.from_date < '$todate'  
+            )
+            AND payments.unpaid_amount > 0  
+            AND payments.from_date >= '$fromdate' 
+            AND payments.from_date < '$todate' 
+            GROUP BY payments.customer_id
+            ORDER BY payments.unpaid_amount desc"; 
+    $resultquery = getData($conn,$selectquery);
+
+    if(count($resultquery) > 0){
+        $jsonresponse = array('code' => '200','status' => "Success",'data'=>$resultquery,);
+    }
+    else{
+        $jsonresponse = array('code' => '200','status' => "Success",'data'=>'','msg'=>'No Pending');
+    }
+    echo json_encode($jsonresponse); 
+}
+
+//pendings
+function pendings($conn){
+    global $previousmonth;
+
+    $selectquery = "
+        SELECT
+ 		customers.CustomerName AS CustomerName,
+        customers.CustomerID AS CustomerID,
+        customers.Email as Email,
+        customers.Phone2,
+       SUM(payments.unpaid_amount) AS total_unpaid, 
+       SUM(payments.total_amount) AS total_amount, 
+       SUM(payments.paid_amount) AS total_paid
+      
+        FROM payments
+        join customers on payments.customer_id = customers.CustomerID
+        WHERE payments.customer_id IN (
+            SELECT payments.customer_id 
+            FROM payments 
+            WHERE payments.unpaid_amount > 0
+            AND payments.from_date < '$previousmonth' 
+        )
+        AND payments.unpaid_amount > 0  
+        GROUP BY payments.customer_id
+    ";
+
+    $resultsql = getData($conn,$selectquery);
+
+    if(count($resultsql) > 0){
+        $jsonresponse = array('code' => '200','status' => "Success",'data'=>$resultsql);
+    }
+    else{
+        $jsonresponse = array('code' => '200','status' => "Success",'data'=>'');
+    }
+    echo json_encode($jsonresponse); 
+}
+
 
 //order summary
 function todayOrderSummary($conn){
@@ -133,13 +241,13 @@ function orderHistory($conn){
 
 //function for update_payment
 function update_payment($conn){
-    global $cid,$fromdate,$todate,$paid_amount,$paymentsno,$todaydate,$new_value,$relatedmonth;
-    $updatequery = "UPDATE `payments` SET `paid_amount`='$paid_amount',`paid_date`='$todaydate' WHERE customer_id = '$cid' AND 
+    global $cid,$fromdate,$todate,$paid_amount,$paymentsno,$todaydate,$new_value,$relatedmonth,$paiddate;
+    $updatequery = "UPDATE `payments` SET `paid_amount`='$paid_amount',`paid_date`='$paiddate' WHERE customer_id = '$cid' AND 
     payments.from_date <= '$fromdate' 
     AND payments.to_date >= '$todate' ";
     $resultquery = setData($conn,$updatequery);
     if($resultquery == "Record created"){
-        $insertquery = "INSERT INTO `payments_log`(`payments_sno`, `paid_amount`,`paid_date`,`related_month`) VALUES ('$paymentsno','$new_value','$todaydate','$relatedmonth')";
+        $insertquery = "INSERT INTO `payments_log`(`payments_sno`, `paid_amount`,`paid_date`,`related_month`) VALUES ('$paymentsno','$new_value','$paiddate','$relatedmonth')";
         $resultinsert = setData($conn,$insertquery);
         if($resultinsert == "Record created"){
             $jsonresponse = array('code' => '200','status' => "Success");
@@ -214,6 +322,7 @@ function send_completed($conn){
     $resultsql = setData($conn,$updatequery);
 
     if ($resultsql === "Record created") {
+        $result = payments($cid,$orderdate,$foodtypevalue,$conn);
 
         $mail = new PHPMailer(true);
 
@@ -246,6 +355,93 @@ function send_completed($conn){
         echo json_encode($jsonresponse);  
     }
 
+}
+
+function payments($cid,$orderdate,$foodtypeID,$conn){
+
+    if ($orderdate instanceof DateTime) {
+        $orderdate = $orderdate->format('Y-m-d');
+    } else {
+        $orderdate = date_create($orderdate)->format('Y-m-d');
+    }
+    
+    $ordermonth = date('m', strtotime($orderdate)); 
+    $orderyear = date('Y', strtotime($orderdate));
+    
+    $fromdate_obj = date_create("$orderyear-$ordermonth-1");
+    $fromdate = date_format($fromdate_obj, 'Y-m-d'); 
+    $todate = date_format($fromdate_obj->modify('last day of this month'), 'Y-m-d');
+    
+
+
+    $checkquery = "select * from payments where customer_id='$cid' and from_date='$fromdate' and to_date='$todate'";
+    $resultcheck = getData($conn,$checkquery);
+
+   
+    
+    if(count($resultcheck) > 0){
+        $previous_totalamount = $resultcheck[0]['total_amount'];
+            $total_payment_query = "
+             SELECT SUM(orders.TotalAmount) AS TotalAmount
+            FROM orders
+            JOIN foodtype ON orders.FoodTypeID = foodtype.sno
+            JOIN customers ON orders.CustomerID = customers.CustomerID
+            WHERE orders.OrderDate =  '$orderdate'
+            AND orders.CustomerID = $cid AND orders.status = 2 AND orders.FoodTypeID = '$foodtypeID'";
+    
+        // Fetch the total payment amount
+        $result_tp = getData($conn, $total_payment_query);
+        $today_amount = $result_tp[0]['TotalAmount'] ?? 0;
+
+        $total_payment = intval($previous_totalamount) + intval($today_amount);
+    
+        $updatepayments = "
+            UPDATE payments 
+            SET total_amount = $total_payment
+            WHERE from_date = '$fromdate' 
+              AND to_date = '$todate' 
+              AND customer_id = $cid";
+        
+        // Execute the update query
+        $result_update = setData($conn, $updatepayments);
+
+        if($result_update == "Record created"){
+            return "success";
+        }
+        else{
+            return "fail";
+        }
+    }
+    else{
+               $total_payment_query = "
+            SELECT SUM(orders.TotalAmount) AS TotalAmount
+            FROM orders
+            JOIN foodtype ON orders.FoodTypeID = foodtype.sno
+            JOIN customers ON orders.CustomerID = customers.CustomerID
+            WHERE orders.OrderDate =  '$orderdate'
+            AND orders.CustomerID = $cid AND orders.status = 2";
+    
+        // Fetch total payment
+        $result_tp = getData($conn, $total_payment_query);
+    
+        if (count($result_tp) > 0) {
+            $total_payment = $result_tp[0]['TotalAmount'] ?? 0;
+    
+            $insertquery = "
+                INSERT INTO payments (customer_id, from_date, to_date, total_amount)
+                VALUES ($cid, '$fromdate', '$todate', $total_payment)";
+            
+            // Execute the insert query
+            $result_insert = setData($conn, $insertquery);
+
+            if($result_insert == "Record created"){
+                return "success";
+            }
+            else{
+                return "fail";
+            }
+        }
+    } 
 }
 
 

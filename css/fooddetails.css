@@ -51,8 +51,9 @@ body{
 }
 
 .existing-categories {
-    margin-top: 20px;
+    /* margin-top: 20px; */
     /* Add space above the table */
+    width:50%;
 }
 
 .category-table {
@@ -180,6 +181,7 @@ body{
     overflow-y: scroll;
     position: relative;
     border:2px solid gray;
+    margin:5px;
 
 }
 
@@ -534,4 +536,22 @@ background-color: green;
 }
 #fdedtbtn:hover{
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.order-history{
+  
+    width:50%;
+    height: 50vh;
+    /* overflow-y: scroll; */
+    position: relative;
+    /* border:2px solid gray; */
+    margin:5px;
+}
+
+.total{
+  
+    display:flex ; 
+    flex-direction:row;
+ 
+
 }
