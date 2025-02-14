@@ -813,63 +813,63 @@ editingId = OptionID; // Set editing ID
 }
 
 function submitForm() {
-const category = $('#category').val();
-const OptionID = $('#food_items-dp').val();
-const Price = $('#Price').val();
-const from_date = $('#from_date').val();
-const ItemName = $('#food_items-dp option:selected').text();
+    const category = $('#category').val();
+    const OptionID = $('#food_items-dp').val();
+    const Price = $('#Price').val();
+    const from_date = $('#from_date').val();
+    const ItemName = $('#food_items-dp option:selected').text();
 
-if (!category || !OptionID || !Price || !from_date ) {
-alert("Fields can't be empty");
-return;
-}
-let confirmmsg = confirm(`Do you really want to change the price \nItemName:${ItemName}\nfromdate:${from_date}`);
-if(!confirmmsg){
-return;
-}
-
-const payload = {
-category: category,
-OptionID: OptionID,
-ItemName:ItemName,
-Price: Price,
-from_date: from_date,
-load:"setFoodPrices"
-// to_date: to_date,
-// load: editingId ? 'update' : 'add',
-// OptionID: editingId // Include OptionID for update, not for add
-};
-console.log("d",payload);
-
-$.ajax({
-type: 'POST',
-url: "./webservices/fooddetails1.php",
-dataType: 'json',
-data: JSON.stringify(payload),
-success: function(response) {
-    console.log(response);
-    if(response.message === "Record Exist"){
-        alert("already record exist in same date");
-        return;
+    if (!category || !OptionID || !Price || !from_date ) {
+    alert("Fields can't be empty");
+    return;
     }
-    if(response.status == "success"){
-        alert("Update Successfully")
+    let confirmmsg = confirm(`Do you really want to change the price \nItemName:${ItemName}\nfromdate:${from_date}`);
+    if(!confirmmsg){
+    return;
+    }
+
+    const payload = {
+    category: category,
+    OptionID: OptionID,
+    ItemName:ItemName,
+    Price: Price,
+    from_date: from_date,
+    load:"setFoodPrices"
+    // to_date: to_date,
+    // load: editingId ? 'update' : 'add',
+    // OptionID: editingId // Include OptionID for update, not for add
+    };
+    console.log("d",payload);
+
+    $.ajax({
+    type: 'POST',
+    url: "./webservices/fooddetails1.php",
+    dataType: 'json',
+    data: JSON.stringify(payload),
+    success: function(response) {
+        console.log(response);
+        if(response.message === "Record Exist"){
+            alert("already record exist in same date");
+            return;
+        }
+        if(response.status == "success"){
+            alert("Update Successfully")
             loadFoodPrices(true);
             let iconElement = document.querySelector(`i[onclick="loadhistory(this,'${OptionID}')"]`);
             if (iconElement) loadhistory(iconElement, OptionID);
-    }   
-    // fetchBackendData(); // Refresh the table
-    // $('#category').val(''); // Clear input fields
-    // $('#ItemName').val('');
-    // $('#Price').val('');
-    // $('#from_date').val('');
-    // $('#to_date').val('');
-    // editingId = null; // Reset editing ID
-},
-error: function(error) {
-    console.error('Error:', error);
-}
-});
+        }   
+        // fetchBackendData(); // Refresh the table
+        // $('#category').val(''); // Clear input fields
+        // $('#ItemName').val('');
+        // $('#Price').val('');
+        // $('#from_date').val('');
+        // $('#to_date').val('');
+        // editingId = null; // Reset editing ID
+    },
+    error: function(error) {
+        console.error('Error:', error);
+    }
+    });
 }
 
 function cancelOperation() {

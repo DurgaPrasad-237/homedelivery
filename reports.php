@@ -168,7 +168,7 @@
                             <span onclick="loadPendingMonthReport(this)">OCT</span>
                             <span onclick="loadPendingMonthReport(this)">NOV</span>
                             <span onclick="loadPendingMonthReport(this)">DEC</span>
-                            <span onclick="pendingreports()"class="active">All</span>
+                            <span id="allreport" class="active">All</span>
                        </div>
                        <table>
                             <thead> 

@@ -31,6 +31,12 @@ else if($load == "load_foodtype"){
 else if ($load == "update") {
     updatecom($conn,$category, $OptionID, $ItemName, $Price, $from_date, $to_date);
 }
+else if($load == "load_foodprices"){
+    loadFoodPrices($conn);
+}
+else if($load == "load_foodhistory"){
+    loadFoodhistory($conn);
+}
 else if($load == "setFoodPrices"){
     setFoodPrices($conn);
 }
@@ -70,12 +76,6 @@ else if($load == "activiyBF"){
 else if($load == "updatePrice"){
     updatePrice($conn);
 }
-else if($load == "load_foodprices"){
-    loadFoodPrices($conn);
-}
-else if($load == "load_foodhistory"){
-    loadFoodhistory($conn);
-}
 // else if($load == 'setbreakfast'){
 //     setBreakFast($conn);
     
@@ -90,65 +90,8 @@ else if($load == "load_foodhistory"){
 //     loaditems($conn);
 // }
 
-
-
-
-//loadin prices of food details
-function loadFoodPrices($conn){
-    global $OptionID,$from_date,$category;
-    $optionquery = ($OptionID) ? " AND fooddetails_log.fd_oid = '$OptionID'" : "";
-    if($category == 3){
-        $category = 1;
-    }
-    $selectquery = "SELECT fooddetails_log.log_sno,foodtype.type,fooddetails_log.item_name,fooddetails_log.price,fooddetails_log.fromdate,fooddetails.OptionID from fooddetails_log
-    join fooddetails on fooddetails_log.fd_oid = fooddetails.OptionID
-    join foodtype on fooddetails.category = $category
-    WHERE 
-    fooddetails_log.fromdate IS NOT NULL 
-    AND fooddetails_log.fromdate != '0000-00-00' 
-    $optionquery
-    order by fooddetails_log.fromdate desc";
-
-    $resultquery = getData($conn,$selectquery);
-    if(count($resultquery) > 0){
-        $jsonresponse = array('code' => '200', 'status' => 'success','data'=>$resultquery);
-    }
-    else{
-        $jsonresponse = array('code' => '200', 'status' => 'success','data'=>"No Data");
-    }
-    echo json_encode($jsonresponse);
-}
-
-function loadFoodhistory($conn){
-    global $OptionID,$from_date;
-   
-    $selectquery = "SELECT fooddetails_log.log_sno,foodtype.type,fooddetails_log.item_name,fooddetails_log.price,fooddetails_log.fromdate,fooddetails.OptionID from fooddetails_log
-    join fooddetails on fooddetails_log.fd_oid = fooddetails.OptionID
-    join foodtype on fooddetails.category = foodtype.sno
-    WHERE 
-    fooddetails_log.fromdate IS NOT NULL 
-    AND fooddetails_log.fromdate != '0000-00-00' 
-    and fooddetails_log.fd_oid = $OptionID 
-    order by fooddetails_log.fromdate desc";
-
-    $resultquery = getData($conn,$selectquery);
-    if(count($resultquery) > 0){
-        $jsonresponse = array('code' => '200', 'status' => 'success','data'=>$resultquery);
-    }
-    else{
-        $jsonresponse = array('code' => '200', 'status' => 'success','data'=>"No Data");
-    }
-    echo json_encode($jsonresponse);
-}
-
-
-
-
-
-
-
-
-//update the price of the items 
+//update the price of the items
+       
 function updatePrice($conn){
     global $logsno,$OptionID,$Price;
     $updatefdquery = "UPDATE `fooddetails` SET `Price`='$Price' WHERE OptionID = '$OptionID'";
@@ -467,25 +410,52 @@ function loadfdby_category($conn){
 
 
 //loadin prices of food details
-// function loadFoodPrices($conn){
-//     global $OptionID,$from_date;
-//     $selectquery = "SELECT fooddetails_log.log_sno,foodtype.type,fooddetails_log.item_name,fooddetails_log.price,fooddetails_log.fromdate,fooddetails.OptionID from fooddetails_log
-//     join fooddetails on fooddetails_log.fd_oid = fooddetails.OptionID
-//     join foodtype on fooddetails.category = foodtype.sno
-//     WHERE 
-//     fooddetails_log.fromdate IS NOT NULL 
-//     AND fooddetails_log.fromdate != '0000-00-00' and fooddetails_log.fd_oid = $OptionID order by fooddetails_log.fromdate desc";
+function loadFoodPrices($conn){
+    global $OptionID,$from_date,$category;
+    $optionquery = ($OptionID) ? " AND fooddetails_log.fd_oid = '$OptionID'" : "";
+    if($category == 3){
+        $category = 1;
+    }
+    $selectquery = "SELECT fooddetails_log.log_sno,foodtype.type,fooddetails_log.item_name,fooddetails_log.price,fooddetails_log.fromdate,fooddetails.OptionID from fooddetails_log
+    join fooddetails on fooddetails_log.fd_oid = fooddetails.OptionID
+    join foodtype on fooddetails.category = $category
+    WHERE 
+    fooddetails_log.fromdate IS NOT NULL 
+    AND fooddetails_log.fromdate != '0000-00-00' 
+    $optionquery
+    order by fooddetails_log.fromdate desc";
 
-//     $resultquery = getData($conn,$selectquery);
-//     if(count($resultquery) > 0){
-//         $jsonresponse = array('code' => '200', 'status' => 'success','data'=>$resultquery);
-//     }
-//     else{
-//         $jsonresponse = array('code' => '200', 'status' => 'success','data'=>"No Data");
-//     }
-//     echo json_encode($jsonresponse);
-// }
+    $resultquery = getData($conn,$selectquery);
+    if(count($resultquery) > 0){
+        $jsonresponse = array('code' => '200', 'status' => 'success','data'=>$resultquery);
+    }
+    else{
+        $jsonresponse = array('code' => '200', 'status' => 'success','data'=>"No Data");
+    }
+    echo json_encode($jsonresponse);
+}
 
+function loadFoodhistory($conn){
+    global $OptionID,$from_date;
+   
+    $selectquery = "SELECT fooddetails_log.log_sno,foodtype.type,fooddetails_log.item_name,fooddetails_log.price,fooddetails_log.fromdate,fooddetails.OptionID from fooddetails_log
+    join fooddetails on fooddetails_log.fd_oid = fooddetails.OptionID
+    join foodtype on fooddetails.category = foodtype.sno
+    WHERE 
+    fooddetails_log.fromdate IS NOT NULL 
+    AND fooddetails_log.fromdate != '0000-00-00' 
+    and fooddetails_log.fd_oid = $OptionID 
+    order by fooddetails_log.fromdate desc";
+
+    $resultquery = getData($conn,$selectquery);
+    if(count($resultquery) > 0){
+        $jsonresponse = array('code' => '200', 'status' => 'success','data'=>$resultquery);
+    }
+    else{
+        $jsonresponse = array('code' => '200', 'status' => 'success','data'=>"No Data");
+    }
+    echo json_encode($jsonresponse);
+}
 //set the prices
 function setFoodPrices($conn){
     global $Price,$OptionID,$from_date,$ItemName,$p_from_date;

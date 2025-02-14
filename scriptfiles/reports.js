@@ -20,6 +20,7 @@ let pendingamount;
 let totalamount;
 let pending_months_span = document.querySelectorAll('.pending_months span:nth-child(n+2)');
 let infocircle;
+let allreports = document.querySelector('#allreport');
 
 
 
@@ -494,6 +495,14 @@ function pendingreports(){
         }
    })
 }
+
+//allreports
+allreports.addEventListener('click',(event)=>{
+    pending_months_span.forEach(el => el.classList.remove("active"));
+    event.target.classList.add('active');
+    pendingreports();
+})
+
 
 
 //circle info
