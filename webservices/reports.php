@@ -70,7 +70,7 @@ else if($load == "infopendings"){
 
 function infopendings($conn){
     global $cid;
-    $sql = "SELECT from_date,total_amount,unpaid_amount FROM `payments` WHERE customer_id = $cid and unpaid_amount > 0";
+    $sql = "SELECT from_date,total_amount,unpaid_amount,paid_amount FROM `payments` WHERE customer_id = $cid and unpaid_amount > 0";
     $result = getData($conn,$sql);
     $modifiedResult = [];
     if(count($result) > 0){
@@ -81,7 +81,8 @@ function infopendings($conn){
             $modifiedResult[] = [
                 'monthyear'    => $formattedDate,
                 'total_amount'  => $rs['total_amount'],
-                'unpaid_amount' => $rs['unpaid_amount']
+                'unpaid_amount' => $rs['unpaid_amount'],
+                'paid_amount' => $rs['paid_amount']
             ];
         }
         $jsonresponse = array('code' => '200','status' => "Success",'data'=>$modifiedResult);
@@ -218,10 +219,11 @@ function paymentHistory($conn){
 function orderHistory($conn){
     global $cid,$fromdate,$todate;
 
-    $selectquery = "SELECT fooddetails.ItemName,orders.OrderDate,orders.Quantity,orders.TotalAmount,foodtype.type
+    $selectquery = "SELECT fooddetails.ItemName,subcategory.subcategory,orders.OrderDate,orders.Quantity,orders.TotalAmount,foodtype.type
     from orders
     join fooddetails on orders.FoodID = fooddetails.OptionID
     join foodtype on orders.FoodTypeID = foodtype.sno
+    join subcategory on fooddetails.sub_category_sno = subcategory.SNO
     where orders.CustomerID = $cid and orders.OrderDate BETWEEN '$fromdate' and '$todate' and orders.Quantity > 0
     and orders.status = 2
     ORDER by orders.OrderDate asc";

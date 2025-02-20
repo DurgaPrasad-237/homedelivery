@@ -272,6 +272,7 @@ orderhistory.addEventListener('click',()=>{
             <div>
                 <p><b>Date</b></p>
                 <p><b>Item</b></p>
+                <p><b>Sub ategory</b></p>
                 <p><b>Quantity</b></p>
                 <p><b>Amount</b></p>
             </div>`;
@@ -279,6 +280,7 @@ orderhistory.addEventListener('click',()=>{
             <div>
                  <p><b>Date</b></p>
                 <p><b>Item</b></p>
+                <p><b>Sub ategory</b></p>
                 <p><b>Quantity</b></p>
                 <p><b>Amount</b></p>
             </div>`;
@@ -286,6 +288,7 @@ orderhistory.addEventListener('click',()=>{
             <div>
                 <p><b>Date</b></p>
                 <p><b>Item</b></p>
+                <p><b>Sub ategory</b></p>
                 <p><b>Quantity</b></p>
                 <p><b>Amount</b></p>
             </div>`;
@@ -297,6 +300,7 @@ orderhistory.addEventListener('click',()=>{
             divele.innerHTML = `
                 <p>${itm.OrderDate}</p>
                 <p>${itm.ItemName}</p>
+                <p>${itm.subcategory}</p>
                 <p>${itm.Quantity}</p>
                 <p>${itm.TotalAmount}</p>
             `;
@@ -430,6 +434,8 @@ document.querySelector('#s_todate').setAttribute('value', todaydate);
 function pendingreports(){
    document.querySelector('.s_table').style.display = "none";
    document.querySelector('.pending_reports').style.display = "flex";
+   document.querySelector('.sumamry_tabs').style.display = "none";
+   document.querySelector('.summary_body').style.display = "none";
    pendingmonths();
 
    //first date of the previous month
@@ -469,6 +475,7 @@ function pendingreports(){
                         <div class="desctd">
                             <p>Month</p>
                             <p>Amount</p>
+                            <p>Paid</p>
                             <p>Pending</p>
                         </div>
                         <div class="descbd">
@@ -499,7 +506,9 @@ function pendingreports(){
 //allreports
 allreports.addEventListener('click',(event)=>{
     pending_months_span.forEach(el => el.classList.remove("active"));
+    yearSelect.value = currentYear;
     event.target.classList.add('active');
+    console.log("d",event.target);
     pendingreports();
 })
 
@@ -526,7 +535,7 @@ function displayinfo(cid){
             descbd.innerHTML = "";
             response.data.forEach(itm=>{
                 let pr = document.createElement('p');
-                pr.innerHTML = `<span>${itm.monthyear}</span><span>${itm.total_amount}</span><span>${itm.unpaid_amount}</span>`;
+                pr.innerHTML = `<span>${itm.monthyear}</span><span>${itm.total_amount}</span><span>${itm.paid_amount}</span><span>${itm.unpaid_amount}</span>`;
                 descbd.appendChild(pr);
             })
         },
