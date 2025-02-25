@@ -1429,38 +1429,35 @@ function fetchitems($conn)
     SELECT DATE_ADD(day, INTERVAL 1 DAY)
     FROM days
     WHERE day < DATE_ADD(CURDATE(), INTERVAL 29 DAY)
-    )
-    SELECT 
-    COALESCE(f.item_name, CONCAT('Sample Item for ', DAYNAME(d.day))) AS ItemName,
-    COALESCE(f.price, 100.00) AS Price,
-    COALESCE(f.fd_oid, wl.optionid) AS OptionID,
+)
+SELECT 
+    COALESCE(f.item_name, CONCAT('No Item')) AS ItemName,
+    COALESCE(f.price, 0.00) AS Price,
+    COALESCE(f.fd_oid, wl.FoodID) AS OptionID,
     o.OrderID AS OrderID,
     1 AS category,
     d.day AS Date,
     DAYNAME(d.day) AS DayName,
-    o.Status as Status,
+    o.Status AS Status,
     COALESCE(SUM(o.Quantity), 0) AS Quantity
-    FROM 
+FROM 
     days d
-    LEFT JOIN 
-    week_log wl ON wl.weeksno = WEEKDAY(d.day) + 1 
-    AND wl.fromdate = (
-        SELECT MAX(wl_inner.fromdate)
-        FROM week_log wl_inner
-        WHERE wl_inner.weeksno = wl.weeksno AND wl_inner.fromdate <= d.day
-    )
-    LEFT JOIN 
-    fooddetails_log f ON wl.optionid = f.fd_oid 
+LEFT JOIN 
+    breakfastschedule wl ON wl.Date = d.day
+LEFT JOIN 
+    fooddetails_log f ON wl.FoodID = f.fd_oid 
     AND f.fromdate = (
         SELECT MAX(f_inner.fromdate) 
         FROM fooddetails_log f_inner
-        WHERE f_inner.fd_oid = wl.optionid AND f_inner.fromdate <= d.day
+        WHERE f_inner.fd_oid = wl.FoodID AND f_inner.fromdate <= d.day
     )
-    LEFT JOIN 
-    orders o ON o.OrderDate = d.day AND o.FoodTypeID = 1 AND o.CustomerId = $cid
-    GROUP BY 
-    d.day, f.item_name, f.price, f.fd_oid, wl.optionid
-    ORDER BY 
+LEFT JOIN 
+    orders o ON o.OrderDate = d.day 
+    AND o.FoodTypeID = 1 
+    AND o.CustomerID = '$cid'
+GROUP BY 
+    d.day, f.item_name, f.price, f.fd_oid, wl.FoodID, o.OrderID
+ORDER BY 
     d.day ASC;
 
     ";

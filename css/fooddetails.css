@@ -1,60 +1,8 @@
 body{
     height:80vh;
 }
-.heading2 {
-    text-align: center;
-    background-color: #4c4c4d;
-    color: white;
-    padding: 2px 0;
-    font-size: 12px;
-    font-weight: bold;
-    width:100%;
-   
-}
 
 
-.form-group {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 30px;
-    /* Add space between input fields and the table */
-}
-
-.form-group input {
-    width: 20%;
-    padding: 10px;
-    margin: 0 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.form-group button {
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    color: white;
-    cursor: pointer;
-}
-
-.btn-primary {
-    background-color: #4c4c4d;
-    margin-left: -4px;
-}
-
-/* .btn-primary:hover {
-    background-color: #ea8dfc;
-    margin-left: -2px;
-} */
-
-.btn-danger {
-    background-color: #f50f1a;
-}
-
-.existing-categories {
-    /* margin-top: 20px; */
-    /* Add space above the table */
-    width:50%;
-}
 
 .category-table {
     width: 100%;
@@ -107,26 +55,36 @@ body{
     margin: 50px 270px; 
 } */
 
-.category-container {
+/* .category-container {
     width: 70%;
     padding: 10px;
 
-}
+} */
 
 .btn-primary {
-    height: 40px;
-    width: 10%;
+    height: 20px;
+    width: 5%;
     /* padding: 10px; */
 }
 
 .btn-primary .edit {
-    width: 20%;
+    width: 10%;
 }
 
 .category-table {
-    width: 100%;
+    width: 80%;
     border-collapse: collapse;
-    margin: 0;
+    margin: 8%;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border: 2px #ccc solid;
+    background-color: white;
+    border-radius: 10%;
+    /* border:2px solid red; */
+}
+.category-table1 {
+    width: 80%;
+    border-collapse: collapse;
+    margin: 8%;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     border: 2px #ccc solid;
     background-color: white;
@@ -170,18 +128,18 @@ body{
     height: 20px;
 
 }
-
+/* 
 .form-group .btn-primary {
     width: 15%;
     gap: 5%;
-}
+} */
 
 .existing-categories {
     height: 50vh;
     overflow-y: scroll;
     position: relative;
-    border:2px solid gray;
-    margin:5px;
+    /* border:2px solid gray; */
+    /* margin:5px; */
 
 }
 
@@ -256,10 +214,10 @@ body{
     height:80%;
     margin-top:0px;
 }
-.add-category-form{
-    /* border:2px solid blue; */
+/* .add-category-form{
+    /* border:2px solid blue; 
     height:50px;
-}
+} */
 .category-table th {
     border: 1px solid #ccc;
     padding: 0px;
@@ -372,7 +330,7 @@ color:white;
 cursor:pointer;
 }
 .add_lun{
-/* border:2px solid black; */
+/* border:2px solid black;  */
 width:40vw;
 height:60vh;
 display:none;
@@ -545,13 +503,103 @@ background-color: green;
     /* overflow-y: scroll; */
     position: relative;
     /* border:2px solid gray; */
-    margin:5px;
+    /* margin:5px; */
 }
 
 .total{
   
     display:flex ; 
     flex-direction:row;
+    margin-top: 5%;
  
 
+}
+
+
+
+
+.add_lun{
+    display: flex;
+    width: 220%;
+    height: 60vh;
+     /* border : 3px solid red;  */
+    flex-direction: column;
+    margin:7%;
+}
+
+.add_lun1{
+    display: flex;
+    width: 100%;
+    height: 60vh;
+     /* border : 3px solid red;  */
+    flex-direction: column;
+    margin:7%;
+}
+.add_lun h3 {
+    background-color: #FFC857;
+    display: flex;
+    flex-direction: center;
+    align-items: center;
+    justify-content: center;
+    margin: 0px;
+    padding: 10px;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+}
+.add_lun1 h3 {
+    background-color: #FFC857;
+    display: flex;
+    flex-direction: center;
+    align-items: center;
+    justify-content: center;
+    margin: 0px;
+    padding: 10px;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.input_lun {
+    width: 98%;
+    /* border:2px solid black; */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 5px;
+}
+
+.input_lun input {
+    outline: none;
+    border: none;
+    border-bottom: 2px solid black;
+    width: 70%;
+}
+
+.input_lun button {
+    width: 25%;
+    padding: 4px;
+    background-color: transparent;
+    color: #f50f1a;
+    border: 2px solid #f50f1a;
+    font-weight: bold;
+    cursor: pointer;
+
+}
+
+.category-table1{
+    width: 80%;
+    border-collapse: collapse;
+    margin: 5%;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border: 2px #ccc solid;
+    background-color: white;
+    /* border-radius: 10%; */
+
+}
+
+.btn-primary1 {
+    height: 35px;
+    width: 24%;
+    padding: 10px;
 }

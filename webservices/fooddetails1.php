@@ -8,6 +8,8 @@ $sno = $data["sno"] ?? "";
 $csno = $data["csno"] ?? ""; 
 $OptionID = $data["OptionID"] ?? "";
 $category = $data["category"] ?? "";
+$foodtype = $data["category"] ?? "";
+$subcategory = $data["subcategory"] ?? "";
 $ItemName = $data["ItemName"] ?? "";
 $foodtype = $data['foodtype'] ?? "";
 $p_from_date = $data['p_from_date'] ?? "";
@@ -20,6 +22,15 @@ $activity = $data['activity'] ?? "";
 $item= $data["item"] ?? "";
 $weeksno = $data["weeksno"] ?? "";
 $logsno = $data['logsno'] ?? "";
+$subcategory = $data['subcategory'] ?? '';
+$itemname = $input['itemname'] ?? '';
+$price = $input['price'] ?? '';
+$currentActivity = $data['activity'] ?? '';
+$todaydate = $data['todaydate'] ?? '';
+$tmrdate = $data['tmrdate'] ?? '';
+$updateactivity = $data['updateactivity'] ?? '';
+
+
 if ($load == "add") {
     addcom($conn,$category, $ItemName, $Price, $from_date, $to_date);
 } else if ($load == "get") {
@@ -30,6 +41,12 @@ else if($load == "load_foodtype"){
     }    
 else if ($load == "update") {
     updatecom($conn,$category, $OptionID, $ItemName, $Price, $from_date, $to_date);
+}
+else if($load == "load_foodprices"){
+    loadFoodPrices($conn);
+}
+else if($load == "load_foodhistory"){
+    loadFoodhistory($conn);
 }
 else if($load == "setFoodPrices"){
     setFoodPrices($conn);
@@ -70,74 +87,279 @@ else if($load == "activiyBF"){
 else if($load == "updatePrice"){
     updatePrice($conn);
 }
-else if($load == "load_foodprices"){
-    loadFoodPrices($conn);
+else if($load == "loadfoodtype"){
+    loadfoodcategory($conn);
 }
-else if($load == "load_foodhistory"){
-    loadFoodhistory($conn);
+else if($load == "loadsubcategory"){
+    loadsubcategory($conn);
 }
-// else if($load == 'setbreakfast'){
-//     setBreakFast($conn);
-    
-// }
-// else if($load == 'additem'){
-//     additem($conn);
-// }
-// else if($load == 'setactivity'){
-//     setactivity($conn);
-// }
-// else if($load == 'loaditems'){
-//     loaditems($conn);
-// }
+else if($load == "loadItemsByCategory"){
+    loadItemsByCategory($conn);
+}
+elseif ($load == "addSubcategory") {
+    addSubcategory($conn);
+}
+else if($load == "loadsubcategory1"){
+ loadsubcategory1($conn, $foodtype);
+}
+else if($load == "loadfoodtype1"){
+    loadfoodcategory1($conn);
+}
+else if($load == "loadItemsByCategory1"){
+    loadItemsByCategory1($conn);
+}
+else if($load == "additemname"){
+    additemname($conn);
+}
+else if($load == "updateSubcategory"){
+    updateSubcategory($conn);
+}
+else if($load == "activityStatusChange"){
+    activityStatusChange($conn);
+}
+else if($load == "updateitemname"){
+    updateitemname($conn);
+}
+else if($load == "activityStatusChangei"){
+    activityStatusChangei($conn);
+}
+else if($load == "loadtodaybfitem"){
+    loadtodaybfitem($conn);
+}
+else if($load == "loadbfitems"){
+    loadbfitems($conn);
+}
+else if($load == "loadbybfitemstmrdate"){
+    loadbfitemstmrdate($conn);
+}
+else if($load == "loadsubbreakfast"){
+    loadsubbreakfast($conn);
+}
+else if($load == "setbfitem"){
+    setbfitem($conn);
+}
+else if($load == "bfcatitems"){
+    bfcatitems($conn);
+}
+else if($load == "checktmritem"){
+    checktrmitem($conn);
+}
 
+function checktrmitem($conn){
+    global $tmrdate;
+    $sql = "SELECT breakfastschedule.sno,fooddetails.ItemName,fooddetails.OptionID,fooddetails.subcategory from breakfastschedule
+            join fooddetails on breakfastschedule.FoodID = fooddetails.OptionID
+            where breakfastschedule.Date = '$tmrdate'";
+    $result = getData($conn,$sql);
 
-
-
-//loadin prices of food details
-function loadFoodPrices($conn){
-    global $OptionID,$from_date,$category;
-    $optionquery = ($OptionID) ? " AND fooddetails_log.fd_oid = '$OptionID'" : "";
-    if($category == 3){
-        $category = 1;
-    }
-    $selectquery = "SELECT fooddetails_log.log_sno,foodtype.type,fooddetails_log.item_name,fooddetails_log.price,fooddetails_log.fromdate,fooddetails.OptionID from fooddetails_log
-    join fooddetails on fooddetails_log.fd_oid = fooddetails.OptionID
-    join foodtype on fooddetails.category = $category
-    WHERE 
-    fooddetails_log.fromdate IS NOT NULL 
-    AND fooddetails_log.fromdate != '0000-00-00' 
-    $optionquery
-    order by fooddetails_log.fromdate desc";
-
-    $resultquery = getData($conn,$selectquery);
-    if(count($resultquery) > 0){
-        $jsonresponse = array('code' => '200', 'status' => 'success','data'=>$resultquery);
+    if(count($result) > 0){
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $result);
     }
     else{
-        $jsonresponse = array('code' => '200', 'status' => 'success','data'=>"No Data");
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => '');
     }
     echo json_encode($jsonresponse);
 }
 
-function loadFoodhistory($conn){
-    global $OptionID,$from_date;
+function bfcatitems($conn){
+    global $subcategory;
+    $sql = "SELECT * from fooddetails WHERE subcategory = $subcategory";
+    $resultsql = getData($conn,$sql);
+    if(count($resultsql) > 0){
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resultsql);
+    }
+    else{
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => '');
+    }
+    echo json_encode($jsonresponse);
+}
+
+
+function loadsubbreakfast($conn){
+    global $foodtype;
+    $sql = "select subcategory,SNO from subcategory where foodtype = $foodtype";
+    $resultsql = getData($conn,$sql);
+    if(count($resultsql) > 0){
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resultsql);
+    }
+    else{
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => '');
+    }
+    echo json_encode($jsonresponse);
+}
+
+
+function setbfitem($conn){
+    global $OptionID,$tmrdate,$subcategory,$updateactivity;
+    $itempricejsql = "SELECT Price from fooddetails where OptionID = $OptionID and subcategory = $subcategory";
+    $priceresulsql = getData($conn,$itempricejsql);
+    $itemprice = $priceresulsql[0]['Price'];
+    if($updateactivity == 1){
+        $insertschsql = "INSERT INTO `breakfastschedule`(`Date`, `FoodID`) VALUES ('$tmrdate','$OptionID')";
+        $resultsqlsch = setData($conn,$insertschsql);
+    }
+    else{
+        $insertschsql = "UPDATE `breakfastschedule` SET `FoodID`='$OptionID' WHERE breakfastschedule.Date = '$tmrdate'";
+        $resultsqlsch = setData($conn,$insertschsql);
+    }
    
-    $selectquery = "SELECT fooddetails_log.log_sno,foodtype.type,fooddetails_log.item_name,fooddetails_log.price,fooddetails_log.fromdate,fooddetails.OptionID from fooddetails_log
-    join fooddetails on fooddetails_log.fd_oid = fooddetails.OptionID
-    join foodtype on fooddetails.category = foodtype.sno
-    WHERE 
-    fooddetails_log.fromdate IS NOT NULL 
-    AND fooddetails_log.fromdate != '0000-00-00' 
-    and fooddetails_log.fd_oid = $OptionID 
-    order by fooddetails_log.fromdate desc";
 
-    $resultquery = getData($conn,$selectquery);
-    if(count($resultquery) > 0){
-        $jsonresponse = array('code' => '200', 'status' => 'success','data'=>$resultquery);
+    if($resultsqlsch == 'Record created'){
+         //get the list of tmrorders
+                $sqltmrorder = "
+                UPDATE orders o
+            JOIN (
+                SELECT OrderID, Quantity 
+                FROM orders 
+                WHERE OrderDate = '$tmrdate'
+                AND Status = 1
+                AND SubCategorySno = $subcategory  
+                AND FoodTypeID = 1
+            ) q 
+            ON o.OrderID = q.OrderID
+            SET o.TotalAmount = q.Quantity * $itemprice,
+                o.FoodID = $OptionID
+            WHERE o.SubCategorySno = $subcategory  
+            AND o.FoodTypeID = 1
+            ";
+
+            $resultmrorder = setData($conn,$sqltmrorder);
+
+            if($resultmrorder == 'Record created'){
+                // //get the ordersno
+                $sqlosno = "SELECT SNO,CustomerID,Quantity,OrderID,TotalAmount,FoodTypeID from Orders WHERE FoodTypeID = 1 and Status = 1 and FoodID = $OptionID and OrderDate = '$tmrdate'";
+                $sqlosnoresult = getData($conn,$sqlosno);
+                if(count($sqlosnoresult) > 0){
+                    $jsonresponse = insertToLog($sqlosnoresult,$conn);
+                }    
+                else{
+                    $jsonresponse = array('code' => '200', 'status' => 'success' ,'msg'=>"successfully update the order price and id",'d'=>$resultmrorder);
+                } 
+            }
+            else{
+                $jsonresponse = array('code' => '500', 'status' => 'fail' ,'msg'=>"failed to update the order price and id");
+            }
     }
     else{
-        $jsonresponse = array('code' => '200', 'status' => 'success','data'=>"No Data");
+        $jsonresponse = array('code' => '500', 'status' => 'fail' ,'msg'=>"failed to insert the breakfastschedule");
     }
+    echo json_encode($jsonresponse);
+}
+
+//function for record insert in logs table
+function insertToLog($resultarr,$conn){
+    foreach($resultarr as $rowlog){
+        $sqlloginsert = "INSERT INTO `logs`(`OrderSno`, `CustomerID`, `OrderID`, `Quantity`, `Price`, `FoodType`) 
+         VALUES ('{$rowlog['SNO']}', '{$rowlog['CustomerID']}', '{$rowlog['OrderID']}', '{$rowlog['Quantity']}', '{$rowlog['TotalAmount']}', '{$rowlog['FoodTypeID']}')";
+        $sqlresultinsert = setData($conn,$sqlloginsert);
+        if($sqlresultinsert != 'Record created'){
+            return array('code' => '500', 'status' => 'fail' ,'msg'=>"failed to insert data in logtable");
+        }
+    }
+    return array('code' => '200', 'status' => 'success','d'=>$resultarr);
+}
+
+
+function loadbfitemstmrdate($conn){
+    global $tmrdate;
+
+    $sql = "SELECT breakfastschedule.sno,fooddetails.ItemName,fooddetails.OptionID from breakfastschedule
+            join fooddetails on breakfastschedule.FoodID = fooddetails.OptionID
+            where breakfastschedule.Date = '$tmrdate'";
+    $resulsql = getData($conn,$sql);
+
+    if(count($resulsql) > 0){
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resulsql);
+    }
+    else{
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => '');
+    }
+    echo json_encode($jsonresponse);
+}
+
+
+
+
+
+function loadtodaybfitem($conn){
+    global $todaydate;
+    $sql = "SELECT breakfastschedule.Date,fooddetails.ItemName FROM `breakfastschedule` 
+            join fooddetails on breakfastschedule.FoodID = fooddetails.OptionID
+            where breakfastschedule.Date = '$todaydate'";
+    $resultsql = getData($conn,$sql);
+    if(count($resultsql) > 0){
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resultsql);
+    }
+    else{
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => '');
+    }
+    echo json_encode($jsonresponse);
+}
+
+
+
+function activityStatusChangei($conn){
+    global $newActivity,$sno,$currentActivity;
+      $newActivity = ($currentActivity == 1) ? 0 : 1; // Toggle between 1 and 0
+  
+      $sql = "UPDATE fooddetails SET activity = '$newActivity' WHERE OptionID = '$sno'";
+      $result = mysqli_query($conn, $sql);
+  
+      if ($result) {
+          $statusText = ($newActivity == 1) ? "Active" : "Inactive";
+          echo json_encode(["status" => "success", "msg" => "Status changed to $statusText."]);
+      } else {
+          echo json_encode(["status" => "error", "msg" => "Failed to update status."]);
+      }
+     
+}
+
+function updateitemname($conn){
+    global $sno;
+    $input = json_decode(file_get_contents("php://input"), true); 
+    $foodtype = $input['foodtype'] ?? '';
+    $subcategory = $input['subcategory'] ?? '';
+    $itemname = $input['itemname'] ?? '';
+    $price = $input['price'] ?? '';
+
+    if (empty($subcategory)) {
+        echo json_encode(['code' => '400', 'status' => 'fail', 'msg' => 'Subcategory name is required.']);
+        return;
+    }
+
+    if (empty($foodtype)) {
+        echo json_encode(['code' => '400', 'status' => 'fail', 'msg' => 'Category is required.']);
+        return;
+    }
+    if (empty($itemname)) {
+        echo json_encode(['code' => '400', 'status' => 'fail', 'msg' => 'ItemName is required.']);
+        return;
+    }
+
+    $foodtype = mysqli_real_escape_string($conn, $foodtype);
+    $subcategory = mysqli_real_escape_string($conn, $subcategory);
+    $itemname = mysqli_real_escape_string($conn, $itemname);
+    $price = mysqli_real_escape_string($conn, $price);
+
+    $checkQuery = "SELECT OptionID,ItemName,Price from fooddetails where category ='$foodtype'  AND subcategory = '$subcategory' AND ItemName = '$itemname' AND price = '$price';";
+    $checkResult = getData($conn, $checkQuery);
+
+    if (count($checkResult) > 0) {
+      
+        echo json_encode(['code' => '409', 'status' => 'fail', 'msg' => 'Subcategory already exists for this category.']);
+        return;
+    }
+
+    // ✅ Insert if not exists
+    $query = "UPDATE fooddetails SET category='$foodtype',subcategory= '$subcategory', ItemName = '$itemname ' WHERE OptionID='$sno'";
+    $result = setdata($conn, $query);
+
+    if ($result == "Record created") {
+        $jsonresponse = array('code' => '201', 'status' => 'success', 'msg' => 'Subcategory added successfully.');
+    } else {
+        $jsonresponse = array('code' => '500', 'status' => 'fail', 'msg' => 'Failed to add subcategory.');
+    }
+
     echo json_encode($jsonresponse);
 }
 
@@ -147,8 +369,279 @@ function loadFoodhistory($conn){
 
 
 
+function additemname($conn){
+    $input = json_decode(file_get_contents("php://input"), true); 
+    $foodtype = $input['foodtype'] ?? '';
+    $subcategory = $input['subcategory'] ?? '';
+    $itemname = $input['itemname'] ?? '';
+    $price = $input['price'] ?? '';
 
-//update the price of the items 
+    if (empty($subcategory)) {
+        echo json_encode(['code' => '400', 'status' => 'fail', 'msg' => 'Subcategory name is required.']);
+        return;
+    }
+
+    if (empty($foodtype)) {
+        echo json_encode(['code' => '400', 'status' => 'fail', 'msg' => 'Category is required.']);
+        return;
+    }
+    if (empty($itemname)) {
+        echo json_encode(['code' => '400', 'status' => 'fail', 'msg' => 'ItemName is required.']);
+        return;
+    }
+
+    $foodtype = mysqli_real_escape_string($conn, $foodtype);
+    $subcategory = mysqli_real_escape_string($conn, $subcategory);
+    $itemname = mysqli_real_escape_string($conn, $itemname);
+    $price = mysqli_real_escape_string($conn, $price);
+
+    $checkQuery = "SELECT OptionID,ItemName,Price from fooddetails where category ='$foodtype'  AND subcategory = '$subcategory' AND ItemName = '$itemname' AND price = '$price';";
+    $checkResult = getData($conn, $checkQuery);
+
+    if (count($checkResult) > 0) {
+      
+        echo json_encode(['code' => '409', 'status' => 'fail', 'msg' => 'Subcategory already exists for this category.']);
+        return;
+    }
+
+    // ✅ Insert if not exists
+    $query = "INSERT into fooddetails (category,subcategory,ItemName,Price) VALUES ('$foodtype', '$subcategory','$itemname',$price)";
+    $result = setdata($conn, $query);
+
+    if ($result == "Record created") {
+        $lastinsertid = mysqli_insert_id($conn); 
+            $logsql = "INSERT INTO `fooddetails_log`(`fd_oid`, `item_name`,`price`) 
+            VALUES ('$lastinsertid','$itemname','$price')";
+            $logresultsql = setData($conn,$logsql);
+            if($logresultsql == "Record created"){
+                $jsonresponse = array('code'=>'200','status'=>'success');
+    } else {
+        $jsonresponse = array('code' => '500', 'status' => 'fail', 'msg' => 'Failed to add subcategory.');
+    }
+
+    echo json_encode($jsonresponse);
+  
+}
+}
+
+// fetcching items for item menu
+
+function loadItemsByCategory1($conn) {
+
+    // Get input data
+    $input = json_decode(file_get_contents("php://input"), true);
+
+    // Sanitize input
+    $foodtype = $conn->real_escape_string($input["category"] ?? "");
+    $subcategory = $conn->real_escape_string($input["subcategory"] ?? "");
+    // Query to fetch items based on category
+    $query = "SELECT OptionID,ItemName,Price,subcategory,activity FROM fooddetails WHERE category = '$foodtype'AND subcategory = '$subcategory';";
+
+    $result = $conn->query($query);
+
+    $data = [];
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;
+        }
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $data);
+    } else {
+        $jsonresponse = array('code' => '404', 'status' => 'fail', 'msg' => "No items found for this category.");
+    }
+    echo json_encode($jsonresponse);
+}
+// Function to load items for item menu screen
+function loadfoodcategory1($conn) {
+    $selectQuery = "SELECT * FROM foodtype ORDER BY sno ASC";
+    $resultquery = getdata($conn, $selectQuery);
+
+    if (count($resultquery) > 0) {
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resultquery);
+    } else {
+        $jsonresponse = array('code' => '200', 'status' => 'error', 'message' => 'No foodtype found');
+    }
+    echo json_encode($jsonresponse);
+}
+
+//  for item menu screen
+function loadsubcategory1($conn, $foodtype) {
+    $foodtype = mysqli_real_escape_string($conn, $foodtype);
+    $selectQuery = "SELECT sno, subcategory,activity FROM subcategory WHERE foodtype = '$foodtype' ORDER BY sno ASC";
+    $resultquery = getdata($conn, $selectQuery);
+
+    if (count($resultquery) > 0) {
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resultquery);
+    } else {
+        $jsonresponse = array('code' => '200', 'status' => 'error', 'message' => 'No subcategory found for this food type');
+    }
+    echo json_encode($jsonresponse);
+}
+
+
+function loadItemsByCategory($conn) {
+    // Get input data
+    $input = json_decode(file_get_contents("php://input"), true);
+
+    // Sanitize input
+    $foodtype = $conn->real_escape_string($input["category"] ?? "");
+
+    // Query to fetch items based on category
+    $query = "SELECT SNO, subcategory,activity FROM subcategory WHERE foodtype = '$foodtype' ORDER BY SNO ASC;";
+    $result = $conn->query($query);
+
+    $data = [];
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;
+        }
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $data);
+    } else {
+        $jsonresponse = array('code' => '404', 'status' => 'fail', 'msg' => "No items found for this category.");
+    }
+    echo json_encode($jsonresponse);
+}
+
+
+// Function to add subcategory
+function addSubcategory($conn) {
+    $input = json_decode(file_get_contents("php://input"), true); 
+    $foodtype = $input['foodtype'] ?? '';
+    $subcategory = $input['subcategory'] ?? '';
+
+    if (empty($subcategory)) {
+        echo json_encode(['code' => '400', 'status' => 'fail', 'msg' => 'Subcategory name is required.']);
+        return;
+    }
+
+    if (empty($foodtype)) {
+        echo json_encode(['code' => '400', 'status' => 'fail', 'msg' => 'Category is required.']);
+        return;
+    }
+
+    // ✅ Escape inputs to prevent SQL injection
+    $foodtype = mysqli_real_escape_string($conn, $foodtype);
+    $subcategory = mysqli_real_escape_string($conn, $subcategory);
+
+    // 🔍 Check if the subcategory already exists for the selected foodtype
+    $checkQuery = "SELECT * FROM subcategory WHERE foodtype = '$foodtype' AND subcategory = '$subcategory'";
+    $checkResult = getData($conn, $checkQuery);
+
+    if (count($checkResult) > 0) {
+      
+        echo json_encode(['code' => '409', 'status' => 'fail', 'msg' => 'Subcategory already exists for this category.']);
+        return;
+    }
+
+    // ✅ Insert if not exists
+    $query = "INSERT INTO subcategory (`foodtype`, `subcategory`) VALUES ('$foodtype', '$subcategory')";
+    $result = setdata($conn, $query);
+
+    if ($result == "Record created") {
+        $jsonresponse = array('code' => '201', 'status' => 'success', 'msg' => 'Subcategory added successfully.');
+    } else {
+        $jsonresponse = array('code' => '500', 'status' => 'fail', 'msg' => 'Failed to add subcategory.');
+    }
+
+    echo json_encode($jsonresponse);
+}
+
+function updateSubcategory($conn){
+    global $sno,$activity;
+    $input = json_decode(file_get_contents("php://input"), true); 
+    $foodtype = $input['foodtype'] ?? '';
+    $subcategory = $input['subcategory'] ?? '';
+
+    if (empty($subcategory)) {
+        echo json_encode(['code' => '400', 'status' => 'fail', 'msg' => 'Subcategory name is required.']);
+        return;
+    }
+
+    if (empty($foodtype)) {
+        echo json_encode(['code' => '400', 'status' => 'fail', 'msg' => 'Category is required.']);
+        return;
+    }
+
+    // ✅ Escape inputs to prevent SQL injection
+    $foodtype = mysqli_real_escape_string($conn, $foodtype);
+    $subcategory = mysqli_real_escape_string($conn, $subcategory);
+
+    // 🔍 Check if the subcategory already exists for the selected foodtype
+    $checkQuery = "SELECT * FROM subcategory WHERE foodtype = '$foodtype' AND subcategory = '$subcategory'";
+    $checkResult = getData($conn, $checkQuery);
+
+    if (count($checkResult) > 0) {
+      
+        echo json_encode(['code' => '409', 'status' => 'fail', 'msg' => 'Subcategory already exists for this category.']);
+        return;
+    }
+
+    // ✅ Insert if not exists
+    $query = "update subcategory set foodtype='$foodtype' , subcategory='$subcategory',activity='$activity'  WHERE SNO='$sno'";
+    $result = setdata($conn, $query);
+
+    if ($result == "Record created") {
+        $jsonresponse = array('code' => '201', 'status' => 'success', 'msg' => 'Subcategory added successfully.');
+    } else {
+        $jsonresponse = array('code' => '500', 'status' => 'fail', 'msg' => 'Failed to add subcategory.');
+    }
+
+    echo json_encode($jsonresponse);
+}
+function activityStatusChange($conn){
+    global $newActivity,$sno,$currentActivity;
+      $newActivity = ($currentActivity == 1) ? 0 : 1; // Toggle between 1 and 0
+  
+      $sql = "UPDATE subcategory SET activity = '$newActivity' WHERE SNO = '$sno'";
+      $result = mysqli_query($conn, $sql);
+  
+      if ($result) {
+          $statusText = ($newActivity == 1) ? "Active" : "Inactive";
+          echo json_encode(["status" => "success", "msg" => "Status changed to $statusText."]);
+      } else {
+          echo json_encode(["status" => "error", "msg" => "Failed to update status."]);
+      }
+  
+  }
+
+//  sub category items for drop down for category menu
+function loadsubcategory($conn)
+{
+    global $foodtype;
+    $selectQuery = "SELECT * from  subcategory WHERE foodtype = '$foodtype' ORDER BY sno ASC;";
+    $resultquery = getdata($conn, $selectQuery);
+
+    if (count($resultquery) > 0) 
+    {
+        $jsonresponse = array('code' => '200' , 'status' => 'success' , 'data' => $resultquery);
+        echo json_encode($jsonresponse);
+    } 
+    else 
+    {
+        $jsonresponse = array('code' => '200' , 'status' => 'error' , 'message' => 'No foodtype found');
+        echo json_encode($jsonresponse);
+    }
+}
+
+//  for category menu screen
+function  loadfoodcategory($conn)
+{
+    $selectQuery = "SELECT * from  foodtype ORDER BY sno ASC";
+    $resultquery = getdata($conn, $selectQuery);
+
+    if (count($resultquery) > 0) 
+    {
+        $jsonresponse = array('code' => '200' , 'status' => 'success' , 'data' => $resultquery);
+        echo json_encode($jsonresponse);
+    } 
+    else 
+    {
+        $jsonresponse = array('code' => '200' , 'status' => 'error' , 'message' => 'No foodtype found');
+        echo json_encode($jsonresponse);
+    }
+}
+
+      
+
 function updatePrice($conn){
     global $logsno,$OptionID,$Price;
     $updatefdquery = "UPDATE `fooddetails` SET `Price`='$Price' WHERE OptionID = '$OptionID'";
@@ -452,7 +945,6 @@ function setBreakFast($conn){
 //load food items by category 
 function loadfdby_category($conn){
     global $category;
-    $category = ($category == 3 || $category == 1) ? 1:2;
     $selectquery = "SELECT * FROM `fooddetails` WHERE category = $category";
     $resultsql = getData($conn,$selectquery);
     if(count($resultsql) > 0){
@@ -467,25 +959,52 @@ function loadfdby_category($conn){
 
 
 //loadin prices of food details
-// function loadFoodPrices($conn){
-//     global $OptionID,$from_date;
-//     $selectquery = "SELECT fooddetails_log.log_sno,foodtype.type,fooddetails_log.item_name,fooddetails_log.price,fooddetails_log.fromdate,fooddetails.OptionID from fooddetails_log
-//     join fooddetails on fooddetails_log.fd_oid = fooddetails.OptionID
-//     join foodtype on fooddetails.category = foodtype.sno
-//     WHERE 
-//     fooddetails_log.fromdate IS NOT NULL 
-//     AND fooddetails_log.fromdate != '0000-00-00' and fooddetails_log.fd_oid = $OptionID order by fooddetails_log.fromdate desc";
+function loadFoodPrices($conn){
+    global $OptionID,$from_date,$category;
+    $optionquery = ($OptionID) ? " AND fooddetails_log.fd_oid = '$OptionID'" : "";
+    if($category == 3){
+        $category = 1;
+    }
+    $selectquery = "SELECT fooddetails_log.log_sno,foodtype.type,fooddetails_log.item_name,fooddetails_log.price,fooddetails_log.fromdate,fooddetails.OptionID from fooddetails_log
+    join fooddetails on fooddetails_log.fd_oid = fooddetails.OptionID
+    join foodtype on fooddetails.category = $category
+    WHERE 
+    fooddetails_log.fromdate IS NOT NULL 
+    AND fooddetails_log.fromdate != '0000-00-00' 
+    $optionquery
+    order by fooddetails_log.fromdate desc";
 
-//     $resultquery = getData($conn,$selectquery);
-//     if(count($resultquery) > 0){
-//         $jsonresponse = array('code' => '200', 'status' => 'success','data'=>$resultquery);
-//     }
-//     else{
-//         $jsonresponse = array('code' => '200', 'status' => 'success','data'=>"No Data");
-//     }
-//     echo json_encode($jsonresponse);
-// }
+    $resultquery = getData($conn,$selectquery);
+    if(count($resultquery) > 0){
+        $jsonresponse = array('code' => '200', 'status' => 'success','data'=>$resultquery);
+    }
+    else{
+        $jsonresponse = array('code' => '200', 'status' => 'success','data'=>"No Data");
+    }
+    echo json_encode($jsonresponse);
+}
 
+function loadFoodhistory($conn){
+    global $OptionID,$from_date;
+   
+    $selectquery = "SELECT fooddetails_log.log_sno,foodtype.type,fooddetails_log.item_name,fooddetails_log.price,fooddetails_log.fromdate,fooddetails.OptionID from fooddetails_log
+    join fooddetails on fooddetails_log.fd_oid = fooddetails.OptionID
+    join foodtype on fooddetails.category = foodtype.sno
+    WHERE 
+    fooddetails_log.fromdate IS NOT NULL 
+    AND fooddetails_log.fromdate != '0000-00-00' 
+    and fooddetails_log.fd_oid = $OptionID 
+    order by fooddetails_log.fromdate desc";
+
+    $resultquery = getData($conn,$selectquery);
+    if(count($resultquery) > 0){
+        $jsonresponse = array('code' => '200', 'status' => 'success','data'=>$resultquery);
+    }
+    else{
+        $jsonresponse = array('code' => '200', 'status' => 'success','data'=>"No Data");
+    }
+    echo json_encode($jsonresponse);
+}
 //set the prices
 function setFoodPrices($conn){
     global $Price,$OptionID,$from_date,$ItemName,$p_from_date;
