@@ -502,7 +502,7 @@
                                 <select class="tmbfitems">
                                     
                                 </select>
-                                <button onclick="upddatetmbfitem(this)" class="btnbftmr">Save</button>
+                                <button onclick="upddatetmitem(this,1)" class="btnbftmr">Save</button>
                             </div>
 
                         </div>
@@ -529,15 +529,18 @@
                              <div class="tdybox">
                                 <p><b>Today</b></p>
                                 <input type="date" id="schtdydate">
-                                <input type="text">
+                                <input type="text" id="schtddinitem">
                             </div>
                             <div class="tmrbox">
                                 <p><b>Tomorrow</b></p>
                                 <input type="date" id="schtmdydate">
-                                <select>
-
+                                <select class="dinnersubcategory" onchange="loadDinnerCategoryItems()">
+                                    
                                 </select>
-                                <button>Save</button>
+                                <select class="tmdinitems">
+                                    
+                                </select>
+                                <button onclick="upddatetmitem(this,3)" class="btndintmr">Save</button>
                             </div>
                         </div>
                     </div>
@@ -557,14 +560,23 @@
         let schtdydate = document.querySelectorAll('#schtdydate');
         let schtmdydate = document.querySelectorAll('#schtmdydate');
         var tomorrowdate = new Date(); 
+        let breakfasttmritem;
+        let dinnertmritem;
+
+       
+
         tomorrowdate.setDate(todaydate.getDate() + 1);
 
         schtdydate.forEach(d=>{
           d.value = dateformat(todaydate);
+          d.setAttribute('max',d.value)
+          d.setAttribute('min',d.value)
         })
 
         schtmdydate.forEach(d=>{
             d.value = dateformat(tomorrowdate);
+            d.setAttribute('max',d.value)
+            d.setAttribute('min',d.value)
         })
 
         
@@ -603,37 +615,135 @@
 
         }
         loadtodaybfitem();
-        function checkingtrigger(){
-            checktmritem();
-        }
 
-        //check wheather tomorrow item set or not
-        function checktmritem(){
+        //function for load today dinner item
+        function loadtodaydinneritem(){
             var payload = {
-                load:"checktmritem",
-                tmrdate:schtmdydate[0].value,
+                todaydate : schtdydate[2].value,
+                load:"loadtodaydinneritem"
             }
+            console.log("dinnerpayload",payload);
             $.ajax({
                 type: "POST",
                 url: "./webservices/fooddetails1.php",
                 data: JSON.stringify(payload),
                 dataType: "json",
                 success:function(response){
-                    console.log('checktrm',response);
-                   if(response.data.length > 0){
-                    document.querySelector('.btnbftmr').textContent = 'Edit';
-                    console.log("t",response);
-                    let subcat = response.data[0]['subcategory'];
-                    console.log('subcat',subcat)
-                    document.querySelector('.subcategory').value = subcat;
-                    loadcatitems();
-                   }
+                    console.log("tdydate",response);
+                    let schtddinitem = document.querySelector('#schtddinitem');
+                    schtddinitem.value = response.data[0]['ItemName'];
                 },
                 error:function(err){
                     console.log(err);
-                    alert("Something wrong try again later")
                 }
             })
+
+        }
+        loadtodaydinneritem();
+
+        
+        async function checkingtrigger() {
+            await checktmritem();
+            await checkdinnertmitem();
+        }
+
+        //check wheather tomorrow breakfast item set or not
+        async function checktmritem(){
+            var payload = {
+                load:"checktmritem",
+                tmrdate:schtmdydate[0].value,
+            }
+            try{
+                let response = await $.ajax({
+                    type: "POST",
+                    url: "./webservices/fooddetails1.php",
+                    data: JSON.stringify(payload),
+                    dataType: "json",
+                });
+                console.log('checktrm', response);
+                if (response.data.length > 0) {
+                    document.querySelector('.btnbftmr').textContent = 'Edit';
+                    console.log("t", response);
+                    let subcat = response.data[0]['subcategory'];
+                    console.log('subcat', subcat);
+                    document.querySelector('.subcategory').value = subcat;
+                    loadcatitems();
+                }
+            }
+            catch(err){
+                console.log(err);
+                alert("Something went wrong, try again later");
+            }
+            // $.ajax({
+            //     type: "POST",
+            //     url: "./webservices/fooddetails1.php",
+            //     data: JSON.stringify(payload),
+            //     dataType: "json",
+            //     success:function(response){
+            //         console.log('checktrm',response);
+            //        if(response.data.length > 0){
+            //         document.querySelector('.btnbftmr').textContent = 'Edit';
+            //         console.log("t",response);
+            //         let subcat = response.data[0]['subcategory'];
+            //         console.log('subcat',subcat)
+            //         document.querySelector('.subcategory').value = subcat;
+            //         loadcatitems();
+            //        }
+            //     },
+            //     error:function(err){
+            //         console.log(err);
+            //         alert("Something wrong try again later")
+            //     }
+            // })
+        }
+        //check tomorrow dinner item
+        async function checkdinnertmitem(){
+            var payload = {
+                load:"checktmrdinitem",
+                tmrdate:schtmdydate[2].value,
+            }
+            try{
+                let response = await $.ajax({
+                    type: "POST",
+                    url: "./webservices/fooddetails1.php",
+                    data: JSON.stringify(payload),
+                    dataType: "json",
+                });
+                console.log('checktrmdin', response);
+                if (response.data.length > 0) {
+                    document.querySelector('.btndintmr').textContent = 'Edit';
+                    console.log("t", response);
+                    let subcat = response.data[0]['subcategory'];
+                    console.log('subcat', subcat);
+                    document.querySelector('.dinnersubcategory').value = subcat;
+                    loadDinnerCategoryItems();
+                }
+            }
+            catch(err){
+                console.log(err);
+                alert("Something went wrong, try again later");
+            }
+            // $.ajax({
+            //     type: "POST",
+            //     url: "./webservices/fooddetails1.php",
+            //     data: JSON.stringify(payload),
+            //     dataType: "json",
+            //     success:function(response){
+            //         console.log('checktrm',response);
+            //        if(response.data.length > 0){
+            //         document.querySelector('.btnbftmr').textContent = 'Edit';
+            //         console.log("t",response);
+            //         let subcat = response.data[0]['subcategory'];
+            //         console.log('subcat',subcat)
+            //         document.querySelector('.subcategory').value = subcat;
+            //         loadcatitems();
+            //        }
+            //     },
+            //     error:function(err){
+            //         console.log(err);
+            //         alert("Something wrong try again later")
+            //     }
+            // })
         }
        
 
@@ -690,7 +800,6 @@
                 data: JSON.stringify(payload),
                 dataType: "json",
                 success:function(response){
-                  
                     if(response.data.length > 0){
                         let subcategory = document.querySelector('.subcategory');
                         if(subcategory){
@@ -710,6 +819,40 @@
             })
         }
         loadsubbreakfast();
+
+
+        //load dinner subcategory
+        function loaddinnersub(){
+            var payload = {
+                foodtype:"3",
+                load:"loaddinnersub",
+            }
+            $.ajax({
+                type: "POST",
+                url: "./webservices/fooddetails1.php",
+                data: JSON.stringify(payload),
+                dataType: "json",
+                success:function(response){
+                    console.log("sub dinner",response);
+                    if(response.data.length > 0){
+                        let subcategory = document.querySelector('.dinnersubcategory');
+                        if(subcategory){
+                            subcategory.innerHTML = `<option value="">Select the category</option>`; 
+                            response.data.forEach(itm=>{
+                               let option = document.createElement('option');
+                               option.value = itm.SNO;
+                               option.textContent = itm.subcategory;
+                                subcategory.appendChild(option);
+                            })
+                        }
+                    }
+                },
+                error:function(err){
+                    console.log(err)
+                }
+            })
+        }
+        loaddinnersub();
 
 
         //load category items
@@ -748,33 +891,105 @@
             })
         }
 
-        function upddatetmbfitem(thsbtn){
+        //load dinner category items
+        function loadDinnerCategoryItems(){
+            var payload = {
+                load:"dincatitems",
+                subcategory: document.querySelector('.dinnersubcategory').value
+            }
+            $.ajax({
+                type: "POST",
+                url: "./webservices/fooddetails1.php",
+                data: JSON.stringify(payload),
+                dataType: "json",
+                success:function(response){    
+                    let tmdinitems = document.querySelector('.tmdinitems');
+                    if(response.data && response.data.length > 0){
+                        console.log('onchange',response)     
+                        if (tmdinitems) {
+                            tmdinitems.innerHTML = `<option value="">Select the item</option>`; 
+                            response.data.forEach(itm => { 
+                                let option = document.createElement('option');
+                                option.value = itm.OptionID;
+                                option.textContent = itm.ItemName;
+                                tmdinitems.appendChild(option);
+                            });
+                        }
+                        loaddinitemstmrdate();
+                    }
+                    else{
+                        tmdinitems.innerHTML = `<option value="">No items</option>`; 
+                    }
+                },
+                error:function(err){
+                    console.log(err);
+                }
+            })
+        }
+
+        function upddatetmitem(thsbtn,foodtype){
             
             let updateactivity = (thsbtn.textContent === 'Edit') ? 2 : 1;
+
+            console.log("foodtype",foodtype)
+
+            let dropdown = (foodtype === 1)?document.querySelector('.tmbfitems'):
+                            (foodtype === 3)?document.querySelector('.tmdinitems')
+                                            :document.querySelector('.tmlunitems')
+
+            let subcategory = (foodtype === 1)?document.querySelector('.subcategory').value:
+                                (foodtype === 3)?document.querySelector('.dinnersubcategory').value:
+                                                document.querySelector('.lunchsubcategory').value
+
+          
+            let tmdate = (foodtype === 1)?schtmdydate[0].value:(foodtype === 3)?schtmdydate[2].value:schtmdydate[1].value
+                            
+                                           
+                                           
+            let previousitem = (foodtype === 1)?breakfasttmritem:(foodtype === 3)?dinnertmritem:lunchtmritem;
          
 
             if(!document.querySelector('.tmbfitems').value || ! document.querySelector('.subcategory').value){
                 alert("Please fill the required fields");
                 return;
             }
+
+            let optionid = dropdown.value; 
+
+            let itemname = dropdown.options[dropdown.selectedIndex].text
+         
+
+            let check = confirm(`Do you really want to update tomorrow's item to ${itemname}?`)
+            if(!check){
+                dropdown.value = previousitem;
+                return;
+            }
             
             var payload = {
-                tmrdate:schtmdydate[0].value,
+                tmrdate:tmdate,
                 load:"setbfitem",
-                OptionID:document.querySelector('.tmbfitems').value,
-                subcategory: document.querySelector('.subcategory').value,
+                OptionID:optionid,
+                subcategory: subcategory,
                 updateactivity:updateactivity,
+                foodtype:foodtype
             }
-            console.log('d',payload);
+            console.log('update',payload);
             $.ajax({
                 type: "POST",
                 url: "./webservices/fooddetails1.php",
                 data: JSON.stringify(payload),
                 dataType: "json",
                 success:function(response){
+                    console.log("updatebfitem",response)
                     if(response.status === 'success'){
                         alert("Successfully Updated")
-                        document.querySelector('.btnbftmr').textContent = 'Edit';
+                        if(foodtype === 1){
+                            document.querySelector('.btnbftmr').textContent = 'Edit';
+                        }
+                        else if(foodtype === 3){
+                            document.querySelector('.btndintmr').textContent = 'Edit';
+                        }
+                      
                     }    
                 },
                 error:function(err){
@@ -801,6 +1016,7 @@
                     console.log('tmr',response)
                     if(response.data && response.data.length > 0){
                         document.querySelector('.tmbfitems').value  = response.data[0]['OptionID'];
+                        breakfasttmritem = response.data[0]['OptionID'];
                     }
                 },
                 error:function(err){
@@ -809,6 +1025,30 @@
             })
         }
        
+        //function for load dinner tomorrow item
+        function loaddinitemstmrdate(){
+            var payload = {
+                load:"loadbydinitemstmrdate",
+                tmrdate:schtmdydate[2].value
+            }
+            console.log("payload",payload);
+            $.ajax({
+                type: "POST",
+                url: "./webservices/fooddetails1.php",
+                data: JSON.stringify(payload),
+                dataType: "json",
+                success:function(response){
+                    console.log('tmr',response)
+                    if(response.data && response.data.length > 0){
+                        document.querySelector('.tmdinitems').value  = response.data[0]['OptionID'];
+                        dinnertmritem = response.data[0]['OptionID'];
+                    }
+                },
+                error:function(err){
+                    console.log(err);
+                }
+            })
+        }
 
 
         // Function to toggle sections with active class

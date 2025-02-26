@@ -8,7 +8,7 @@ $sno = $data["sno"] ?? "";
 $csno = $data["csno"] ?? ""; 
 $OptionID = $data["OptionID"] ?? "";
 $category = $data["category"] ?? "";
-$foodtype = $data["category"] ?? "";
+// $foodtype = $data["category"] ?? "";
 $subcategory = $data["subcategory"] ?? "";
 $ItemName = $data["ItemName"] ?? "";
 $foodtype = $data['foodtype'] ?? "";
@@ -132,8 +132,14 @@ else if($load == "loadbfitems"){
 else if($load == "loadbybfitemstmrdate"){
     loadbfitemstmrdate($conn);
 }
+else if($load == "loadbydinitemstmrdate"){
+    loadbydinitemstmrdate($conn);
+}
 else if($load == "loadsubbreakfast"){
     loadsubbreakfast($conn);
+}
+else if($load == "loaddinnersub"){
+    loaddinnersub($conn);
 }
 else if($load == "setbfitem"){
     setbfitem($conn);
@@ -141,9 +147,37 @@ else if($load == "setbfitem"){
 else if($load == "bfcatitems"){
     bfcatitems($conn);
 }
+else if($load == "dincatitems"){
+    dincatitems($conn);
+}
 else if($load == "checktmritem"){
     checktrmitem($conn);
 }
+else if($load == "checktmrdinitem"){
+    checktrmdinitem($conn);
+}
+else if($load == "loadtodaydinneritem"){
+    loadtodaydinneritem($conn);
+}
+
+
+function checktrmdinitem($conn){
+    global $tmrdate;
+    $sql = "SELECT dinnerschedule.sno,fooddetails.ItemName,fooddetails.OptionID,fooddetails.subcategory from dinnerschedule
+            join fooddetails on dinnerschedule.FoodID = fooddetails.OptionID
+            where dinnerschedule.Date = '$tmrdate'";
+    $result = getData($conn,$sql);
+
+    if(count($result) > 0){
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $result);
+    }
+    else{
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => '');
+    }
+    echo json_encode($jsonresponse);
+}
+
+
 
 function checktrmitem($conn){
     global $tmrdate;
@@ -174,8 +208,35 @@ function bfcatitems($conn){
     echo json_encode($jsonresponse);
 }
 
+//function for load dinner sub category items
+function dincatitems($conn){
+    global $subcategory;
+    $sql = "SELECT * from fooddetails WHERE subcategory = $subcategory";
+    $resultsql = getData($conn,$sql);
+    if(count($resultsql) > 0){
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resultsql);
+    }
+    else{
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => '');
+    }
+    echo json_encode($jsonresponse);
+}
+
 
 function loadsubbreakfast($conn){
+    global $foodtype;
+    $sql = "select subcategory,SNO from subcategory where foodtype = $foodtype";
+    $resultsql = getData($conn,$sql);
+    if(count($resultsql) > 0){
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resultsql);
+    }
+    else{
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => '');
+    }
+    echo json_encode($jsonresponse);
+}
+//function for load dinner sub category
+function loaddinnersub($conn){
     global $foodtype;
     $sql = "select subcategory,SNO from subcategory where foodtype = $foodtype";
     $resultsql = getData($conn,$sql);
@@ -190,58 +251,95 @@ function loadsubbreakfast($conn){
 
 
 function setbfitem($conn){
-    global $OptionID,$tmrdate,$subcategory,$updateactivity;
+    global $OptionID,$tmrdate,$foodtype,$subcategory,$updateactivity;
     $itempricejsql = "SELECT Price from fooddetails where OptionID = $OptionID and subcategory = $subcategory";
     $priceresulsql = getData($conn,$itempricejsql);
     $itemprice = $priceresulsql[0]['Price'];
+
     if($updateactivity == 1){
-        $insertschsql = "INSERT INTO `breakfastschedule`(`Date`, `FoodID`) VALUES ('$tmrdate','$OptionID')";
-        $resultsqlsch = setData($conn,$insertschsql);
+        if($foodtype == 1){
+            $insertschsql = "INSERT INTO `breakfastschedule`(`Date`, `FoodID`) VALUES ('$tmrdate','$OptionID')";
+            $resultsqlsch = setData($conn,$insertschsql);
+        }
+        else if($foodtype == 3){
+            $insertschsql = "INSERT INTO `dinnerschedule`(`Date`, `FoodID`) VALUES ('$tmrdate','$OptionID')";
+            $resultsqlsch = setData($conn,$insertschsql);
+        }
+       
     }
     else{
-        $insertschsql = "UPDATE `breakfastschedule` SET `FoodID`='$OptionID' WHERE breakfastschedule.Date = '$tmrdate'";
-        $resultsqlsch = setData($conn,$insertschsql);
+        if($foodtype == 1){
+            $insertschsql = "UPDATE `breakfastschedule` SET `FoodID`='$OptionID' WHERE breakfastschedule.Date = '$tmrdate'";
+            $resultsqlsch = setData($conn,$insertschsql);
+        }
+        else if($foodtype == 3){
+            $insertschsql = "UPDATE `dinnerschedule` SET `FoodID`='$OptionID' WHERE breakfastschedule.Date = '$tmrdate'";
+            $resultsqlsch = setData($conn,$insertschsql);
+        }
+       
     }
    
 
     if($resultsqlsch == 'Record created'){
          //get the list of tmrorders
+        if($updateactivity == 1){
                 $sqltmrorder = "
                 UPDATE orders o
-            JOIN (
-                SELECT OrderID, Quantity 
-                FROM orders 
-                WHERE OrderDate = '$tmrdate'
-                AND Status = 1
-                AND SubCategorySno = $subcategory  
-                AND FoodTypeID = 1
-            ) q 
-            ON o.OrderID = q.OrderID
-            SET o.TotalAmount = q.Quantity * $itemprice,
-                o.FoodID = $OptionID
-            WHERE o.SubCategorySno = $subcategory  
-            AND o.FoodTypeID = 1
-            ";
+                JOIN (
+                    SELECT OrderID, Quantity 
+                    FROM orders 
+                    WHERE OrderDate = '$tmrdate'
+                    AND Status = 1
+                    AND SubCategorySno = 0  
+                    AND FoodTypeID = '$foodtype'
+                ) q 
+                ON o.OrderID = q.OrderID
+                SET o.TotalAmount = q.Quantity * $itemprice,
+                    o.FoodID = $OptionID,
+                    o.SubCategorySno = $subcategory
+                WHERE o.SubCategorySno = 0  
+                AND o.FoodTypeID = '$foodtype'
+                ";
+        }
+        else{
+            $sqltmrorder = "
+                UPDATE orders o
+                JOIN (
+                    SELECT OrderID, Quantity 
+                    FROM orders 
+                    WHERE OrderDate = '$tmrdate'
+                    AND Status = 1
+                    AND SubCategorySno = $subcategory  
+                    AND FoodTypeID = '$foodtype'
+                ) q 
+                ON o.OrderID = q.OrderID
+                SET o.TotalAmount = q.Quantity * $itemprice,
+                    o.FoodID = $OptionID
+                WHERE o.SubCategorySno = $subcategory  
+                AND o.FoodTypeID = '$foodtype'
+                ";
+        }
+               
 
-            $resultmrorder = setData($conn,$sqltmrorder);
+        $resultmrorder = setData($conn,$sqltmrorder);
 
-            if($resultmrorder == 'Record created'){
-                // //get the ordersno
-                $sqlosno = "SELECT SNO,CustomerID,Quantity,OrderID,TotalAmount,FoodTypeID from Orders WHERE FoodTypeID = 1 and Status = 1 and FoodID = $OptionID and OrderDate = '$tmrdate'";
-                $sqlosnoresult = getData($conn,$sqlosno);
-                if(count($sqlosnoresult) > 0){
-                    $jsonresponse = insertToLog($sqlosnoresult,$conn);
-                }    
-                else{
-                    $jsonresponse = array('code' => '200', 'status' => 'success' ,'msg'=>"successfully update the order price and id",'d'=>$resultmrorder);
-                } 
-            }
+        if($resultmrorder == 'Record created'){
+            // //get the ordersno
+            $sqlosno = "SELECT SNO,CustomerID,Quantity,OrderID,TotalAmount,FoodTypeID from Orders WHERE FoodTypeID = $foodtype and Status = 1 and FoodID = $OptionID and OrderDate = '$tmrdate'";
+            $sqlosnoresult = getData($conn,$sqlosno);
+            if(count($sqlosnoresult) > 0){
+                $jsonresponse = insertToLog($sqlosnoresult,$conn);
+            }    
             else{
-                $jsonresponse = array('code' => '500', 'status' => 'fail' ,'msg'=>"failed to update the order price and id");
-            }
+                $jsonresponse = array('code' => '200', 'status' => 'success' ,'msg'=>"successfully update the order price and id",'d'=>$resultmrorder);
+            } 
+        }
+        else{
+            $jsonresponse = array('code' => '500', 'status' => 'fail' ,'msg'=>"failed to update the order price and id");
+        }
     }
     else{
-        $jsonresponse = array('code' => '500', 'status' => 'fail' ,'msg'=>"failed to insert the breakfastschedule");
+        $jsonresponse = array('code' => '500', 'status' => 'fail' ,'msg'=>"failed to insert the breakfastschedule",'d'=>$foodtype);
     }
     echo json_encode($jsonresponse);
 }
@@ -277,6 +375,23 @@ function loadbfitemstmrdate($conn){
     echo json_encode($jsonresponse);
 }
 
+//load tomorrow dinner item
+function loadbydinitemstmrdate($conn){
+    global $tmrdate;
+
+    $sql = "SELECT dinnerschedule.sno,fooddetails.ItemName,fooddetails.OptionID from dinnerschedule
+            join fooddetails on dinnerschedule.FoodID = fooddetails.OptionID
+            where dinnerschedule.Date = '$tmrdate'";
+    $resulsql = getData($conn,$sql);
+
+    if(count($resulsql) > 0){
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resulsql);
+    }
+    else{
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => '');
+    }
+    echo json_encode($jsonresponse);
+}
 
 
 
@@ -292,6 +407,22 @@ function loadtodaybfitem($conn){
     }
     else{
         $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => '');
+    }
+    echo json_encode($jsonresponse);
+}
+
+//function for load today dinner item
+function loadtodaydinneritem($conn){
+    global $todaydate;
+    $sql = "SELECT dinnerschedule.Date,fooddetails.ItemName FROM `dinnerschedule` 
+    join fooddetails on dinnerschedule.FoodID = fooddetails.OptionID
+    where dinnerschedule.Date = '$todaydate'";
+    $resultsql = getData($conn,$sql);
+    if(count($resultsql) > 0){
+    $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resultsql);
+    }
+    else{
+    $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => '');
     }
     echo json_encode($jsonresponse);
 }
