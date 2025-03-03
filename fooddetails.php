@@ -8,301 +8,6 @@
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" type="text/css" href="css/fooddetails.css">
-
-    <style>
-        .main-container {
-            width: 100%;
-            height: 78vh;
-            display: flex;
-            flex-direction: row;
-        }
-
-        .side-container {
-            width: 20%;
-            height: 76vh;
-            background-color: grey;
-            color: black;
-            display: flex;
-            flex-direction: column;
-            padding-top: 20px;
-        }
-
-        .side-container ul {
-            padding: 0;
-            width: 100%;
-            list-style: none;
-        }
-
-        .side-container ul li {
-            padding: 15px;
-            text-align: left;
-            cursor: pointer;
-            transition: 0.3s;
-            padding-left: 20px;
-        }
-
-        .side-container ul li:hover,
-        .side-container ul li.active {
-            background-color: #eee;
-            width: 150px;
-            font-weight: bold;
-        }
-
-        .content-section {
-            display: none;
-            padding: 20px;
-            font-size: 18px;
-            width: 100%;
-        }
-
-        .content-section.active {
-            display: block;
-        }
-
-        .head-container {
-            height: 7vh;
-            width: 100%;
-            background-color: orangered;
-            color: whitesmoke;
-            font-size: 2vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .input-container {
-            width: 95%;
-            padding: 20px;
-            height: 80vh;
-        }
-
-        #button .row-1,
-        #button .row-2 {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 10px;
-        }
-
-        #button .row-1 select,
-        #button .row-2 input,
-        #button .row-2 button {
-            width: 25%;
-            padding: 6px;
-        }
-
-        #button .row-2 button {
-            width: 12%;
-            padding: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            height: auto;
-        }
-
-        .btn-primary {
-            background-color: #28a745;
-            border: none;
-            color: white;
-        }
-
-        .btn-danger {
-            background-color: #dc3545;
-            border: none;
-            color: white;
-        }
-
-        .category-container {
-            margin-bottom: 20px;
-        }
-
-        .category-container select {
-            width: 60%;
-            padding: 8px;
-            margin-left: 10px;
-        }
-
-        .add_lun .input_lun input {
-            width: 60%;
-            padding: 8px;
-            margin-right: 10px;
-        }
-
-        .add_lun .input_lun button {
-            padding: 8px 16px;
-            font-weight: bold;
-            cursor: pointer;
-            background-color: #28a745;
-            color: white;
-            border: none;
-        }
-
-        .category-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .category-row label {
-            width: 20%;
-            font-weight: bold;
-        }
-
-        .category-row select {
-            width: 60%;
-            padding: 8px;
-        }
-
-        .input_lun {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .input_lun input {
-            width: 60%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .input_lun button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        #addi {
-            background-color: #28a745;
-        }
-
-        #addi:hover {
-            background-color: #218838;
-        }
-
-        #updatei {
-            background-color: #ffc107;
-        }
-
-        #updatei:hover {
-            background-color: #e0a800;
-        }
-
-
-        #add {
-            background-color: #28a745;
-        }
-
-        #add:hover {
-            background-color: #218838;
-        }
-
-        #update {
-            background-color: #ffc107;
-        }
-
-        #update:hover {
-            background-color: #e0a800;
-        }
-
-        .lun_table th,
-        .lun_table td {
-            padding: 10px;
-            text-align: center;
-        }
-
-        .lun_table thead {
-            background-color: #f8c471;
-            color: white;
-            font-weight: bold;
-        }
-
-        .lun_table tbody tr:nth-child(odd) {
-            background-color: #f9f9f9;
-        }
-
-        .lun_table tbody tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        .lun_table1 th,
-        .lun_table1 td {
-            padding: 10px;
-            text-align: center;
-        }
-
-        .lun_table1 thead {
-            background-color: #f8c471;
-            color: white;
-            font-weight: bold;
-        }
-
-        .lun_table1 tbody tr:nth-child(odd) {
-            background-color: #f9f9f9;
-        }
-
-        .lun_table1 tbody tr:hover {
-            background-color: #f1f1f1;
-        }
-        #scheduling-content{
-            border:2px solid black;
-           height:80vh;
-           width:54.5vw;
-        }
-        #scheduling-content .scheduling_content_container{
-            height:90%;
-            width:100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            padding:5px;
-            align-items: center;
-        }
-        #scheduling-content .scheduling_content_container .schedulingboxes{
-            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-            width:80%;
-            height:20%;
-            margin-left: 10px;
-            margin-top: 3vh;
-            border-radius: 5px;
-            padding:5px;
-        }
-        .scheduling_content_container h3{
-            margin: 0px;
-            padding:5px;
-            text-align: center;
-            background-color: #f8c471;
-            color:white;
-        }
-        .scheduling_content_container p{
-            margin-left: 2vw;;
-        }
-        .schedulingboxes select{
-            width:8vw;
-        }
-        .schedulingboxes input{
-            width:5vw;
-        }
-        #schtmdydate{
-            width:8vw;
-        }
-        #schtdydate{
-            width:8vw;
-        }
-        .tdybox{
-            float: left;
-        }
-        .tmrbox{
-            float: right;
-        }
-    </style>
 </head>
 
 <body style="overflow: hidden;">
@@ -329,14 +34,14 @@
                                     <!-- Row 1: Category, Food Item, Sub Item -->
                                     <div class="row-1">
                                         <label for="category">Food Type:</label>
-                                        <select id="category" class="category" onchange="loadFdItemByCategory();loadFoodPrices(true);hidetab()">
+                                        <select id="category" class="category" onchange="loadsubcategory();loadFoodPrices(true);hidetab()">
                                             <option value="">Select Type</option>
                                             <!-- <option value="daily">Daily</option>
                                             <option value="monthly">Monthly</option> -->
                                         </select>
 
                                         <label for="sub_item">Category:</label>
-                                        <select id="sub_items-dp" class="sub_items_dp"></select>
+                                        <select id="sub_items-dp" class="sub_items_dp" onchange="loadFdItemByCategory();loadFoodPricessub();"></select>
 
                                         <label for="food_item">Item:</label>
                                         <select id="food_items-dp" class="food_items_dp" onchange="loadFoodPrices(false);hidetab();"></select>
@@ -366,12 +71,7 @@
                                                 <!-- <th>Category</th> -->
                                                 <th>Item Name</th>
                                                 <th>Price</th>
-                                                <th>From
-                                                    Date</th>
-                                                <!-- <th>To
-                                    Date
-                                </th> -->
-                                                <!-- <th>Edit</th> -->
+                                                <th>From Date</th>
                                                 <th>View</th>
                                             </tr>
                                         </thead>
@@ -409,13 +109,13 @@
                 <!-- Items Menu Section -->
                 <div id="items-menu-content" class="content-section">
                     <!-- <h2>Items Menu Section</h2> -->
-                    <div class="category-container">
+                    <div class="category-containerc">
                         <label for="item_category"><strong>Food Type:</strong></label>
                         <select id="item_category" class="category" onchange="loadItemsByCategory();">
                         </select>
                     </div>
 
-                    <div class="add_lun">
+                    <div class="addlun">
                         <h3>Add Item</h3>
                         <div class="input_lun">
                             <input type="text" id="subcategory_name" placeholder="Enter Subcategory Name">
@@ -423,18 +123,20 @@
                             <button type="submit" id="update" name="add" style="display:none;">Update</button>
                             <button class="cnclbtn" style="display:none;background-color:red">Cancel</button>
                         </div>
-                        <table class="add_lun lun_table">
-                            <thead>
-                                <tr>
-                                    <th>Item Name</th>
-                                    <th>Edit</th>
-                                    <th>Activity</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Dynamic items will be loaded here -->
-                            </tbody>
-                        </table>
+                        <div class="data_lunch1">
+                            <table class="add_lun lun_table">
+                                <thead>
+                                    <tr>
+                                        <th>Item Name</th>
+                                        <th>Edit</th>
+                                        <th>Activity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dynamic items will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
 
                     </div>
                 </div>
@@ -442,20 +144,20 @@
                 <!-- Sub Items Menu Section -->
                 <div id="sub-items-menu-content" class="content-section">
                     <div class="category-row">
-                        <div>
+                        <!-- <div class="form_group"> -->
                             <label for="sub_item_category"><strong>Food Type:</strong></label>
                             <select id="sub_item_category">
 
 
                             </select>
-                        </div>
+                        <!-- </div> -->
 
-                        <div>
-                            <label for="sub_items"><strong>Sub Category:</strong></label>
+                        <!-- <div class="form_group"> -->
+                            <label for="sub_items"><strong>Category:</strong></label>
                             <select id="sub_items" onchange=" loadItemsByCategory1()">
 
                             </select>
-                        </div>
+                        <!-- </div> -->
                     </div>
 
                     <div class="add_lun1">
@@ -467,40 +169,41 @@
                             <button type="submit" id="updatei" name="add" style="display:none;">Update</button>
                             <button class="cnclbtni" style="display:none;background-color:red">Cancel</button>
                         </div>
-                        <table class="lun_table1">
-                            <thead>
-                                <tr>
-                                    <th>Sub Item Name</th>
-                                    <th>Price</th>
-                                    <th>Edit</th>
-                                    <th>Activity</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Dynamic sub-items go here -->
-                            </tbody>
-                        </table>
+                        <div class="data_lunch">
+                            <table class="lun_table1">
+                                <thead>
+                                    <tr>
+                                        <th>Sub Item Name</th>
+                                        <th>Price</th>
+                                        <th>Edit</th>
+                                        <th>Activity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dynamic sub-items go here -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-
                 <!--scheduling-content section-->
                 <div id="scheduling-content">
                     <div class="scheduling_content_container">
                         <div class="schedulingboxes">
                             <h3>Break Fast</h3>
                             <div class="tdybox">
-                            <p><b>Today</b></p>
-                                <input type="date" id="schtdydate">
-                                <input type="text" id="schtdbfitem">
+                                <p><b>Today</b></p>
+                                <input type="date" id="schtdydate" readonly>
+                                <input type="text" id="schtdbfitem" readonly>
                             </div>
                             <div class="tmrbox">
-                            <p><b>Tomorrow</b></p>
-                                <input type="date" id="schtmdydate">
+                                <p><b>Tomorrow</b></p>
+                                <input type="date" id="schtmdydate" readonly>
                                 <select class="subcategory" onchange="loadcatitems()">
-                                    
+
                                 </select>
                                 <select class="tmbfitems">
-                                    
+
                                 </select>
                                 <button onclick="upddatetmitem(this,1)" class="btnbftmr">Save</button>
                             </div>
@@ -510,35 +213,38 @@
                         <div class="schedulingboxes">
                             <h3>Lunch</h3>
                             <div class="tdybox">
-                            <p><b>Today</b></p>
-                                <input type="date" id="schtdydate">
-                                <input type="text">
+                                <p><b>Today</b></p>
+                                <input type="date" id="schtdydate" readonly>
+                                <input type="text" id="schtdlunitem" readonly>
                             </div>
                             <div class="tmrbox">
-                            <p><b>Tomorrow</b></p>
-                                <input type="date" id="schtmdydate">
-                                <select>
+                                <p><b>Tomorrow</b></p>
+                                <input type="date" id="schtmdydate" readonly>
+                                <select class="lunchsubcategory" onchange="loadLunchCategoryItems()">
 
                                 </select>
-                                <button>Save</button>
+                                <select class="tmlunitems">
+
+                                </select>
+                                <button onclick="upddatetmitem(this,2)" class="btnluntmr">Save</button>
                             </div>
                         </div>
 
                         <div class="schedulingboxes">
-                             <h3>Dinner</h3>
-                             <div class="tdybox">
+                            <h3>Dinner</h3>
+                            <div class="tdybox">
                                 <p><b>Today</b></p>
-                                <input type="date" id="schtdydate">
-                                <input type="text" id="schtddinitem">
+                                <input type="date" id="schtdydate" readonly>
+                                <input type="text" id="schtddinitem" readonly>
                             </div>
                             <div class="tmrbox">
                                 <p><b>Tomorrow</b></p>
-                                <input type="date" id="schtmdydate">
+                                <input type="date" id="schtmdydate" readonly>
                                 <select class="dinnersubcategory" onchange="loadDinnerCategoryItems()">
-                                    
+
                                 </select>
                                 <select class="tmdinitems">
-                                    
+
                                 </select>
                                 <button onclick="upddatetmitem(this,3)" class="btndintmr">Save</button>
                             </div>
@@ -555,47 +261,67 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="scriptfiles/fooddetails.js"></script>
     <script>
-
         var todaydate = new Date();
         let schtdydate = document.querySelectorAll('#schtdydate');
         let schtmdydate = document.querySelectorAll('#schtmdydate');
-        var tomorrowdate = new Date(); 
+        var tomorrowdate = new Date();
         let breakfasttmritem;
         let dinnertmritem;
-
-       
+        let lunchtmritem;
 
         tomorrowdate.setDate(todaydate.getDate() + 1);
 
-        schtdydate.forEach(d=>{
-          d.value = dateformat(todaydate);
-          d.setAttribute('max',d.value)
-          d.setAttribute('min',d.value)
+        schtdydate.forEach(d => {
+            d.value = dateformat(todaydate);
+            d.setAttribute('max', d.value)
+            d.setAttribute('min', d.value)
         })
 
-        schtmdydate.forEach(d=>{
+        schtmdydate.forEach(d => {
             d.value = dateformat(tomorrowdate);
-            d.setAttribute('max',d.value)
-            d.setAttribute('min',d.value)
+            d.setAttribute('max', d.value)
+            d.setAttribute('min', d.value)
         })
-
-        
 
         function dateformat(date) {
             let day = String(date.getDate()).padStart(2, "0");
-            let month = String(date.getMonth() + 1).padStart(2, "0"); 
+            let month = String(date.getMonth() + 1).padStart(2, "0");
             let year = date.getFullYear();
 
             return `${year}-${month}-${day}`;
         }
 
-
         //function for loadtoday order
-        function loadtodaybfitem(){
+        function loadtodaybfitem() {
 
             var payload = {
-                todaydate : schtdydate[0].value,
-                load:"loadtodaybfitem"
+                todaydate: schtdydate[0].value,
+                load: "loadtodaybfitem"
+            }
+            console.log("payload", payload);
+            $.ajax({
+                type: "POST",
+                url: "./webservices/fooddetails1.php",
+                data: JSON.stringify(payload),
+                dataType: "json",
+                success: function(response) {
+                    console.log("tdydate", response);
+                    let schtdbfitem = document.querySelector('#schtdbfitem');
+                    schtdbfitem.value = response.data[0]['ItemName'];
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            })
+
+        }
+        loadtodaybfitem();
+
+          //today lunch curry item
+          function loadCurryInLunch(){
+            var payload = {
+                todaydate : schtdydate[1].value,
+                load:"loadtodaylunitem"
             }
             console.log("payload",payload);
             $.ajax({
@@ -605,16 +331,15 @@
                 dataType: "json",
                 success:function(response){
                     console.log("tdydate",response);
-                    let schtdbfitem = document.querySelector('#schtdbfitem');
+                    let schtdbfitem = document.querySelector('#schtdlunitem');
                     schtdbfitem.value = response.data[0]['ItemName'];
                 },
                 error:function(err){
                     console.log(err);
                 }
             })
-
         }
-        loadtodaybfitem();
+        loadCurryInLunch();
 
         //function for load today dinner item
         function loadtodaydinneritem(){
@@ -641,14 +366,15 @@
         }
         loadtodaydinneritem();
 
-        
         async function checkingtrigger() {
             await checktmritem();
             await checkdinnertmitem();
+            await checklunchitem();
         }
 
-        //check wheather tomorrow breakfast item set or not
-        async function checktmritem(){
+         //check wheather tomorrow breakfast item set or not
+         async function checktmritem(){
+            console.log("breakfast tmr item")
             var payload = {
                 load:"checktmritem",
                 tmrdate:schtmdydate[0].value,
@@ -674,28 +400,41 @@
                 console.log(err);
                 alert("Something went wrong, try again later");
             }
-            // $.ajax({
-            //     type: "POST",
-            //     url: "./webservices/fooddetails1.php",
-            //     data: JSON.stringify(payload),
-            //     dataType: "json",
-            //     success:function(response){
-            //         console.log('checktrm',response);
-            //        if(response.data.length > 0){
-            //         document.querySelector('.btnbftmr').textContent = 'Edit';
-            //         console.log("t",response);
-            //         let subcat = response.data[0]['subcategory'];
-            //         console.log('subcat',subcat)
-            //         document.querySelector('.subcategory').value = subcat;
-            //         loadcatitems();
-            //        }
-            //     },
-            //     error:function(err){
-            //         console.log(err);
-            //         alert("Something wrong try again later")
-            //     }
-            // })
         }
+
+
+         //check tomorrow lunch item
+         async function checklunchitem(){
+            console.log("check tmr lunc item")
+            var payload = {
+                load:"checktmrlunitem",
+                tmrdate:schtmdydate[1].value,
+            }
+            try{
+                let response = await $.ajax({
+                    type: "POST",
+                    url: "./webservices/fooddetails1.php",
+                    data: JSON.stringify(payload),
+                    dataType: "json",
+                });
+                console.log('check tomorrow lunch item', response);
+                if (response.data.length > 0) {
+                    console.log("hello");
+                    document.querySelector('.btnluntmr').textContent = 'Edit';
+                    console.log("t", response);
+                    let subcat = response.data[0]['subcategory'];
+                    console.log('subcat', subcat);
+                    document.querySelector('.lunchsubcategory').value = subcat;
+                    loadLunchCategoryItems();
+                }
+            }
+            catch(err){
+                console.log(err);
+                alert("Something went wrong, try again later");
+            }
+        }
+
+
         //check tomorrow dinner item
         async function checkdinnertmitem(){
             var payload = {
@@ -820,6 +559,39 @@
         }
         loadsubbreakfast();
 
+        //load lunch subcategory
+        function loadlunchsub(){
+            var payload = {
+                foodtype:"2",
+                load:"loadlunchsub",
+            }
+            $.ajax({
+                type: "POST",
+                url: "./webservices/fooddetails1.php",
+                data: JSON.stringify(payload),
+                dataType: "json",
+                success:function(response){
+                    console.log("sub dinner",response);
+                    if(response.data.length > 0){
+                        let subcategory = document.querySelector('.lunchsubcategory');
+                        if(subcategory){
+                            subcategory.innerHTML = `<option value="">Select the category</option>`; 
+                            response.data.forEach(itm=>{
+                               let option = document.createElement('option');
+                               option.value = itm.SNO;
+                               option.textContent = itm.subcategory;
+                                subcategory.appendChild(option);
+                            })
+                        }
+                    }
+                },
+                error:function(err){
+                    console.log(err)
+                }
+            })
+        }
+        loadlunchsub();
+
 
         //load dinner subcategory
         function loaddinnersub(){
@@ -859,17 +631,18 @@
         function loadcatitems(){
             var payload = {
                 load:"bfcatitems",
-                subcategory: document.querySelector('.subcategory').value
+                ssubcategory: document.querySelector('.subcategory').value
             }
             $.ajax({
                 type: "POST",
                 url: "./webservices/fooddetails1.php",
                 data: JSON.stringify(payload),
                 dataType: "json",
-                success:function(response){    
+                success:function(response){   
+                    console.log('breakfasttttttt',response)   
                     let tmbfitems = document.querySelector('.tmbfitems');
                     if(response.data && response.data.length > 0){
-                        console.log('onchange',response)     
+                          
                         if (tmbfitems) {
                             tmbfitems.innerHTML = `<option value="">Select the item</option>`; 
                             response.data.forEach(itm => { 
@@ -886,6 +659,42 @@
                     }
                 },
                 error:function(err){
+                    console.log('breakfastcat item',err);
+
+                }
+            })
+        }
+        //load lunch category items
+        function loadLunchCategoryItems(){
+            var payload = {
+                load:"lunchcatitems",
+                ssubcategory: document.querySelector('.lunchsubcategory').value
+            }
+            $.ajax({
+                type: "POST",
+                url: "./webservices/fooddetails1.php",
+                data: JSON.stringify(payload),
+                dataType: "json",
+                success:function(response){    
+                    let tmdinitems = document.querySelector('.tmlunitems');
+                    if(response.data && response.data.length > 0){
+                        console.log('onchange',response)     
+                        if (tmdinitems) {
+                            tmdinitems.innerHTML = `<option value="">Select the item</option>`; 
+                            response.data.forEach(itm => { 
+                                let option = document.createElement('option');
+                                option.value = itm.OptionID;
+                                option.textContent = itm.ItemName;
+                                tmdinitems.appendChild(option);
+                            });
+                        }
+                        loadlunitemstmrdate();
+                    }
+                    else{
+                        tmdinitems.innerHTML = `<option value="">No items</option>`; 
+                    }
+                },
+                error:function(err){
                     console.log(err);
                 }
             })
@@ -895,7 +704,7 @@
         function loadDinnerCategoryItems(){
             var payload = {
                 load:"dincatitems",
-                subcategory: document.querySelector('.dinnersubcategory').value
+                ssubcategory: document.querySelector('.dinnersubcategory').value
             }
             $.ajax({
                 type: "POST",
@@ -967,9 +776,9 @@
             
             var payload = {
                 tmrdate:tmdate,
-                load:"setbfitem",
+                load:"setitem",
                 OptionID:optionid,
-                subcategory: subcategory,
+                ssubcategory: subcategory,
                 updateactivity:updateactivity,
                 foodtype:foodtype
             }
@@ -988,6 +797,9 @@
                         }
                         else if(foodtype === 3){
                             document.querySelector('.btndintmr').textContent = 'Edit';
+                        }
+                        else{
+                            document.querySelector('.btnluntmr').textContent = 'Edit';
                         }
                       
                     }    
@@ -1024,6 +836,30 @@
                 }
             })
         }
+        //function for lunch items tomorrow
+        function loadlunitemstmrdate(){
+            var payload = {
+                load:"loadbylunitemstmrdate",
+                tmrdate:schtmdydate[1].value
+            }
+            console.log("payload",payload);
+            $.ajax({
+                type: "POST",
+                url: "./webservices/fooddetails1.php",
+                data: JSON.stringify(payload),
+                dataType: "json",
+                success:function(response){
+                    console.log('tmr',response)
+                    if(response.data && response.data.length > 0){
+                        document.querySelector('.tmlunitems').value  = response.data[0]['OptionID'];
+                        lunchtmritem = response.data[0]['OptionID'];
+                    }
+                },
+                error:function(err){
+                    console.log(err);
+                }
+            })
+        }
        
         //function for load dinner tomorrow item
         function loaddinitemstmrdate(){
@@ -1053,7 +889,7 @@
 
         // Function to toggle sections with active class
         function toggleSection(sectionId, element) {
-            const sections = ['prices-content', 'items-menu-content', 'sub-items-menu-content' ,'scheduling-content'];
+            const sections = ['prices-content', 'items-menu-content', 'sub-items-menu-content','scheduling-content'];
             sections.forEach(id => {
 
                 document.getElementById(id).style.display = (id === sectionId) ? 'block' : 'none';
@@ -1080,10 +916,10 @@
 
         // drop down for category for category menu 
         function loadsubcategory() {
-            console.log('hello');
             var payload = {
                 sno: "",
                 item: "",
+                category: document.querySelector('.category').value,
                 load: "loadsubcategory",
             }
 
@@ -1093,7 +929,6 @@
                 data: JSON.stringify(payload),
                 dataType: "json",
                 success: function(response) {
-                    console.log("subcategory",response);
                     let dropdown = document.getElementById("sub_items-dp");
                     dropdown.innerHTML = ""; //clear any existing options
                     let defaultOption = document.createElement('option');
@@ -1104,7 +939,7 @@
                     dropdown.appendChild(defaultOption);
                     response.data.forEach(x => {
                         let option = document.createElement('option');
-                        option.value = x.sno;
+                        option.value = x.SNO;
                         option.text = x.subcategory;
                         dropdown.appendChild(option);
                     });
@@ -1256,7 +1091,9 @@
         });
 
         // Cancel Button Function
-        document.querySelector('.cnclbtn').addEventListener('click', resetForm);
+        document.querySelector('.cnclbtn').addEventListener('click', resetForm);{
+            
+        }
 
         // Reset Form Function - Hides Update & Cancel, Shows Save
         function resetForm() {
@@ -1368,57 +1205,58 @@
 
         // fetching items for item menu
         function loadItemsByCategory1() {
-    const selectedCategory = document.getElementById("sub_item_category").value;
-    const selectedSubCategory = document.getElementById("sub_items").value;
-    if (!selectedCategory || !selectedSubCategory) return;
+            const selectedCategory = document.getElementById("sub_item_category").value;
+            const selectedSubCategory = document.getElementById("sub_items").value;
+            if (!selectedCategory || !selectedSubCategory) return;
 
-    const payload = {
-        category: selectedCategory,
-        subcategory: selectedSubCategory,
-        load: "loadItemsByCategory1"
-    };
+            const payload = {
 
-    $.ajax({
-        type: "POST",
-        url: "./webservices/fooddetails1.php",
-        data: JSON.stringify(payload),
-        contentType: "application/json",
-        dataType: "json",
-        success: function(response) {
-            console.log("resultttttttttt", response);
-            const tbody = document.querySelector(".lun_table1 tbody");
-            tbody.innerHTML = ""; // Clear existing rows
+                category: selectedCategory,
+                subcategory: selectedSubCategory,
+                load: "loadItemsByCategory1"
+            };
 
-            if (response.data && response.data.length > 0) {
-                response.data.forEach(item => {
-                    // Define activity label based on activity status (you can adjust logic)
-                    const activityLabel = item.activity === 1 ? "Deactivate" : "Activate";
+            $.ajax({
+                type: "POST",
+                url: "./webservices/fooddetails1.php",
+                data: JSON.stringify(payload),
+                contentType: "application/json",
+                dataType: "json",
+                success: function(response) {
+                    console.log("resultttttttttt", response);
+                    const tbody = document.querySelector(".lun_table1 tbody");
+                    tbody.innerHTML = ""; // Clear existing rows
 
-                    const row = `<tr>
+                    if (response.data && response.data.length > 0) {
+                        response.data.forEach(item => {
+                            // Define activity label based on activity status (you can adjust logic)
+                            const activityLabel = item.activity === 1 ? "Deactivate" : "Activate";
+
+                            const row = `<tr>
                         <td>${item.ItemName}</td>
                         <td>${item.Price}</td>
                         <td><button onclick="editItemi(${item.OptionID}, '${item.ItemName.replace(/'/g, "\\'")}')">Edit</button></td>
                         <td><button onclick="activityi(${item.OptionID}, ${item.activity})">${activityLabel}</button></td>
                     </tr>`;
-                    tbody.insertAdjacentHTML("beforeend", row);
-                });
-            } else {
-                tbody.innerHTML = "<tr><td colspan='4'>No items found for this category.</td></tr>";
-            }
-        },
+                            tbody.insertAdjacentHTML("beforeend", row);
+                        });
+                    } else {
+                        tbody.innerHTML = "<tr><td colspan='4'>No items found for this category.</td></tr>";
+                    }
+                },
 
-        error: function(err) {
-            console.error("Error loading items:", err);
+                error: function(err) {
+                    console.error("Error loading items:", err);
+                }
+            });
         }
-    });
-}
 
         // Trigger load on dropdown change
         $("#sub_item_category, #sub_items").change(loadItemsByCategory1);
 
 
-// for item screen 
-document.querySelector("#addi").addEventListener('click', () => {
+        // for item screen 
+        document.querySelector("#addi").addEventListener('click', () => {
             // console.log("item and price add");
             var selectedCategory = document.getElementById("sub_item_category").value;
             var subcategoryName = document.getElementById("sub_items").value;
@@ -1442,11 +1280,15 @@ document.querySelector("#addi").addEventListener('click', () => {
                 alert("Please select a  FoodType!");
             }
 
+            var todayDate = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+
+
             var payload = {
                 foodtype: selectedCategory,
                 subcategory: subcategoryName,
                 itemname: selectitemname,
                 price: selectprice,
+                fromdate: todayDate, // Optional if backend handles date
                 load: "additemname"
             }
             document.getElementById('addi').disabled = true; // Disable button during the request
@@ -1460,93 +1302,95 @@ document.querySelector("#addi").addEventListener('click', () => {
                     if (response.status === "success") {
                         alert("Item Name added successfully!");
                         document.getElementById("item_name").value = "";
-                        resetForm();   
+                        resetForm();
                         loadfoodtype1();
                         loadItemsByCategory1();
                     } else {
                         alert("Failed to add subcategory: " + response.msg);
                     }
+                    document.getElementById('addi').disabled = false; // Re-enable button after response
                 },
                 error: function(error) {
                     console.error("Error adding itemname:", error);
+                    document.getElementById('addi').disabled = false; // Re-enable button even if error
                 }
             });
-    });
+        });
 
-     // Edit Function - Shows Update & Cancel buttons, hides Save button
-  // Edit Function - Shows Update & Cancel buttons, hides Save button
-function editItemi(sno, subitemName) {
-    document.getElementById("item_name").value = subitemName;
-    edititemNameId = sno;
+        // Edit Function - Shows Update & Cancel buttons, hides Save button
+        // Edit Function - Shows Update & Cancel buttons, hides Save button
+        function editItemi(sno, subitemName) {
+            document.getElementById("item_name").value = subitemName;
+            edititemNameId = sno;
 
-    // Toggle button visibility
-    document.getElementById('addi').style.display = 'none';
-    document.getElementById('updatei').style.display = 'inline-block';
-    document.querySelector('.cnclbtni').style.display = 'inline-block';
+            // Toggle button visibility
+            document.getElementById('addi').style.display = 'none';
+            document.getElementById('updatei').style.display = 'inline-block';
+            document.querySelector('.cnclbtni').style.display = 'inline-block';
 
-    // Disable price field during edit
-    document.getElementById("item_number").disabled = true;
-}
-        // Update Function - Updates only the item name
-document.getElementById('updatei').addEventListener('click', function() {
-    const updateditemName = document.getElementById("item_name").value.trim();
-    const selectedCategory = document.getElementById("sub_item_category").value;
-    const subcategoryName = document.getElementById("sub_items").value;
-
-    if (updateditemName === "") {
-        alert("Item name cannot be empty!");
-        return;
-    }
-
-    var payload = {
-        sno: edititemNameId,
-        foodtype: selectedCategory,
-        subcategory: subcategoryName,
-        itemname: updateditemName,
-        load: "updateitemname"
-    };
-
-    $.ajax({
-        type: "POST",
-        url: "./webservices/fooddetails1.php",
-        data: JSON.stringify(payload),
-        dataType: "json",
-        success: function(response) {
-            if (response.status === "success") {
-                alert("Item Name updated successfully!");
-                resetForm();
-                loadItemsByCategory1(); // Reload updated list
-            } else {
-                alert("Failed to update itemname: " + response.msg);
-            }
-        },
-        error: function(err) {
-            console.error("Error updating itemname:", err);
+            // Disable price field during edit
+            document.getElementById("item_number").disabled = true;
         }
-    });
-});
+        // Update Function - Updates only the item name
+        document.getElementById('updatei').addEventListener('click', function() {
+            const updateditemName = document.getElementById("item_name").value.trim();
+            const selectedCategory = document.getElementById("sub_item_category").value;
+            const subcategoryName = document.getElementById("sub_items").value;
+
+            if (updateditemName === "") {
+                alert("Item name cannot be empty!");
+                return;
+            }
+
+            var payload = {
+                sno: edititemNameId,
+                foodtype: selectedCategory,
+                subcategory: subcategoryName,
+                itemname: updateditemName,
+                load: "updateitemname"
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "./webservices/fooddetails1.php",
+                data: JSON.stringify(payload),
+                dataType: "json",
+                success: function(response) {
+                    if (response.status === "success") {
+                        alert("Item Name updated successfully!");
+                        resetForm();
+                        loadItemsByCategory1(); // Reload updated list
+                    } else {
+                        alert("Failed to update itemname: " + response.msg);
+                    }
+                },
+                error: function(err) {
+                    console.error("Error updating itemname:", err);
+                }
+            });
+        });
 
         // Cancel Button Function
-        document.querySelector('.cnclbtni').addEventListener('click', resetForm);
+        document.querySelector('.cnclbtni').addEventListener('click', resetFormi);
 
         // Reset Form Function - Hides Update & Cancel, Shows Save
-     // Reset Form Function - Hides Update & Cancel, Shows Save
-function resetForm() {
-    document.getElementById("item_name").value = '';
-    document.getElementById("item_number").value = '';
-    document.getElementById("item_number").disabled = false; // Enable price input after edit
+        // Reset Form Function - Hides Update & Cancel, Shows Save
+        function resetFormi() {
+            document.getElementById("item_name").value = '';
+            document.getElementById("item_number").value = '';
+            document.getElementById("item_number").disabled = false; // Enable price input after edit
 
-    edititemNameId = null;
+            edititemNameId = null;
 
-    document.getElementById('addi').style.display = 'inline-block';
-    document.getElementById('updatei').style.display = 'none';
-    document.querySelector('.cnclbtni').style.display = 'none';
-}
+            document.getElementById('addi').style.display = 'inline-block';
+            document.getElementById('updatei').style.display = 'none';
+            document.querySelector('.cnclbtni').style.display = 'none';
+        }
 
 
 
-function activityi(sno,currentActivity){
-    var payload = {
+        function activityi(sno, currentActivity) {
+            var payload = {
                 sno: sno,
                 activity: currentActivity,
                 load: "activityStatusChangei"
@@ -1571,7 +1415,7 @@ function activityi(sno,currentActivity){
                     console.error("Error changing activity status:", err);
                 }
             });
-}
+        }
 
 
 
@@ -1588,9 +1432,42 @@ function activityi(sno,currentActivity){
             document.querySelector('.cnclbtn').style.display = 'none';
             document.getElementById('#add').style.display = 'block';
         });
+
+
+        // Enable edit mode for Sub Items Menu
+        function enableSubItemEditMode(subItemName, subItemPrice) {
+            const itemNameField = document.getElementById('item_name');
+            const itemPriceField = document.getElementById('item_number');
+            const saveBtn = document.getElementById('addi');
+            const updateBtn = document.getElementById('updatei');
+            const cancelBtn = document.querySelector('.cnclbtni');
+            const addSubItemSection = document.querySelector('.add_lun1');
+
+            itemNameField.value = subItemName;
+            itemPriceField.value = subItemPrice;
+            saveBtn.style.display = 'none';
+            updateBtn.style.display = 'inline-block';
+            cancelBtn.style.display = 'inline-block';
+            addSubItemSection.classList.add('edit-mode');
+        }
+
+        // Cancel edit mode for Sub Items Menu
+        function cancelSubItemOperation() {
+            const itemNameField = document.getElementById('item_name');
+            const itemPriceField = document.getElementById('item_number');
+            const saveBtn = document.getElementById('addi');
+            const updateBtn = document.getElementById('updatei');
+            const cancelBtn = document.querySelector('.cnclbtni');
+            const addSubItemSection = document.querySelector('.add_lun1');
+
+            itemNameField.value = '';
+            itemPriceField.value = '';
+            saveBtn.style.display = 'inline-block';
+            updateBtn.style.display = 'none';
+            cancelBtn.style.display = 'none';
+            addSubItemSection.classList.remove('edit-mode');
+        }
     </script>
-
-
 </body>
 
 </html>

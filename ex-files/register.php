@@ -10,32 +10,11 @@
 
 <body>
     <header class="head">
-        <div class="register" id="register"><img src="images/person.png" height="25px" width="25px"/>Register</div>
+        <div class="register" id="register"><img src="images/person.png" height="25px" width="25px" />Register</div>
         <div class="Report"><img src="images/report.png" width="25px" height="25px"><a href="reports.php">Report</a></div>
         <div class="date-container">
-            <div><img onclick="viewMenu()" class="menuimg" src="images/menu.png" height="50px" width="50px"></div>
-            <div>
-            <p class="date" id="formatted-date"></p>
-            <p class="day" id="day-name"></p>
-            </div>
-        </div>
-        <div class="menu_block">
-            <h3 class="menu_heading">Menu Schedule</h3>
-            <div class="dates_block">
-                <!-- <p class="individual_dates">25</p> -->
-            </div>
-            <div class="day_Menu_list">
-
-            </div>
-            <!-- <div class="breakfast_menu">
-
-            </div>
-            <div class="lunch_menu">
-
-            </div>
-            <div class="Dinner_menu">
-
-            </div> -->
+            <div class="date" id="formatted-date"></div>
+            <div class="day" id="day-name"></div>
         </div>
     </header>
     <section class="main_container">
@@ -43,43 +22,43 @@
         <div class="register_form_wrapper">
             <div class="delivery_address_block">
 
-           <i class="fa-solid fa-xmark fa-beat-fade" onclick="closenewD()"></i>
-           <div class="div_a_block">
-                <div>
-                    <label>Customer Name:</label>
-                    <input id="da_name" placeholder="Name" disabled/>
+                <i class="fa-solid fa-xmark fa-beat-fade" onclick="closenewD()"></i>
+                <div class="div_a_block">
+                    <div>
+                        <label>Customer Name:</label>
+                        <input id="da_name" placeholder="Name" disabled />
+                    </div>
+                    <div>
+                        <label>Mobile Number:</label>
+                        <input id="da_mobile_number" placeholder="Mobile Number" disabled />
+                    </div>
+                    <div>
+                        <label>Email</label>
+                        <input id="da_mail" placeholder="Email" disabled />
+                    </div>
+                    <p>Address</p>
+                    <div>
+                        <label>Flat No:</label>
+                        <input id="da_flatno" placeholder="Flatno/houseno" />
+                    </div>
+                    <div>
+                        <label>Area</label>
+                        <input id="da_area" placeholder="Area" />
+                    </div>
+                    <div>
+                        <label>Street</label>
+                        <input id="da_street" placeholder="Street" />
+                    </div>
+                    <div>
+                        <label>Delivery Ph</label>
+                        <input id="da_deph" placeholder="Delivery Ph" />
+                    </div>
+                    <div>
+                        <label>Add Link</label>
+                        <input id="da_link" placeholder="Link" />
+                    </div>
+                    <button onclick="addNewdelivery()">Save</button>
                 </div>
-                <div>
-                    <label>Mobile Number:</label>
-                    <input id="da_mobile_number" placeholder="Mobile Number" disabled/>
-                </div>
-                <div>
-                    <label>Email</label>
-                    <input id="da_mail" placeholder="Email" disabled/>
-                </div>
-                <p>Address</p>
-                <div>
-                    <label>Flat No:</label>
-                    <input id="da_flatno" placeholder="Flatno/houseno" />
-                </div>
-                <div>
-                    <label>Area</label>
-                    <input id="da_area" placeholder="Area" />
-                </div>
-                <div>
-                    <label>Street</label>
-                    <input id="da_street" placeholder="Street" />
-                </div>
-                <div>
-                    <label>Delivery Ph</label>
-                    <input type="text" oninput="validateRegisterPhoneNumber(this)"  id="da_deph" placeholder="Delivery Ph" />
-                </div>
-                <div>
-                    <label>Add Link</label>
-                    <input id="da_link" placeholder="Link" />
-                </div>
-                <button onclick="addNewdelivery()">Save</button>
-           </div>
 
             </div>
             <div class="register_form">
@@ -121,11 +100,11 @@
                         </div>
                         <div class="input_row">
                             <label><span><i class="fa-solid fa-phone"></i></span></label>
-                            <input oninput="validateRegisterPhoneNumber(this)" type="text" maxlength="10" disabled class="customer_Phone" id="customer_phone" placeholder="Enter PH.Number">
+                            <input disabled class="customer_Phone" id="customer_phone" placeholder="Enter PH.Number">
                         </div>
                         <div class="input_row">
                             <label><span><i class="fa-solid fa-envelope"></i></span></label>
-                            <input type="text" oninput="validateRegisterEmail(this)" disabled class="customer_Email" id="customer_email" placeholder="Enter Mail">
+                            <input disabled class="customer_Email" id="customer_email" placeholder="Enter Mail">
                         </div>
                         <!-- <div class="input_row" id="selectionperiod">
                             <label>Period:</label>
@@ -137,7 +116,7 @@
                             <input placeholder="flatno/houseno" class="regaddress_input" id="regflat">
                             <input placeholder="Street" class="regaddress_input" id="regstreet">
                             <input placeholder="Area" class="regaddress_input" id="regarea">
-                            <input oninput="validateRegisterPhoneNumber(this)" type="text" maxlength="10" placeholder="Delivery_Mobile" class="regaddress_input" id="regdmobile">
+                            <input placeholder="Delivery_Mobile" class="regaddress_input" id="regdmobile">
                             <input placeholder="Address link" class="regaddress_input" id="reglink">
                             <input placeholder="Address link" class="regaddress_input">
                         </div>
@@ -184,13 +163,13 @@
                             <input placeholder="flatno/houseno" class="address_input" id="address_flat" disabled>
                             <input placeholder="Street" class="address_input" id="address_street" disabled>
                             <input placeholder="Area" class="address_input" id="address_area" disabled>
-                            <input type="text" oninput="validateRegisterPhoneNumber(this)"  placeholder="Mobile" class="address_input" id="address_mobile" disabled>
+                            <input placeholder="Mobile" class="address_input" id="address_mobile" disabled>
                             <input placeholder="Address link" class="address_input" id="address_link" disabled>
                             <button class="editbtn" id="deditbtn">Edit</button>
                             <div class="scbtn">
                                 <button id="dsbtn">Save</button>
                                 <button id="dcbtn">Cancel</button>
-                            </div>  
+                            </div>
                         </div>
                     </div>
                     <div class="billing_area">
@@ -202,7 +181,7 @@
                             <input placeholder="flatno/houseno" class="address_input" id="billing_flat" disabled>
                             <input placeholder="Street" class="address_input" id="billing_street" disabled>
                             <input placeholder="Area" class="address_input" id="billing_area" disabled>
-                            <input type="text" oninput="validateRegisterPhoneNumber(this)"  placeholder="Mobile" class="address_input" id="billing_mobile" disabled>
+                            <input placeholder="Mobile" class="address_input" id="billing_mobile" disabled>
                             <input placeholder="Address link" class="address_input" id="billing_link" disabled>
                             <button class="editbtn" id="beditbtn">Edit</button>
                             <div class="bscbtn">
@@ -218,8 +197,8 @@
 
                 <!-- <div class="button_area">
                     <button>Place Order</button> -->
-                    <!-- <button>Save Edit</button> -->
-                    <!-- <button>Cancel Order</button>
+                <!-- <button>Save Edit</button> -->
+                <!-- <button>Cancel Order</button>
                 </div> -->
 
 
@@ -227,9 +206,6 @@
         </div>
 
         <div class="selection-container">
-            <div class="selection-container-overlay">
-
-            </div>
             <div class="button-container">
                 <button class="menu-button" onclick="showBreakfast()">
                     Breakfast
@@ -638,7 +614,6 @@
         </div>
 
     </section>
-
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="scriptfiles/register.js"></script>

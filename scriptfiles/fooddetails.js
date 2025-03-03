@@ -324,8 +324,9 @@ error:function(error){
 }
 
 function loadFoodPrices(x) {
+    console.log("fffffffffff");
     if(x){
-        document.querySelector('#food_items-dp').value='';
+        document.querySelector('#sub_items-dp').value = '';
     }
     var payload = {
         OptionID: document.querySelector('#food_items-dp').value,
@@ -388,6 +389,72 @@ function loadFoodPrices(x) {
     });
 }
 
+
+function loadFoodPricessub(x) {
+    console.log("fffffffffff");
+    if(x){
+        document.querySelector('#sub_items-dp').value = '';
+    }
+    var payload = {
+        OptionID: document.querySelector('#food_items-dp').value,
+        category:document.getElementById('sub_items-dp').value,
+        load: "load_foodpricessub",
+    };
+    console.log("payload", payload);
+    $.ajax({
+        type: "POST",
+        url: "./webservices/fooddetails1.php",
+        dataType: 'json',
+        data: JSON.stringify(payload),
+        success: function (response) {
+            console.log(response.data);
+            if (response.data !== "No Data") {
+                document.querySelector('.no_price').style.display = "none";
+
+                // Filter the data to find the latest record for each OptionID
+                const currentDate = new Date();
+                let nearestRecords = {};
+
+                response.data.forEach(item => {
+                    const fromDate = new Date(item.fromdate);
+                    if (fromDate <= currentDate) { // Ensure the date is in the past or today
+                        if (!nearestRecords[item.OptionID] || fromDate > new Date(nearestRecords[item.OptionID].fromdate)) {
+                            nearestRecords[item.OptionID] = item; // Store latest record for each OptionID
+                        }
+                    }
+                });
+
+                const typesTableBody = $('#typesTableBody');
+                typesTableBody.empty();
+
+                // Populate table with all filtered records
+                Object.values(nearestRecords).forEach(record => {
+                    const fromDateFormatted = new Date(record.fromdate).toISOString().split('T')[0];
+                    const row = $('<tr>');
+                    row.html(`
+                        <td>${record.item_name}</td>
+                        <td>${record.price}</td>
+                        <td>${fromDateFormatted}</td>
+                        <td>
+                            <button class="view_history" style="width: 50px; display: flex; align-items: center; justify-content: center; padding: 0; border: none; background-color: #f0f0f0; border-radius: 4px;">
+                                <i class="fa-solid fa-eye fa-beat-fade" onclick="loadhistory(this,'${record.OptionID}')" style="font-size: 18px;"></i>
+                            </button>
+                        </td>
+                    `);
+                    typesTableBody.append(row);
+                });
+
+            } else {
+                const typesTableBody = $('#typesTableBody');
+                typesTableBody.empty();
+                document.querySelector('.no_price').style.display = "block";
+            }
+        },
+        error: function (err) {
+            console.log(err);
+        }
+    });
+}
 
 
 
@@ -482,6 +549,8 @@ function hidetab(){
     $('#tablehead').hide();
     typesTableBody.empty();
 }
+
+
 
 // function loadhistory(){
 //     var payload = {
@@ -586,18 +655,25 @@ function foodPriceEdit(sno,optionid){
    })
 }
 
+// prices screen itemname dropdown
 
 function loadFdItemByCategory(){
+console.log("itemanme");
 var payload = {
-category: document.querySelector('.category').value,
+    OptionID : "",
+    ItemName : "",
+sbcategory: document.querySelector('.sub_items_dp').value,
 load:"loadfdby_category"
+
 }
+console.log("itemname1",payload);
 $.ajax({
 type:"POST",
 url: "./webservices/fooddetails1.php",
 dataType: 'json',
 data: JSON.stringify(payload),
 success:function(response){
+    
 if(response.data !== "No Data"){
 let foodItems = document.querySelector('#food_items-dp');
 foodItems.innerHTML = `<option value="">Select Food Item</option>`;
@@ -616,6 +692,67 @@ console.log(err);
 })
 
 }
+
+//  dropdown for foodtype
+function loadfoodtype() {
+    console.log("Loading food types...");
+
+    var payload = {
+        load: "loadfoodtype",
+        sno: "",
+        type: "type"
+    };
+
+    $.ajax({
+        type: "POST",
+        url: "./webservices/fooddetails1.php",
+        data: JSON.stringify(payload),
+        dataType: "json",
+        contentType: "application/json", // Ensures server reads JSON properly
+        beforeSend: function() {
+            console.log("Fetching food types...");
+        },
+        success: function(response) {
+            console.log("Response received:", response);
+
+            let dropdown = document.getElementById("item_category");
+            dropdown.innerHTML = ""; // Clear existing options
+
+            let defaultOption = document.createElement('option');
+            defaultOption.value = "";
+            defaultOption.text = "Select Type";
+            defaultOption.disabled = true;
+            defaultOption.selected = true;
+            dropdown.appendChild(defaultOption);
+
+            if (response.status === "success" && response.data.length > 0) {
+                response.data.forEach(x => {
+                    let option = document.createElement('option');
+                    option.value = x.sno;
+                    option.text = x.type;
+                    dropdown.appendChild(option);
+                });
+            } else {
+                console.warn("No food types found.");
+                let noDataOption = document.createElement('option');
+                noDataOption.value = "";
+                noDataOption.text = "No types available";
+                noDataOption.disabled = true;
+                dropdown.appendChild(noDataOption);
+            }
+        },
+        error: function(err) {
+            console.error("Error loading food types:", err);
+            alert("Failed to load food types. Please try again later.");
+        }
+    });
+}
+
+
+    loadfoodtype();
+
+
+
 
 function navbtns(this_button){
 if(this_button.classList.contains('bf_din')){
@@ -762,6 +899,7 @@ error: function(error) {
 });
 }
 
+// price screen foodtype dropdown
 function load_foodType() {
 var payload = {
 sno: "",
@@ -781,7 +919,7 @@ success: function(response) {
         // Create a default option (Empty) for the dropdown
         const defaultOption = document.createElement('option');
         defaultOption.value = '';
-        defaultOption.textContent = 'Select Category';
+        defaultOption.textContent = 'Select FoodType';
         foodtype.appendChild(defaultOption);
 
         response.data.forEach(fd => {
@@ -854,9 +992,7 @@ success: function(response) {
     }
     if(response.status == "success"){
         alert("Update Successfully")
-            loadFoodPrices(true);
-            let iconElement = document.querySelector(`i[onclick="loadhistory(this,'${OptionID}')"]`);
-            if (iconElement) loadhistory(iconElement, OptionID);
+        loadFoodPrices(true);
     }   
     // fetchBackendData(); // Refresh the table
     // $('#category').val(''); // Clear input fields
@@ -904,3 +1040,33 @@ document.getElementById('from_date').addEventListener('change', function() {
 var fromDate = this.value;
 document.getElementById('to_date').setAttribute('min', fromDate);
 });
+
+  // Function to enable edit mode
+function enableEditMode(itemName) {
+    const inputField = document.getElementById('subcategory_name');
+    const saveBtn = document.getElementById('add');
+    const updateBtn = document.getElementById('update');
+    const cancelBtn = document.querySelector('.cnclbtn');
+    const addLunSection = document.querySelector('.addlun');
+
+    inputField.value = itemName;
+    saveBtn.style.display = 'none';
+    updateBtn.style.display = 'inline-block';
+    cancelBtn.style.display = 'inline-block';
+    addLunSection.classList.add('edit-mode');
+}
+
+// Cancel operation and reset form
+function cancelOperation() {
+    const inputField = document.getElementById('subcategory_name');
+    const saveBtn = document.getElementById('add');
+    const updateBtn = document.getElementById('update');
+    const cancelBtn = document.querySelector('.cnclbtn');
+    const addLunSection = document.querySelector('.addlun');
+
+    inputField.value = '';
+    saveBtn.style.display = 'inline-block';
+    updateBtn.style.display = 'none';
+    cancelBtn.style.display = 'none';
+    addLunSection.classList.remove('edit-mode');
+}

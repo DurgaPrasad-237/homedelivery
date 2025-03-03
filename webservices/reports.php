@@ -223,7 +223,7 @@ function orderHistory($conn){
     from orders
     join fooddetails on orders.FoodID = fooddetails.OptionID
     join foodtype on orders.FoodTypeID = foodtype.sno
-    join subcategory on fooddetails.sub_category_sno = subcategory.SNO
+    join subcategory on fooddetails.subcategory = subcategory.SNO
     where orders.CustomerID = $cid and orders.OrderDate BETWEEN '$fromdate' and '$todate' and orders.Quantity > 0
     and orders.status = 2
     ORDER by orders.OrderDate asc";

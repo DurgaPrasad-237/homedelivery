@@ -20,6 +20,7 @@ $deliveryaddress = $data['deliveryaddress'] ?? "";
 $email = $data['email'] ?? "";
 $periodicity = $data['periodicity'] ?? "";
 $map = $data['map'] ?? "";
+$menuDate = $data['menuDate'] ?? "";
 
 if($load == "register"){
     register($conn);
@@ -39,23 +40,47 @@ else if($load == "add_delivery_address"){
 else if($load == "add_billing_address"){
     add_billingaddress($conn);
 }
-else if($load == "loadperiodicity"){
-    load_periodicity($conn);
+else if($load == "loadMenubyDate"){
+    loadMenuByDate($conn);
+}
+
+function loadMenuByDate($conn){
+    global $menuDate;
+    $selectquery = "SELECT s.Date, f.OptionID, f.ItemName, f.category,f.subcategory,ft.type
+                    FROM (
+                        SELECT date, foodid FROM breakfastschedule
+                        UNION ALL
+                        SELECT date, foodid FROM lunchschedule
+                        UNION ALL
+                        SELECT date, foodid FROM dinnerschedule
+                    ) AS s
+                    JOIN fooddetails AS f ON s.FoodID = f.OptionID
+                    JOIN foodtype AS ft on f.category = ft.sno
+                    WHERE s.Date = '$menuDate'";
+    $resultquery = getData($conn,$selectquery);
+
+    if (count($resultquery) > 0) {
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resultquery);
+    } else {
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => []);
+    }
+    echo json_encode($jsonresponse);
+
 }
 
 //function for load load_periodicity
-function load_periodicity($conn){
-   $selectquery = "SELECT * FROM `periodicity`";
-   $result = getData($conn,$selectquery);
-   if(count($result) > 0){
-    $jsonresponse = array('code' => '200', 'status' => "Success",'data'=>$result);
-    echo json_encode($jsonresponse);
-   }
-   else{
-    $jsonresponse = array('code' => '200', 'status' => "Success",'data'=>"No data");
-    echo json_encode($jsonresponse);
-   }
-}
+// function load_periodicity($conn){
+//    $selectquery = "SELECT * FROM `periodicity`";
+//    $result = getData($conn,$selectquery);
+//    if(count($result) > 0){
+//     $jsonresponse = array('code' => '200', 'status' => "Success",'data'=>$result);
+//     echo json_encode($jsonresponse);
+//    }
+//    else{
+//     $jsonresponse = array('code' => '200', 'status' => "Success",'data'=>"No data");
+//     echo json_encode($jsonresponse);
+//    }
+// }
 
 
 //add billing address
@@ -105,6 +130,14 @@ function add_deliveryaddress($conn){
 //register the customer
 function register($conn){
     global $customername,$primaryphone,$email,$deliveryaddress,$deliveryphone,$map;
+
+    $checksql = "SELECT * FROM `customers` WHERE `Phone1` = '$primaryphone' OR `Email` = '$email'";
+    $resultsql = getData($conn,$checksql);
+
+    if(count($resultsql) > 0){
+        echo json_encode(['code' => '200', 'status' => "Exist"]);
+        exit;
+    }
     // $flatno,$street,$area,$landmark,$billingaddress,$deliveryaddress,$email,$periodicity,$map;
 
     // $insertsql = "INSERT INTO `customers`(`CustomerName`, `Phone1`, `Phone2`, `Phone3`, `FlatNo`, `Street`, `Area`, `Landmark`, `BillingAddress`, `DeliveryAddress`, `email`, `periodicity`, `Map`) 

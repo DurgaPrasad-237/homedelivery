@@ -3,28 +3,6 @@ body{
 }
 
 
-
-.category-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-}
-
-.category-table thead {
-    background-color: pink;
-    color: white;
-}
-
-.category-table th,
-.category-table td {
-    border: 1px solid #ccc;
-    padding: 15px;
-}
-
-.category-table tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
 .edit-buttonfd {
     background-color: #4c4c4d;
     color: white;
@@ -34,32 +12,9 @@ body{
     cursor: pointer;
 }
 
-/* .edit-button:hover {
-    background-color: #ea8dfc;
-} */
-
-
 .complaint_container h2 {
     margin-left: 20px;
 }
-
-/*.main-container {
-
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap; 
-     justify-content: space-around;
-
-    height: 95vh;
-    width: 88%;
-    margin: 50px 270px; 
-} */
-
-/* .category-container {
-    width: 70%;
-    padding: 10px;
-
-} */
 
 .btn-primary {
     height: 20px;
@@ -71,26 +26,73 @@ body{
     width: 10%;
 }
 
+
+
+.edit-buttonfd {
+    color: white;
+    padding: 8px 25px;
+}
+
+.sb {
+    width: 20%;
+}
+
+
+#ItemName,
+#Price, 
+#category,
+.food_item,
+.food_items_dp{
+    border: none;
+    border-bottom: 2px solid rgb(6, 6, 6);
+    outline: none;
+    padding: 5px;
+
+
+
+}
+
+#ItemName {
+
+    margin-right: 5px;
+    width: 50px;
+
+
+}
+#from_date,#to_date {
+    width:50px;
+}
+#ItemName {
+    width: 50px;
+
+
+}
+.fund-container{
+    /* border:2px solid green; */
+    display:flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+   
+}
+.category-container {
+    width: 100%;
+    padding: 10px;
+    height:80%;
+    margin-top:0px;
+}
 .category-table {
-    width: 80%;
+    width: 400px;  /* Adjusts to the container's width */
+    min-width: 400px;
+    max-width: 400px;
     border-collapse: collapse;
-    margin: 8%;
+    margin: 0 auto;  /* Center it if desired */
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     border: 2px #ccc solid;
     background-color: white;
     border-radius: 10%;
-    /* border:2px solid red; */
 }
-.category-table1 {
-    width: 80%;
-    border-collapse: collapse;
-    margin: 8%;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-    border: 2px #ccc solid;
-    background-color: white;
-    border-radius: 10%;
-    /* border:2px solid red; */
-}
+
 
 .category-table td {
     background-color: white;
@@ -121,27 +123,22 @@ body{
 
 .category-table th {
     height: 60px;
-    background-color:#4c4c4d;
+    background-color: #F3681E;
 }
 
 .category-table td {
     height: 20px;
 
 }
-/* 
-.form-group .btn-primary {
-    width: 15%;
-    gap: 5%;
-} */
+
 
 .existing-categories {
     height: 50vh;
     overflow-y: scroll;
     position: relative;
-    /* border:2px solid gray; */
-    /* margin:5px; */
-
 }
+
+
 
 .existing-categories::-webkit-scrollbar {
     display: none;
@@ -214,10 +211,7 @@ body{
     height:80%;
     margin-top:0px;
 }
-/* .add-category-form{
-    /* border:2px solid blue; 
-    height:50px;
-} */
+
 .category-table th {
     border: 1px solid #ccc;
     padding: 0px;
@@ -246,32 +240,7 @@ background-color:white;
 flex-direction: row;
 justify-content: space-between;
 }
-.add_table_bf {
-box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-width: 50%;
-border-collapse: collapse;
-border:none;
-background-color: transparent;
-}
 
-.add_table_bf thead th, .add_table_bf tbody td {
-/* background-color: white; */
-color: black;
-padding: 5px;
-font-size: 12px; 
-line-height: 1;
-/* border: 1px solid #ddd;  */
-text-align: center;
-border:none;
-border-radius: 0px;
-}
-
-.add_table_bf tbody tr {
-/* background-color: white; */
-color: black;
-height: 10px;  
-
-}
 
 .food_items_dp{
 width:200px;
@@ -289,13 +258,13 @@ outline:none;
 background-color: transparent;
 }
 .bf_itm_row td:nth-child(1){
-background-color: #FFC857;
+background-color: #F3681E;
 font-weight: bold;
 }
 .add_table_bf thead th{
 background-color: white;
 font-size: 18px;
-background-color:#FFC857;
+background-color: #F3681E;
 color:white;
 height:5vh; 
 }
@@ -329,28 +298,6 @@ background-color: #FF5733;
 color:white;
 cursor:pointer;
 }
-.add_lun{
-/* border:2px solid black;  */
-width:40vw;
-height:60vh;
-display:none;
-margin-top: 20px;
-box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-flex-direction: column;
-overflow-y: auto;
-}
-.add_lun h3{
-background-color: #FFC857;
-display:flex;
-flex-direction: center;
-align-items: center;
-justify-content: center;
-margin:0px;
-padding:10px;
-color:white;
-font-weight: bold;
-font-size: 18px;
-}
 .input_lun{
 width:98%;
 /* border:2px solid black; */
@@ -376,11 +323,11 @@ cursor:pointer;
 
 }
 .lun_table thead{
-background-color: #FFC857;
+background-color: #F3681E;
 box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 .lun_table thead th{
-background-color: #FFC857;
+background-color:  #F3681E;
 border-radius: 0px;
 }
 .lun_table tbody td{
@@ -416,7 +363,7 @@ box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 width:98%;
 text-align: center;
 padding:4px;
-background-color: #FFC857;
+background-color: #F3681E;
 margin:0px;
 box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.35);
 height:5vh;
@@ -460,7 +407,7 @@ position: relative;
 
 }
 .bf_add_item_table table thead th{
-background-color: #FFC857;
+background-color: #F3681E;
 border-radius: 0px;
 }
 .bf_add_item_table table tbody tr td{
@@ -500,10 +447,7 @@ background-color: green;
   
     width:50%;
     height: 50vh;
-    /* overflow-y: scroll; */
     position: relative;
-    /* border:2px solid gray; */
-    /* margin:5px; */
 }
 
 .total{
@@ -518,25 +462,26 @@ background-color: green;
 
 
 
-.add_lun{
+.addlun{
     display: flex;
-    width: 220%;
+    width: 100%;
     height: 60vh;
-     /* border : 3px solid red;  */
     flex-direction: column;
     margin:7%;
+    max-width: 100%;
+    max-height:70vh;
 }
 
 .add_lun1{
     display: flex;
     width: 100%;
     height: 60vh;
-     /* border : 3px solid red;  */
     flex-direction: column;
+    max-width: 100%;
     margin:7%;
 }
-.add_lun h3 {
-    background-color: #FFC857;
+.addlun h3 {
+    background-color: #F3681E;
     display: flex;
     flex-direction: center;
     align-items: center;
@@ -548,7 +493,7 @@ background-color: green;
     font-size: 18px;
 }
 .add_lun1 h3 {
-    background-color: #FFC857;
+    background-color: #F3681E;
     display: flex;
     flex-direction: center;
     align-items: center;
@@ -587,19 +532,648 @@ background-color: green;
 
 }
 
-.category-table1{
-    width: 80%;
-    border-collapse: collapse;
-    margin: 5%;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-    border: 2px #ccc solid;
-    background-color: white;
-    /* border-radius: 10%; */
 
-}
 
 .btn-primary1 {
     height: 35px;
     width: 24%;
     padding: 10px;
 }
+
+
+
+
+
+.main-container {
+    width: 100%;
+    height: 78vh;
+    display: flex;
+    flex-direction: row;
+}
+
+.side-container {
+    width: 20%;
+    height: 76vh;
+    background-color: grey;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+}
+
+.side-container ul {
+    padding: 0;
+    width: 100%;
+    list-style: none;
+}
+
+.side-container ul li {
+    padding: 15px;
+    text-align: left;
+    cursor: pointer;
+    transition: 0.3s;
+    padding-left: 20px;
+}
+
+.side-container ul li:hover,
+.side-container ul li.active {
+    background-color: #eee;
+    width: 150px;
+    font-weight: bold;
+}
+.head-container {
+    height: 7vh;
+    width: 100%;
+    background-color: orangered;
+    color: whitesmoke;
+    font-size: 2vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.input-container {
+    width: 95%;
+    padding: 20px;
+    height: 80vh;
+}
+
+#button .row-1,
+#button .row-2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+
+}
+
+#button .row-1 select,
+#button .row-2 input{
+    width: 20%;
+    padding: 6px;
+}
+
+#button .row-2 button {
+    width: 12%;
+    padding: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    height: auto;
+}
+
+.btn-primary {
+    background-color: #28a745;
+    border: none;
+    color: white;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border: none;
+    color: white;
+}
+
+.category-container {
+    margin-bottom: 20px;
+}
+
+.category-container select {
+    width: 60%;
+    padding: 8px;
+    margin-left: 10px;
+}
+
+.add_lun .input_lun input {
+    width: 60%;
+    padding: 8px;
+    margin-right: 10px;
+}
+
+.add_lun .input_lun button {
+    padding: 8px 16px;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #28a745;
+    color: white;
+    border: none;
+}
+
+
+
+.input_lun {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.input_lun input {
+    width: 60%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.input_lun button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#addi {
+    background-color: #28a745;
+}
+
+#addi:hover {
+    background-color: #218838;
+}
+
+#updatei {
+    background-color: #ffc107;
+}
+
+#updatei:hover {
+    background-color: #e0a800;
+}
+
+
+#add {
+    background-color: #28a745;
+}
+
+#add:hover {
+    background-color: #218838;
+}
+
+#update {
+    background-color: #ffc107;
+}
+
+#update:hover {
+    background-color: #e0a800;
+}
+
+.lun_table th,
+.lun_table td {
+    padding: 10px;
+    text-align: center;
+}
+
+.lun_table thead {
+    background-color:  #F3681E;
+    color: white;
+    font-weight: bold;
+}
+
+.lun_table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+.lun_table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.lun_table1 {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.lun_table1 th,
+.lun_table1 td {
+    padding: 10px;
+    text-align: center;
+}
+
+.lun_table1 thead {
+    position: sticky;
+    background-color: #F3681E;
+    color: white;
+    font-weight: bold;
+    z-index: 1;
+}
+
+.lun_table1 tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+.lun_table1 tbody tr:hover {
+    background-color: #f1f1f1;
+}
+.form_group{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    width:100%;
+    max-width: 100%;
+    
+
+}
+.form_group label {
+    width: 20%;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.form_group select {
+    width: 60%;
+    padding: 8px;
+}
+
+.category-row {
+    max-width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin:3%;
+}
+
+.category-row label {
+    width: 20%;
+  font-size: 16px;
+}
+
+.category-row select {
+    width: 30%;
+    padding: 8px;
+}
+.category-containerc{
+    max-width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin:3%;
+}
+.category-containerc label {
+    width: 20%;
+  font-size: 16px;
+}
+.category-containerc select {
+    width: 30%;
+    padding: 8px;
+}
+.data_lunch{
+        overflow-x : auto;
+        overflow-y : auto ;
+        max-height:  300px;
+
+}
+.data_lunch1{
+    overflow-x : auto;
+    overflow-y : auto ;
+    max-height:  300px;
+
+}
+
+
+.addlun {
+    width: 500px; /* Fixed width */
+    transition: all 0.3s ease; /* Smooth transition */
+    padding: 20px;
+    /* border: 1px solid #ccc; */
+    border-radius: 10px;
+}
+
+.addlun.edit-mode {
+    width: 500px; /* Fixed width remains unchanged in edit mode */
+}
+
+.input_lun {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+}
+
+.input_lun input {
+    width: 60%;
+}
+
+.input_lun button {
+    width: 20%;
+}
+
+.input_lun .cnclbtn {
+    width: 20%;
+}
+
+/* Fixed width for Sub Items section */
+.add_lun1 {
+    width: 500px; /* Same fixed width as Item Menu */
+    transition: all 0.3s ease;
+    padding: 20px;
+    /* border: 1px solid #ccc; */
+    border-radius: 10px;
+}
+
+.add_lun1.edit-mode {
+    width: 500px; /* Fixed width in edit mode too */
+}
+
+.input_lun input,
+.input_lun1 input {
+    width: 60%;
+}
+
+.input_lun1 {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+}
+
+.input_lun1 button {
+    width: 20%;
+}
+
+.input_lun1 .cnclbtni {
+    width: 20%;
+}
+
+
+.main-container {
+    width: 100%;
+    height: 78vh;
+    display: flex;
+    flex-direction: row;
+}
+
+.side-container {
+    width: 20%;
+    height: 76vh;
+    background-color: grey;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+}
+
+.side-container ul {
+    padding: 0;
+    width: 100%;
+    list-style: none;
+}
+
+.side-container ul li {
+    padding: 15px;
+    text-align: left;
+    cursor: pointer;
+    transition: 0.3s;
+    padding-left: 20px;
+}
+
+.side-container ul li:hover,
+.side-container ul li.active {
+    background-color: #eee;
+    width: 150px;
+    font-weight: bold;
+}
+
+.content-section {
+    display: none;
+    padding: 20px;
+    font-size: 18px;
+    width: 90%;
+}
+
+.content-section.active {
+    display: block;
+}
+
+.head-container {
+    height: 7vh;
+    width: 100%;
+    background-color: orangered;
+    color: whitesmoke;
+    font-size: 2vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.input-container {
+    width: 95%;
+    padding: 20px;
+    height: 80vh;
+}
+
+#button .row-1,
+#button .row-2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+#button .row-1 select,
+#button .row-2 input,
+#button .row-2 button {
+    width: 25%;
+    padding: 6px;
+}
+
+#button .row-2 button {
+    width: 12%;
+    padding: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    height: auto;
+}
+
+.btn-primary {
+    background-color: #28a745;
+    border: none;
+    color: white;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border: none;
+    color: white;
+}
+
+.category-container {
+    margin-bottom: 20px;
+}
+
+.category-container select {
+    width: 60%;
+    padding: 8px;
+    margin-left: 10px;
+}
+
+.add_lun .input_lun input {
+    width: 60%;
+    padding: 8px;
+    margin-right: 10px;
+}
+
+.add_lun .input_lun button {
+    padding: 8px 16px;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #28a745;
+    color: white;
+    border: none;
+}
+
+
+
+.input_lun {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.input_lun input {
+    width: 60%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.input_lun button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#addi {
+    background-color: #28a745;
+}
+
+#addi:hover {
+    background-color: #218838;
+}
+
+#updatei {
+    background-color: #ffc107;
+}
+
+#updatei:hover {
+    background-color: #e0a800;
+}
+
+
+#add {
+    background-color: #28a745;
+}
+
+#add:hover {
+    background-color: #218838;
+}
+
+#update {
+    background-color: #ffc107;
+}
+
+#update:hover {
+    background-color: #e0a800;
+}
+
+.lun_table th,
+.lun_table td {
+    padding: 10px;
+    text-align: center;
+}
+
+.lun_table thead {
+    background-color: #F3681E;
+    color: white;
+    font-weight: bold;
+}
+
+.lun_table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+.lun_table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.lun_table1 th,
+.lun_table1 td {
+    padding: 10px;
+    text-align: center;
+}
+
+.lun_table1 thead {
+    background-color: #F3681E;
+    color: white;
+    font-weight: bold;
+}
+
+.lun_table1 tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+.lun_table1 tbody tr:hover {
+    background-color: #f1f1f1;
+}
+#scheduling-content{
+    border:2px solid black;
+   height:80vh;
+   width:54.5vw;
+}
+#scheduling-content .scheduling_content_container{
+    height:90%;
+    width:100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding:5px;
+    align-items: center;
+}
+#scheduling-content .scheduling_content_container .schedulingboxes{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    width:80%;
+    height:20%;
+    margin-left: 10px;
+    margin-top: 3vh;
+    border-radius: 5px;
+    padding:5px;
+}
+.scheduling_content_container h3{
+    margin: 0px;
+    padding:5px;
+    text-align: center;
+    background-color:#F3681E;
+    color:white;
+}
+.scheduling_content_container p{
+    margin-left: 2vw;;
+}
+.schedulingboxes select{
+    width:8vw;
+}
+.schedulingboxes input{
+    width:5vw;
+}
+#schtmdydate{
+    width:8vw;
+}
+#schtdydate{
+    width:8vw;
+}
+.tdybox{
+    float: left;
+}
+.tmrbox{
+    float: right;
+}
+
+
+

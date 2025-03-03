@@ -48,22 +48,7 @@ let prevdeliverylink;
 $(document).ready(intialload())
 
 
-function validateRegisterPhoneNumber(input){
-    input.value = input.value.replace(/[^0-9]/g, ''); // Allow only numbers
-    if (!/^[6-9]/.test(input.value)) {
-        input.value = ""; // Clear if the first digit is not 6-9
-    }
-}
 
-//validate register mail
-function validateRegisterEmail(input) {
-    input.value = input.value.replace(/[^a-zA-Z0-9@._-]/g, ''); // Allow only valid email characters
-    if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(input.value)) {
-        input.style.borderColor = "red"; // Highlight if invalid
-    } else {
-        input.style.borderColor = ""; // Reset if valid
-    }
-}
 
 
 
@@ -91,8 +76,8 @@ function validatePhoneNumber(phoneNumber) {
 
 //email validate
 function validateEmail(email) {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(email) && email.indexOf('@') === email.lastIndexOf('@'); 
+    const emailRegex = /\S+@\S+\.\S+/;
+    return emailRegex.test(email);
 }
 //extract digit
 function extractdigit(customerid) {
@@ -137,8 +122,6 @@ function billingdisabled(status) {
     document.getElementById("billing_area").disabled = true
     document.getElementById("billing_mobile").disabled = true
     document.querySelector('.bscbtn').style.display = "none";
-    document.querySelector('.selection-container-overlay').style.display = "none";
-    
 
     if(status !== "success"){
         document.getElementById("billing_flat").value = prevbillingflat || ""
@@ -178,7 +161,7 @@ function deliverydisabled(status) {
     document.getElementById("address_mobile").disabled = true
     document.getElementById("address_link").disabled = true;
     document.querySelector('.scbtn').style.display = "none";
-    document.querySelector('.selection-container-overlay').style.display = "none";
+
     if(status !== "Success"){
         document.querySelector('#address_flat').value = prevdeliveryflat
         document.querySelector('#address_street').value = prevdeliverystreet
@@ -187,91 +170,6 @@ function deliverydisabled(status) {
         document.querySelector('#address_link').value =  prevdeliverylink
     }
     dedit.style.display = "block";
-}
-
-//function for load menudates
-function loadMenDates(){
-    let today = new Date();
-    let colors = ["#2C3E50", "#8E44AD", "#1F618D", "#C0392B", "#7D6608"];
-
-    let dates_block = document.querySelector('.dates_block');
-    for (let i = 0; i < 5; i++) {
-        let para = document.createElement('p');
-        para.setAttribute('class','individual_dates');
-        para.setAttribute('onclick',`loadMenuByDate(this)`);
-        let futureDate = new Date();
-        futureDate.setDate(today.getDate() + i);
-        let formattedDate = futureDate.toISOString().split('T')[0];
-        para.setAttribute('data-menudate',`${formattedDate}`)
-        para.textContent = futureDate.getDate();
-        para.style.backgroundColor = colors[i]; 
-        dates_block.appendChild(para);
-    }
-}
-loadMenDates();
-
-function viewMenu() {
-    let menublock = document.querySelector('.menu_block');
-    let currentDisplay = window.getComputedStyle(menublock).display; 
-    if (currentDisplay === "none") {
-        console.log("open");
-        menublock.style.display = "block";
-    } else {
-        console.log("close");
-        menublock.style.display = "none";
-    }
-}
-
-
-function loadMenuByDate(thisdate){
-
-    document.querySelectorAll('.individual_dates').forEach(el => {
-        el.classList.remove('thisdate_active');
-    });
-
-    thisdate.classList.add('thisdate_active');
-
-   var payload = {
-        menuDate : thisdate.dataset.menudate,
-        load:"loadMenubyDate"
-   }
-   console.log(payload);
-   $.ajax({
-        type: "POST",
-        url: "./webservices/register.php",
-        data: JSON.stringify(payload),
-        dataType: "json",
-        success:function(response){
-            console.log(response)
-            if(response.data.length > 0){
-                let day_Menu_list = document.querySelector('.day_Menu_list');
-             
-                day_Menu_list.innerHTML = "";
-                let pg = document.createElement('p');
-                pg.textContent = payload.menuDate;
-
-               day_Menu_list.appendChild(pg)
-               response.data.forEach(itm =>{
-                
-                 let div = document.createElement('div');
-                 
-                 div.innerHTML = `
-                 <p class="menu_foodtype_heading">${itm.type.toUpperCase()}</p>
-                 <p class="itemname_list">ItemName<span>${itm.ItemName}</span></p>
-                 `
-                 day_Menu_list.appendChild(div);
-                 
-               })
-            }
-            else{
-               alert(`No Data on this date: ${thisdate.dataset.menudate}`)
-            }
-        },
-        error:function(err){
-            console.log("menu error",err);
-            alert("Error to fetch menu try again later")
-        }
-   })
 }
 
 //function for todayorderdetails
@@ -448,13 +346,6 @@ function todayorderdetails(customerid) {
 //function for display register form
 register.addEventListener('click', () => {
     intialload();
-
-    let = [prevdeliveryflat,prevbillingflat,
-    prevdeliverystreet,prevbillingstreet,
-    prevdeliveryarea,prevbillingarea,
-    prevdeliverymobile,prevbillingmobile,
-    prevdeliverylink] = ["","","","","","","","",""];
-
     form_tdylist.style.display = "flex";
     customerform.style.display = 'flex';
     console.log("hello", document.getElementById('delivery_area'));
@@ -527,10 +418,6 @@ submit.addEventListener('click', () => {
         data: JSON.stringify(payload),
         dataType: "json",
         success: function(response) {
-            if(response.status === "Exist"){
-                alert("Already User Exist");
-                return;
-            }
             if (response.status === "Success") {
                 alert("registred sucessfully");
                 form_tdylist.style.display = "none";
@@ -650,9 +537,6 @@ function fetchbyid(sinput) {
 
                     displaydetails();
                     todayorderdetails(cust.CustomerID);
-                    // document.querySelectorAll('#breakfast-contain,#lunch-options-container,#dinner-container').forEach(x => {
-                    //     x.style.display = 'none';
-                    // })
                     // console.log(cust.CustomerID);
                     // console.log(customerid);
 
@@ -749,9 +633,6 @@ function fetchbyname(sinput) {
 
                         setInterval(todayorderdetails(cust.CustomerID), 2000);
                         displaydetails();
-                        // document.querySelectorAll('#breakfast-contain,#lunch-options-container,#dinner-container').forEach(x => {
-                        //     x.style.display = 'none';
-                        // })
                         // console.log(cust.CustomerID);
                         // console.log(customerid);
 
@@ -851,9 +732,6 @@ function fetchbymobile(sinput) {
 
                         displaydetails();
                         setInterval(todayorderdetails(cust.CustomerID), 2000);
-                        // document.querySelectorAll('#breakfast-contain,#lunch-options-container,#dinner-container').forEach(x => {
-                        //     x.style.display = 'none';
-                        // })
                         // console.log(cust.CustomerID);
                         // console.log(customerid);
 
@@ -882,7 +760,6 @@ sameasadd.addEventListener('click', () => {
         document.getElementById("billing_area").value = document.getElementById("address_area").value
         document.getElementById("billing_mobile").value = document.getElementById("address_mobile").value
         document.querySelector('.bscbtn').style.display = "flex";
-        document.querySelector('.selection-container-overlay').style.display = "block";
         bedit.style.display = "none";
     } else {
         // alert("false")
@@ -893,7 +770,6 @@ sameasadd.addEventListener('click', () => {
 //edit delivery address
 dedit.addEventListener('click', () => {
     document.querySelector('.scbtn').style.display = "flex";
-    document.querySelector('.selection-container-overlay').style.display = "block";
     dedit.style.display = "none";
     // document.querySelector('#da_name').value = customername.value;
     // document.querySelector('#da_mobile_number').value = primaryphone.value;
@@ -1075,7 +951,6 @@ dsbtn.addEventListener('click', () => {
 
 dcbtn.addEventListener('click', () => {
     document.querySelector('.scbtn').style.display = "none";
-    document.querySelector('.selection-container-overlay').style.display = "none";
     dedit.style.display = "block";
     deliverydisabled("fail");
 })
@@ -1095,7 +970,6 @@ dcbtn.addEventListener('click', () => {
 //edit billing address
 bedit.addEventListener('click', () => {
     document.querySelector('.bscbtn').style.display = "flex";
-    document.querySelector('.selection-container-overlay').style.display = "block";
     bedit.style.display = "none";
     billingenabled();
 })
@@ -1152,7 +1026,6 @@ bsbtn.addEventListener('click', () => {
     })
     bcbtn.addEventListener('click', () => {
         document.querySelector('.bscbtn').style.display = "none";
-        document.querySelector('.selection-container-overlay').style.display = "none";
         bedit.style.display = "block";
         billingdisabled("fail");
     })
@@ -1223,7 +1096,7 @@ async function placeorder(event) {
     }
 
 
-    
+
 
     if (!custid) {
         alert("No user selected")
@@ -1267,10 +1140,10 @@ async function placeorder(event) {
     const lqty = calculateTotalL();
     const dqty = calculateTotalD();
 
-    // if ((bqty + lqty + dqty) < 1) {
-    //     alert("Please select at least one item to proceed");
-    //     return;
-    // }
+    if ((bqty + lqty + dqty) < 1) {
+        alert("Please select at least one item to proceed");
+        return;
+    }
 
     let confirmationMessage = 'Do you want to proceed?';
     const confirmation = confirm(confirmationMessage);
@@ -1331,124 +1204,124 @@ async function getlastid(finaldeliveryaddress, billingaddress) {
 
 function fetchall() {
 
-var payload = {
-load: "fetchitems",
-day: dayName,
-cid: customerid,
-};
+    var payload = {
+        load: "fetchitems",
+        day: dayName,
+        cid: customerid,
+    };
 
-$.ajax({
-url: './webservices/dinner.php',
-type: 'POST',
-dataType: 'json',
-data: JSON.stringify(payload),
-success: function(response) {
-console.log("fetchall", response);
+    $.ajax({
+        url: './webservices/dinner.php',
+        type: 'POST',
+        dataType: 'json',
+        data: JSON.stringify(payload),
+        success: function(response) {
+            console.log("fetchall", response);
 
-const table1Body = $('#table1 tbody');
-const table2Body = $('#table2 tbody');
-table1Body.empty();
-table2Body.empty();
+            const table1Body = $('#table1 tbody');
+            const table2Body = $('#table2 tbody');
+            table1Body.empty();
+            table2Body.empty();
 
-// Append data for the first table (first 15 rows)
-response.data.slice(0, 15).forEach((x, index) => {
-    let disabled = (x.Status === "2") ? "disabled" : "enabled";
-    const row = $('<tr>');
-    row.html(`
-<td>${x.Date}</td>
+            // Append data for the first table (first 15 rows)
+            response.data.slice(0, 15).forEach((x, index) => {
+                let disabled = (x.Status === "2") ? "disabled" : "enabled";
+                const row = $('<tr>');
+                row.html(`
+            <td>${x.Date}</td>
             <td>${x.ItemName}</td>
-<td>
-<input type='number' min='0' class='tableqty' id='tableqty-${x.Date.replaceAll('-', '')}' 
-data-optionid='${x.OptionID}' data-price='${x.Price}' data-index='${index}' data-category='${x.category}'
-data-initial='${x.Quantity}' value='${x.Quantity}' ${disabled}>
-</td>
-<td><input type='text' class='reason' id='reason-${x.Date.replaceAll('-', '')}'></td>
+            <td>
+            <input type='number' min='0' class='tableqty' id='tableqty-${x.Date.replaceAll('-', '')}' 
+            data-optionid='${x.OptionID}' data-price='${x.Price}' data-index='${index}' data-category='${x.category}'
+            data-initial='${x.Quantity}' value='${x.Quantity}' ${disabled}>
+            </td>
+            <td><input type='text' class='reason' id='reason-${x.Date.replaceAll('-', '')}'></td>
             <td><button class="table-btn" onclick="update('${x.Date}', this,'${x.category}','${x.OptionID}','${x.Price}','${x.OrderID}','${x.subcategory}')" disabled>Edit</button></td>
-`);
-    table1Body.append(row);
-});
+            `);
+                table1Body.append(row);
+            });
 
-// Append data for the second table (next 15 rows)
-response.data.slice(15, 30).forEach((x, index) => {
-    let disabled = (x.Status === "2") ? "disabled" : "enabled";
-    const row = $('<tr>');
-    row.html(`
-<td>${x.Date}</td>
+            // Append data for the second table (next 15 rows)
+            response.data.slice(15, 30).forEach((x, index) => {
+                let disabled = (x.Status === "2") ? "disabled" : "enabled";
+                const row = $('<tr>');
+                row.html(`
+            <td>${x.Date}</td>
             <td>${x.ItemName}</td>
-<td>
-<input type='number' min='0' class='tableqty' id='tableqty-${x.Date.replaceAll('-', '')}' 
-data-optionid='${x.OptionID}' data-price='${x.Price}' data-index='${index}'  data-category='${x.category}'
-data-initial='${x.Quantity}' value='${x.Quantity}' ${disabled}>
-</td>
-<td><input type='text' class='reason' id='reason-${x.Date.replaceAll('-', '')}'></td>
+            <td>
+            <input type='number' min='0' class='tableqty' id='tableqty-${x.Date.replaceAll('-', '')}' 
+            data-optionid='${x.OptionID}' data-price='${x.Price}' data-index='${index}'  data-category='${x.category}'
+            data-initial='${x.Quantity}' value='${x.Quantity}' ${disabled}>
+            </td>
+            <td><input type='text' class='reason' id='reason-${x.Date.replaceAll('-', '')}'></td>
             <td><button class="table-btn" onclick="update('${x.Date}', this,'${x.category}','${x.OptionID}','${x.Price}','${x.OrderID}','${x.subcategory}')" disabled>Edit</button></td>
-`);
-    table2Body.append(row);
-});
+            `);
+                table2Body.append(row);
+            });
 
-// Enable editing on input click
-$('.tableqty').on('click', function() {
-    if ($(this).is('[readonly]')) {
-        $(this).removeAttr('readonly'); // Make editable
-        $(this).focus(); // Focus on the input field
-    }
-});
+            // Enable editing on input click
+            $('.tableqty').on('click', function() {
+                if ($(this).is('[readonly]')) {
+                    $(this).removeAttr('readonly'); // Make editable
+                    $(this).focus(); // Focus on the input field
+                }
+            });
 
-// Revert to readonly on blur
-$('.tableqty').on('blur', function() {
-    $(this).attr('readonly', true); // Revert to readonly
-});
-$('.tableqty').on('input', function() {
-    const $input = $(this);
-    const currentValue = parseInt($input.val(), 10) || 0; // Current value
-    const initialValue = parseInt($input.data('initial'), 10) || 0; // Initial value
-    const dateId = $input.attr('id').split('-')[1]; // Extract the date ID
-    const button = $input.closest('tr').find('.table-btn');
+            // Revert to readonly on blur
+            $('.tableqty').on('blur', function() {
+                $(this).attr('readonly', true); // Revert to readonly
+            });
+            $('.tableqty').on('input', function() {
+                const $input = $(this);
+                const currentValue = parseInt($input.val(), 10) || 0; // Current value
+                const initialValue = parseInt($input.data('initial'), 10) || 0; // Initial value
+                const dateId = $input.attr('id').split('-')[1]; // Extract the date ID
+                const button = $input.closest('tr').find('.table-btn');
 
-    // Enable the button only if the current value differs from the initial value
-    if (currentValue !== initialValue) {
-        button.prop('disabled', false);
-    } else {
-        button.prop('disabled', true);
-    }
-});
-// initialQuantitySumB = calculateTotalSum('.tableqty');
-// $('.tableqty').on('input', calculateTotalB); // Optional calculation
+                // Enable the button only if the current value differs from the initial value
+                if (currentValue !== initialValue) {
+                    button.prop('disabled', false);
+                } else {
+                    button.prop('disabled', true);
+                }
+            });
+            // initialQuantitySumB = calculateTotalSum('.tableqty');
+            // $('.tableqty').on('input', calculateTotalB); // Optional calculation
 
-$('#breakfast-contain').show();
-},
-error: function(error) {
-console.error('Error fetching data:', error);
-}
-});
+            $('#breakfast-contain').show();
+        },
+        error: function(error) {
+            console.error('Error fetching data:', error);
+        }
+    });
 }
 
 function getall() {
-console.log("helfha;lhfa;jh")
-var payload = {
-load: "getitems",
-day: dayName,
-cid: customerid
-};
+    console.log("helfha;lhfa;jh")
+    var payload = {
+        load: "getitems",
+        day: dayName,
+        cid: customerid
+    };
 
-$.ajax({
-url: './webservices/dinner.php',
-type: 'POST',
-dataType: 'json',
-data: JSON.stringify(payload),
-success: function(response) {
-console.log('getalll........', response);
+    $.ajax({
+        url: './webservices/dinner.php',
+        type: 'POST',
+        dataType: 'json',
+        data: JSON.stringify(payload),
+        success: function(response) {
+            console.log('getalll........', response);
 
-const table1Body = $('#d-table1 tbody');
-const table2Body = $('#d-table2 tbody');
-table1Body.empty();
-table2Body.empty();
+            const table1Body = $('#d-table1 tbody');
+            const table2Body = $('#d-table2 tbody');
+            table1Body.empty();
+            table2Body.empty();
 
-// Append data for the first table (first 15 rows)
-response.data.slice(0, 15).forEach((x, index) => {
-    let disabled = (x.Status === "2") ? "disabled" : "enabled";
-    const row = $('<tr>');
-    row.html(`
+            // Append data for the first table (first 15 rows)
+            response.data.slice(0, 15).forEach((x, index) => {
+                let disabled = (x.Status === "2") ? "disabled" : "enabled";
+                const row = $('<tr>');
+                row.html(`
 <td>${x.Date}</td>
 <td>${x.ItemName}</td>
 <td>
@@ -1459,14 +1332,14 @@ response.data.slice(0, 15).forEach((x, index) => {
 <td><input type='text'  class='reason' id='reason-${x.Date.replaceAll('-', '')}'></td>
 <td><button class="table-btn" onclick="update('${x.Date}', this,'${x.category}','${x.OptionID}','${x.Price}','${x.OrderID}','${x.subcategory}')" disabled>Edit</button></td>
 `);
-    table1Body.append(row);
-});
+                table1Body.append(row);
+            });
 
-// Append data for the second table (next 15 rows)
-response.data.slice(15, 30).forEach((x, index) => {
-    let disabled = (x.Status === "2") ? "disabled" : "enabled";
-    const row = $('<tr>');
-    row.html(`
+            // Append data for the second table (next 15 rows)
+            response.data.slice(15, 30).forEach((x, index) => {
+                let disabled = (x.Status === "2") ? "disabled" : "enabled";
+                const row = $('<tr>');
+                row.html(`
 <td>${x.Date}</td>
 <td>${x.ItemName}</td>
 <td>
@@ -1477,45 +1350,45 @@ response.data.slice(15, 30).forEach((x, index) => {
 <td><input type='text'  class='reason' id='reason-${x.Date.replaceAll('-', '')}'></td>
 <td><button class="table-btn" onclick="update('${x.Date}', this,'${x.category}','${x.OptionID}','${x.Price}','${x.OrderID}','${x.subcategory}')" disabled>Edit</button></td>
 `);
-    table2Body.append(row);
-});
+                table2Body.append(row);
+            });
 
-// Enable editing on input click
-$('.tableqtyd').on('click', function() {
-    if ($(this).is('[readonly]')) {
-        $(this).removeAttr('readonly'); // Make editable
-        $(this).focus(); // Focus on the input field
-    }
-});
+            // Enable editing on input click
+            $('.tableqtyd').on('click', function() {
+                if ($(this).is('[readonly]')) {
+                    $(this).removeAttr('readonly'); // Make editable
+                    $(this).focus(); // Focus on the input field
+                }
+            });
 
-// Revert to readonly on blur
-$('.tableqtyd').on('blur', function() {
-    $(this).attr('readonly', true); // Revert to readonly
-});
+            // Revert to readonly on blur
+            $('.tableqtyd').on('blur', function() {
+                $(this).attr('readonly', true); // Revert to readonly
+            });
 
-$('.tableqtyd').on('input', function() {
-    const $input = $(this);
-    const currentValue = parseInt($input.val(), 10) || 0; // Current value
-    const initialValue = parseInt($input.data('initial'), 10) || 0; // Initial value
-    const dateId = $input.attr('id').split('-')[1]; // Extract the date ID
-    const button = $input.closest('tr').find('.table-btn');
+            $('.tableqtyd').on('input', function() {
+                const $input = $(this);
+                const currentValue = parseInt($input.val(), 10) || 0; // Current value
+                const initialValue = parseInt($input.data('initial'), 10) || 0; // Initial value
+                const dateId = $input.attr('id').split('-')[1]; // Extract the date ID
+                const button = $input.closest('tr').find('.table-btn');
 
-    // Enable the button only if the current value differs from the initial value
-    if (currentValue !== initialValue) {
-        button.prop('disabled', false);
-    } else {
-        button.prop('disabled', true);
-    }
-});
-// initialQuantitySumD = calculateTotalSum('.tableqtyd');
-// $('.tableqtyd').on('input', calculateTotalD); // Optional calculation for dinner total
+                // Enable the button only if the current value differs from the initial value
+                if (currentValue !== initialValue) {
+                    button.prop('disabled', false);
+                } else {
+                    button.prop('disabled', true);
+                }
+            });
+            // initialQuantitySumD = calculateTotalSum('.tableqtyd');
+            // $('.tableqtyd').on('input', calculateTotalD); // Optional calculation for dinner total
 
-$('#dinner-container').show();
-},
-error: function(error) {
-console.error('Error fetching data:', error);
-}
-});
+            $('#dinner-container').show();
+        },
+        error: function(error) {
+            console.error('Error fetching data:', error);
+        }
+    });
 }
 
 
@@ -1576,7 +1449,7 @@ console.error('Error fetching data:', error);
 //             const quantity = matchingItem ? matchingItem.Quantity : 0;
 //             const price = matchingItem ? matchingItem.Price : lunchidsprice[count-1].price;
 //             const OrderID = matchingItem ? matchingItem.OrderID : ''; // Use matching OrderID or leave empty
-    
+
 
 //             return `
 //                 <td>
@@ -1724,20 +1597,20 @@ function fetchalll(thlength) {
                     </td>
                 `;
                 // Calculate the initial sum for this row
-    const inputs = row.querySelectorAll('.tableqty');
-    const initialSum = Array.from(inputs).reduce((sum, input) => {
-        return sum + parseInt(input.value || 0, 10);
-    }, 0);
-    row.setAttribute('data-initial-sum', initialSum); // Store in `data-initial-sum`
+                const inputs = row.querySelectorAll('.tableqty');
+                const initialSum = Array.from(inputs).reduce((sum, input) => {
+                    return sum + parseInt(input.value || 0, 10);
+                }, 0);
+                row.setAttribute('data-initial-sum', initialSum); // Store in `data-initial-sum`
 
                 chargesTableBody.appendChild(row);
-                
+
                 // Initialize Edit button state
                 updateEditButtonState(row);
             }
             if (response.status === 'success' && response.data) {
-        disableFieldsBasedOnStatus(response.data);
-    }
+                disableFieldsBasedOnStatus(response.data);
+            }
             document.querySelector("#lunch-options-container").style.display = "block";
         },
         error: function(error) {
@@ -2198,101 +2071,101 @@ function fetchorderl(event) {
 
 async function update(Date, btn, category, optionid, price, orderid,subcategory) {
 
-const row = $(btn).closest('tr');
-const tname = (category === "1") ? "#tableqty" : "#tableqtyd"
-const input = row.find('.tableqty, .tableqtyd');
-const quantity = parseInt(input.val(), 10) || 0;
-const currentValue = parseInt(input.val(), 10) || 0; // Current value
-const initialValue = parseInt(input.data('initial'), 10) || 0; 
-// const category =row.find(`#tableqtyd-${Date.replaceAll('-', '')}`).data('category');  
-// const optionid =row.find(`#tableqtyd-${Date.replaceAll('-', '')}`).data('optionid'); 
-const newQuantity = row.find(`${tname}-${Date.replaceAll('-', '')}`).val(); 
-const reason = row.find(`#reason-${Date.replaceAll('-', '')}`).val();
+    const row = $(btn).closest('tr');
+    const tname = (category === "1") ? "#tableqty" : "#tableqtyd"
+    const input = row.find('.tableqty, .tableqtyd');
+    const quantity = parseInt(input.val(), 10) || 0;
+    const currentValue = parseInt(input.val(), 10) || 0; // Current value
+    const initialValue = parseInt(input.data('initial'), 10) || 0;
+    // const category =row.find(`#tableqtyd-${Date.replaceAll('-', '')}`).data('category');  
+    // const optionid =row.find(`#tableqtyd-${Date.replaceAll('-', '')}`).data('optionid'); 
+    const newQuantity = row.find(`${tname}-${Date.replaceAll('-', '')}`).val();
+    const reason = row.find(`#reason-${Date.replaceAll('-', '')}`).val();
 
-checkaddress();
+    checkaddress();
 
-if (!addressflat || !addressstreet || !address_area || !deliverymobile || !addresslink) {
-    alert("Please the fill the delivery address")
-    return ""
-}
-if (!baddressflat || !baddressstreet || !baddressarea || !billingmobile) {
-    alert("Please the fill the billing address")
-    return ""
-}
+    if (!addressflat || !addressstreet || !address_area || !deliverymobile || !addresslink) {
+        alert("Please the fill the delivery address")
+        return ""
+    }
+    if (!baddressflat || !baddressstreet || !baddressarea || !billingmobile) {
+        alert("Please the fill the billing address")
+        return ""
+    }
 
-intialdeliveryaddress = intialdeliveryaddress.replace(/\s/g, "");
-finaldeliveryaddress = finaldeliveryaddress.replace(/\s/g, "");
+    intialdeliveryaddress = intialdeliveryaddress.replace(/\s/g, "");
+    finaldeliveryaddress = finaldeliveryaddress.replace(/\s/g, "");
 
 
 
-if (intialdeliveryaddress !== finaldeliveryaddress) {
-    finaldeliveryaddress = addressflat + "," + addressstreet + "," + address_area
-    response = await getlastid(finaldeliveryaddress, billingaddress);
-    customerid = response.cid;
+    if (intialdeliveryaddress !== finaldeliveryaddress) {
+        finaldeliveryaddress = addressflat + "," + addressstreet + "," + address_area
+        response = await getlastid(finaldeliveryaddress, billingaddress);
+        customerid = response.cid;
         console.log("3818", response);
-}
+    }
 
 
     if (!reason.trim() & ((newQuantity == 0) || (initialValue != 0 & currentValue !== initialValue))) {
-alert("Please provide a reason for updating the quantity.");
-return;
-}
+        alert("Please provide a reason for updating the quantity.");
+        return;
+    }
 
     let confirmationMessageAdd = 'Do you want to place order for ' + Date + '?';
     let confirmationMessageUpdate = 'Do you want to update order for ' + Date + '?';
     let confirmationMessageDelete = 'Do you want to cancel order for ' + Date + '?';
-let confirmation = '';
+    let confirmation = '';
     if (initialValue == 0) {
-confirmation = confirm(confirmationMessageAdd);
+        confirmation = confirm(confirmationMessageAdd);
     } else if (currentValue == 0) {
-confirmation = confirm(confirmationMessageDelete);
+        confirmation = confirm(confirmationMessageDelete);
     } else {
-confirmation = confirm(confirmationMessageUpdate);
-}
+        confirmation = confirm(confirmationMessageUpdate);
+    }
     console.log("Confirmation", confirmation);
 
-if (!confirmation) {
-console.log('User cancelled the operation.');
-return;
-}
+    if (!confirmation) {
+        console.log('User cancelled the operation.');
+        return;
+    }
 
 
-var payload = {
-load: "updateQuantity",
-date: Date, 
-quantity: quantity,
-reason: reason.trim(),
-cid: customerid,
-foodtype: category,
-subcategory:subcategory,
-foodid: (optionid === "null") ? 0 : optionid,
-price: price,
-orderid: orderid
+    var payload = {
+        load: "updateQuantity",
+        date: Date,
+        quantity: quantity,
+        reason: reason.trim(),
+        cid: customerid,
+        foodtype: category,
+        subcategory:subcategory,
+        foodid: optionid,
+        price: price,
+        orderid: orderid
 
-};
+    };
 
-console.log("update:", payload);
+    console.log("update:", payload);
 
-$.ajax({
-url: './webservices/dinner.php',
-type: 'POST',
-dataType: 'json',
-data: JSON.stringify(payload),
-success: function(response) {
+    $.ajax({
+        url: './webservices/dinner.php',
+        type: 'POST',
+        dataType: 'json',
+        data: JSON.stringify(payload),
+        success: function(response) {
             console.log("updateresponse", response)
-input.data('initial', quantity);
-$(btn).prop('disabled', true);
-fetchall();
-getall();
-alert(response.message); 
-todayorderdetails(customerid);
+            input.data('initial', quantity);
+            $(btn).prop('disabled', true);
+            fetchall();
+            getall();
+            alert(response.message);
+            todayorderdetails(customerid);
 
-},
-error: function(error) {
-console.error('Error updating quantity:', error);
-alert("An error occurred while updating. Please try again.");
-}
-});
+        },
+        error: function(error) {
+            console.error('Error updating quantity:', error);
+            alert("An error occurred while updating. Please try again.");
+        }
+    });
 }
 
 
@@ -2383,10 +2256,10 @@ function showDinner() {
     document.getElementById("edit-box").style.display = "none";
     document.querySelector('.food_details').style.display = "none";
     const radioBtn = document.querySelector('input[name="dinner-category"][value="categoryd1"]');
-if (radioBtn) {
-    radioBtn.checked = true; // Check the radio button
-}
-getall();
+    if (radioBtn) {
+        radioBtn.checked = true; // Check the radio button
+    }
+    getall();
 }
 
 function showedit() {
@@ -2457,9 +2330,9 @@ function calculateTotalB() {
         });
 
         // Calculate totals for the UI
-            const price = parseFloat($(this).data('price')) || 0;
-            totalAmount += quantity * price;
-            totalQuantity += quantity;
+        const price = parseFloat($(this).data('price')) || 0;
+        totalAmount += quantity * price;
+        totalQuantity += quantity;
     });
 
     // Compare initial and current data
@@ -2485,9 +2358,9 @@ function calculateTotalD() {
         });
 
         // Calculate totals for the UI
-            const price = parseFloat($(this).data('price')) || 0;
-            totalAmount += quantity * price;
-            totalQuantity += quantity;
+        const price = parseFloat($(this).data('price')) || 0;
+        totalAmount += quantity * price;
+        totalQuantity += quantity;
     });
 
     // Compare initial and current data
@@ -2701,7 +2574,7 @@ function updateLunchTotal() {
     // Loop through each row of the lunch table
     $('#lunch-table tbody tr').each(function() {
         // Get the date from the first column (assumed to be in the format YYYY-MM-DD)
-        const rowDate = $(this).find('td:first').text().trim(); 
+        const rowDate = $(this).find('td:first').text().trim();
 
         // Only calculate the total if the date in the row matches today's date
         if (rowDate === today) {
@@ -2865,51 +2738,51 @@ function openSummaryModal(event) {
 
 // }
 function closeSummaryModal(event) {
-event.preventDefault();
-// Hide the modal
+    event.preventDefault();
+    // Hide the modal
 
-document.getElementById('summary-modal').style.display = 'none';
-document.getElementById('overlay').style.display = 'none';
-document.getElementById("breakfast-box-b").style.display = "none";
-document.getElementById("dinner-box-b").style.display = "none";
+    document.getElementById('summary-modal').style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+    document.getElementById("breakfast-box-b").style.display = "none";
+    document.getElementById("dinner-box-b").style.display = "none";
 
-let today = new Date().toISOString().split('T')[0];
+    let today = new Date().toISOString().split('T')[0];
 
-document.getElementById('from-date-b').value = today;
-document.getElementById('to-date-b').value = today;
-document.getElementById('from-date-l').value = today;
-document.getElementById('to-date-l').value = today;
-document.getElementById('from-date-d').value = today;
-document.getElementById('to-date-d').value = today;
-$('#breakfast-contain-b').hide();
-$('#dinner-container-b').hide();
-$('#lunch-options-containers').hide();
-const breakfastRadioBtn = document.querySelector('input[name="breakfast-category-b"][value="categoryb1b"]');
-if (breakfastRadioBtn) {
-breakfastRadioBtn.checked = false;  
-}
+    document.getElementById('from-date-b').value = today;
+    document.getElementById('to-date-b').value = today;
+    document.getElementById('from-date-l').value = today;
+    document.getElementById('to-date-l').value = today;
+    document.getElementById('from-date-d').value = today;
+    document.getElementById('to-date-d').value = today;
+    $('#breakfast-contain-b').hide();
+    $('#dinner-container-b').hide();
+    $('#lunch-options-containers').hide();
+    const breakfastRadioBtn = document.querySelector('input[name="breakfast-category-b"][value="categoryb1b"]');
+    if (breakfastRadioBtn) {
+        breakfastRadioBtn.checked = false;
+    }
 
-const dinnerRadioBtn = document.querySelector('input[name="dinner-category-b"][value="categoryd1d"]');
-if (dinnerRadioBtn) {
-dinnerRadioBtn.checked = false; 
-}
+    const dinnerRadioBtn = document.querySelector('input[name="dinner-category-b"][value="categoryd1d"]');
+    if (dinnerRadioBtn) {
+        dinnerRadioBtn.checked = false;
+    }
 
-const lunchRadioBtn = document.querySelector('input[name="lunch-category"][value="category1"]');
-if (lunchRadioBtn) {
-    lunchRadioBtn.checked = false;  
-}
+    const lunchRadioBtn = document.querySelector('input[name="lunch-category"][value="category1"]');
+    if (lunchRadioBtn) {
+        lunchRadioBtn.checked = false;
+    }
 
 }
 
 function showBreakfastB() {
 
-document.getElementById("breakfast-box-b").style.display = "block";
-document.getElementById("lunch-box-b").style.display = "none";
-document.getElementById("dinner-box-b").style.display = "none";
-const radioBtn = document.querySelector('input[name="breakfast-category-b"][value="categoryb1b"]');
-if (radioBtn) {
-    radioBtn.checked = true; 
-}
+    document.getElementById("breakfast-box-b").style.display = "block";
+    document.getElementById("lunch-box-b").style.display = "none";
+    document.getElementById("dinner-box-b").style.display = "none";
+    const radioBtn = document.querySelector('input[name="breakfast-category-b"][value="categoryb1b"]');
+    if (radioBtn) {
+        radioBtn.checked = true;
+    }
 }
 
 
@@ -2920,7 +2793,7 @@ function showLunchB() {
     document.getElementById("dinner-box-b").style.display = "none";
     const radioBtn = document.querySelector('input[name="lunch-category"][value="category1"]');
     if (radioBtn) {
-        radioBtn.checked = true; 
+        radioBtn.checked = true;
     }
     fetchalllunch();
 }
@@ -2932,14 +2805,14 @@ function showLunchB() {
 // }
 function showDinnerB() {
 
-document.getElementById("breakfast-box-b").style.display = "none";
-document.getElementById("lunch-box-b").style.display = "none";
-document.getElementById("dinner-box-b").style.display = "block";
-const radioBtn = document.querySelector('input[name="dinner-category-b"][value="categoryd1d"]');
-if (radioBtn) {
-    radioBtn.checked = true; 
-        }
-    }
+    document.getElementById("breakfast-box-b").style.display = "none";
+    document.getElementById("lunch-box-b").style.display = "none";
+    document.getElementById("dinner-box-b").style.display = "block";
+    const radioBtn = document.querySelector('input[name="dinner-category-b"][value="categoryd1d"]');
+    if (radioBtn) {
+        radioBtn.checked = true;
+    }
+}
 
 
 
@@ -3098,7 +2971,7 @@ function fetchItems(cat) {
     bval = 1;
     if (cat == 1) {
         // document.getElementById("breakfast-bulk-table").style.height = '48vh';
-        $('#breakfast-contain-b').show();
+        fetchallb();
         return;
     }
     // document.getElementById("breakfast-bulk-table").style.height = 'auto';
@@ -3129,8 +3002,7 @@ function fetchItems(cat) {
         load: "fetchsubitem",
         day: dayName,
         fromdate: fromDate,
-        cat: cat,
-        cid:customerid
+        cat: cat
     };
 
     $.ajax({
@@ -3174,7 +3046,7 @@ function fetchItemsDinner(cat) {
     dval = 3;
     if (cat == 9) {
         // document.getElementById("dinner-bulk-table").style.height = '48vh';
-        $('#dinner-container-b').show();
+        getallb();
         return;
     }
     // document.getElementById("dinner-bulk-table").style.height = 'auto';
@@ -3203,8 +3075,7 @@ function fetchItemsDinner(cat) {
         load: "fetchsubitem",
         day: dayName,
         fromdate: fromDate,
-        cat: cat,
-        cid:customerid
+        cat: cat
     };
     console.log("Line 5027",payload)
     $.ajax({
@@ -3257,13 +3128,12 @@ function fetchallb() {
     const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const dayName = dayNames[dayOfWeek];
     const fromDate = $('#from-date-b').val();
-    
-    
+
+
     var payload = {
         load: "fetchitemsb",
         day: dayName,
-        fromdate: fromDate,
-        cid:customerid
+        fromdate: fromDate
     };
 
     $.ajax({
@@ -3331,12 +3201,11 @@ function getallb() {
     const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const dayName = dayNames[dayOfWeek];
     const fromDate = $('#from-date-d').val();
-   
+
     var payload = {
         load: "getitemsb",
         day: dayName,
-        fromdate: fromDate,
-        cid:customerid
+        fromdate: fromDate
     };
 
     $.ajax({
@@ -3537,10 +3406,10 @@ async function submitForB(event) {
     //   }
     });
 
-    // if (items.length === 0) {
-    //     alert("Please select at least one item with quantity.");
-    //     return;
-    // }
+    if (items.length === 0) {
+        alert("Please select at least one item with quantity.");
+        return;
+    }
 
     let payload = {
         load: 'setitemsb',
@@ -3550,7 +3419,7 @@ async function submitForB(event) {
         day: dayName,
         dates: []
     };
-
+   
     if (fromDate && toDate) {
         const from = new Date(fromDate);
         const to = new Date(toDate);
@@ -3617,10 +3486,10 @@ async function submitForD(event) {
    //    }
     });
 
-    // if (items.length === 0) {
-    //     alert("Please select at least one item with quantity.");
-    //     return;
-    // }
+    if (items.length === 0) {
+        alert("Please select at least one item with quantity.");
+        return;
+    }
 
     let payload = {
         load: 'setitemsb', // Use a separate identifier for dinner orders
@@ -3697,21 +3566,21 @@ function fetchalllunch() {
 
                 response.data.forEach(item => {
                     const row = $(`
-                        <tr>
-                            <td class="itemname">${item.ItemName}</td>
-                            <td class="price">${item.Price}</td>
-                            <td>
-                                <input 
-                                    type="number" 
-                                    class='tableqtyl'
-                                    id='tableqtyl'
-                                    data-optionid1="${item.OptionID}" 
-                                    placeholder="0" 
-                                    min="0" 
-                                    style="width:100px">
-                            </td>
-                        </tr>
-                    `);
+                <tr>
+                    <td class="itemname">${item.ItemName}</td>
+                    <td class="price">${item.Price}</td>
+                    <td>
+                        <input 
+                            type="number" 
+                            class='tableqtyl'
+                            id='tableqtyl'
+                            data-optionid1="${item.OptionID}" 
+                            placeholder="0" 
+                            min="0" 
+                            style="width:100px">
+                    </td>
+                </tr>
+            `);
                     chargesTableBody.append(row);
 
                     // Add item to global array
@@ -3720,14 +3589,14 @@ function fetchalllunch() {
                         price: item.Price,
                         foodid: item.OptionID,
                         Quantity: item.quantity !== undefined && item.quantity !== null ? item.quantity : 0
- 
+
                     });
                 });
 
                 fetchQuantitiesForCustomer(); // Fetch quantities for customer orders
                 $('.tableqtyl').on('input', calculateTotalL);
                 let alertshown = 0;
-                 document.querySelectorAll('.tableqtyl').forEach(field => {
+                document.querySelectorAll('.tableqtyl').forEach(field => {
                     statuscheck(formattedDate, formattedDate, foodtype, field, alertshown);
                     alertshown = 1;
                 });
@@ -3745,60 +3614,60 @@ function fetchalllunch() {
 
 let previouslunqty = 0; //global
 function fetchQuantitiesForCustomer() {
-console.log("Fetching quantities for all items...");
+    console.log("Fetching quantities for all items...");
 
-const today = new Date();
-const formattedDate = today.toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
 
-if (typeof customerid === 'undefined' || customerid === null) {
-console.error("Customer ID is not defined.");
-return;
-}
-
-const payload = {
-load: "fetchQuantities",
-cid: customerid, // Ensure customerid is dynamically set
-date: formattedDate // Pass the specific date
-};
-
-console.log("Payload:", payload); // Debug payload
-
-$.ajax({
-url: './webservices/dinner.php',
-type: 'POST',
-dataType: 'json',
-contentType: 'application/json',
-data: JSON.stringify(payload),
-        success: function(response) {
-    console.log("Quantities fetched for the specific date:", response);
-
-    if (response.status === 'success' && response.data) {
-        const quantities = response.data;
-
-        // Update table rows with fetched quantities using map
-        quantities.forEach(order => {
-            const inputField = $(`input[data-optionid1="${order.OptionID}"]`);
-            if (inputField.length > 0) {
-                inputField.val(order.Quantity);
-
-                // Update the corresponding item in allItems array
-                const itemIndex = allItems.findIndex(item => item.foodid === order.OptionID);
-                if (itemIndex !== -1) {
-                    allItems[itemIndex].Quantity = order.Quantity; // Add or update the Quantity field
-                }
-            }
-        });
-
-        console.log("Quantities successfully updated in the table and allItems array.");
-        console.log("Updated allItems array:", allItems);
-    } else {
-        console.error(response.message || 'No quantities found.');
+    if (typeof customerid === 'undefined' || customerid === null) {
+        console.error("Customer ID is not defined.");
+        return;
     }
-},
+
+    const payload = {
+        load: "fetchQuantities",
+        cid: customerid, // Ensure customerid is dynamically set
+        date: formattedDate // Pass the specific date
+    };
+
+    console.log("Payload:", payload); // Debug payload
+
+    $.ajax({
+        url: './webservices/dinner.php',
+        type: 'POST',
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify(payload),
+        success: function(response) {
+            console.log("Quantities fetched for the specific date:", response);
+
+            if (response.status === 'success' && response.data) {
+                const quantities = response.data;
+
+                // Update table rows with fetched quantities using map
+                quantities.forEach(order => {
+                    const inputField = $(`input[data-optionid1="${order.OptionID}"]`);
+                    if (inputField.length > 0) {
+                        inputField.val(order.Quantity);
+
+                        // Update the corresponding item in allItems array
+                        const itemIndex = allItems.findIndex(item => item.foodid === order.OptionID);
+                        if (itemIndex !== -1) {
+                            allItems[itemIndex].Quantity = order.Quantity; // Add or update the Quantity field
+                        }
+                    }
+                });
+
+                console.log("Quantities successfully updated in the table and allItems array.");
+                console.log("Updated allItems array:", allItems);
+            } else {
+                console.error(response.message || 'No quantities found.');
+            }
+        },
         error: function(error) {
-    console.error("Error fetching quantities:", error);
-}
-});
+            console.error("Error fetching quantities:", error);
+        }
+    });
 }
 
 // Function to handle lunch order submission
@@ -3956,7 +3825,7 @@ function handleDateChangeB() {
         toDateB = fromDateB;
     }
 
-const foodtype = 1;
+    const foodtype = 1;
     let alertshown = 0;
 
     if (fromDateB && toDateB) {
@@ -3965,20 +3834,20 @@ const foodtype = 1;
             alertshown = 1;
         });
 
-const payload = { 
-load: 'datechange',
-fromdate: fromDateB,
-todate: toDateB,
+        const payload = {
+            load: 'datechange',
+            fromdate: fromDateB,
+            todate: toDateB,
             foodtype: foodtype,
-cid: customerid
-};
+            cid: customerid
+        };
 
-$.ajax({
-url: './webservices/dinner.php',
-type: 'POST',
-dataType: 'json',
-data: JSON.stringify(payload),
-success: function(data) {
+        $.ajax({
+            url: './webservices/dinner.php',
+            type: 'POST',
+            dataType: 'json',
+            data: JSON.stringify(payload),
+            success: function(data) {
                 console.log(data, "date check");
 
                 if (data.status === 'success' && data.data.length > 0) {
@@ -3992,21 +3861,21 @@ success: function(data) {
                                 inputField.val(order.Quantity);
                             }
                         });
-} else {
+                    } else {
                         // Pattern mismatch, set all to 0
                         $('.tableqtyb').val(0);
-}
+                    }
                 } else {
                     $('.tableqtyb').val(0);
                 }
 
-// initialQuantitySumB = calculateTotalSum('.tableqtyb');
-},
-error: function(error) {
-console.error('Error:', error);
-}
-});
-}
+                initialQuantitySumB = calculateTotalSum('.tableqtyb');
+            },
+            error: function(error) {
+                console.error('Error:', error);
+            }
+        });
+    }
 }
 
 function handleDateChangeD() {
@@ -4016,7 +3885,7 @@ function handleDateChangeD() {
         toDateD = fromDateD;
     }
 
-const foodtype = 3;
+    const foodtype = 3;
     let alertshown = 0;
 
     if (fromDateD && toDateD) {
@@ -4025,21 +3894,21 @@ const foodtype = 3;
             alertshown = 1;
         });
 
-const payload = { 
-load: 'datechange',
-fromdate: fromDateD,
-todate: toDateD,
+        const payload = {
+            load: 'datechange',
+            fromdate: fromDateD,
+            todate: toDateD,
             foodtype: foodtype,
-cid: customerid
-};
+            cid: customerid
+        };
 
-$.ajax({
-url: './webservices/dinner.php',
-type: 'POST',
-dataType: 'json',
-data: JSON.stringify(payload),
-success: function(data) {
-console.log(data);
+        $.ajax({
+            url: './webservices/dinner.php',
+            type: 'POST',
+            dataType: 'json',
+            data: JSON.stringify(payload),
+            success: function(data) {
+                console.log(data);
 
                 if (data.status === 'success' && data.data.length > 0) {
                     const groupedData = groupByDate(data.data);
@@ -4052,21 +3921,21 @@ console.log(data);
                                 inputField.val(order.Quantity);
                             }
                         });
-} else {
+                    } else {
                         // Pattern mismatch, set all to 0
                         $('.tableqtydb').val(0);
-}
+                    }
                 } else {
                     $('.tableqtydb').val(0);
                 }
 
-// initialQuantitySumD = calculateTotalSum('.tableqtydb');
-},
-error: function(error) {
-console.error('Error:', error);
-}
-});
-}
+                initialQuantitySumD = calculateTotalSum('.tableqtydb');
+            },
+            error: function(error) {
+                console.error('Error:', error);
+            }
+        });
+    }
 }
 
 
@@ -4098,7 +3967,7 @@ function checkIfPatternMatches(groupedData) {
 
 function statuscheck(fromdate, todate, foodtype, field, alertcount) {
 
-    const payload = { 
+    const payload = {
         load: 'statuscheck',
         fromdate: fromdate,
         todate: todate,
@@ -4106,28 +3975,28 @@ function statuscheck(fromdate, todate, foodtype, field, alertcount) {
         cid: customerid
     };
   
-    
+
     if (fromdate && todate) {
         $.ajax({
-        url: './webservices/dinner.php',
-        type: 'POST',
-        dataType: 'json',
-        data: JSON.stringify(payload),
-        success: function(data) {
+            url: './webservices/dinner.php',
+            type: 'POST',
+            dataType: 'json',
+            data: JSON.stringify(payload),
+            success: function(data) {
              
                 if (data.status !== "error" && data.data[0].Status == 2) {
                     if (alertcount != 1) {
-                alert(`Order has been already delivered for the following date: ${fromdate}.\nPlease select any other date.`);
-            }
-           
-            field.disabled = true;
+                        alert(`Order has been already delivered for the following date: ${fromdate}.\nPlease select any other date.`);
+                    }
+
+                    field.disabled = true;
                 } else {
-            field.disabled = false;
-        }
-    },
-    error: function(error) {
-        console.error('Error:', error);
-    }
+                    field.disabled = false;
+                }
+            },
+            error: function(error) {
+                console.error('Error:', error);
+            }
         });
     }
 }
@@ -4215,14 +4084,14 @@ function statuscheck(fromdate, todate, foodtype, field, alertcount) {
 //     });
 // }
 $('#from-date-l, #to-date-l').on('change', function() {
-const fromDate = $('#from-date-l').val();
-const toDate = $('#to-date-l').val();
+    const fromDate = $('#from-date-l').val();
+    const toDate = $('#to-date-l').val();
 
-if (fromDate && toDate) {
-handleDateChangeL(fromDate, toDate);
-} else {
-console.error("Both From Date and To Date are required.");
-}
+    if (fromDate && toDate) {
+        handleDateChangeL(fromDate, toDate);
+    } else {
+        console.error("Both From Date and To Date are required.");
+    }
 });
 
 // Function to handle date range change
@@ -4232,7 +4101,7 @@ function handleDateChangeL(fromDate, toDate) {
     let alertshown = 0;
     document.querySelectorAll('.tableqtyl').forEach(field => {
         statuscheck(fromDate, toDate, foodtype, field, alertshown);
-    alertshown = 1;
+        alertshown = 1;
     });
 
     if (typeof customerid === 'undefined' || customerid === null) {
@@ -4256,131 +4125,131 @@ function handleDateChangeL(fromDate, toDate) {
 
 // Helper function to fetch quantities for a specific date
 function fetchQuantities(date, callback) {
-const payload = {
-load: "fetchQuantities",
-cid: customerid,
-date: date
-};
+    const payload = {
+        load: "fetchQuantities",
+        cid: customerid,
+        date: date
+    };
 
-$.ajax({
-url: './webservices/dinner.php',
-type: 'POST',
-dataType: 'json',
-contentType: 'application/json',
-data: JSON.stringify(payload),
+    $.ajax({
+        url: './webservices/dinner.php',
+        type: 'POST',
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify(payload),
         success: function(response) {
-    if (response.status === 'success' && response.data) {
-        callback(response.data); // Pass data to the callback
-    } else {
-        console.error(`No quantities found for date: ${date}`);
-        callback(null); // No data
-    }
-},
+            if (response.status === 'success' && response.data) {
+                callback(response.data); // Pass data to the callback
+            } else {
+                console.error(`No quantities found for date: ${date}`);
+                callback(null); // No data
+            }
+        },
         error: function(error) {
-    console.error(`Error fetching quantities for date: ${date}`, error);
-    callback(null); // Error
-}
-});
+            console.error(`Error fetching quantities for date: ${date}`, error);
+            callback(null); // Error
+        }
+    });
 }
 
 // Helper function to update quantities if they match
 function updateQuantitiesIfMatched(fromData, toData) {
-let isMatch = true;
+    let isMatch = true;
 
-// Check if both datasets have the same OptionIDs and Quantities
-fromData.forEach(fromItem => {
-const toItem = toData.find(item => item.OptionID === fromItem.OptionID);
-if (!toItem || fromItem.Quantity !== toItem.Quantity) {
-    isMatch = false;
-}
-});
+    // Check if both datasets have the same OptionIDs and Quantities
+    fromData.forEach(fromItem => {
+        const toItem = toData.find(item => item.OptionID === fromItem.OptionID);
+        if (!toItem || fromItem.Quantity !== toItem.Quantity) {
+            isMatch = false;
+        }
+    });
 
-if (isMatch) {
-fromData.forEach(order => {
-    const inputField = $(`input[data-optionid1="${order.OptionID}"]`);
-    if (inputField.length > 0) {
-        inputField.val(order.Quantity); // Update with matching quantity
+    if (isMatch) {
+        fromData.forEach(order => {
+            const inputField = $(`input[data-optionid1="${order.OptionID}"]`);
+            if (inputField.length > 0) {
+                inputField.val(order.Quantity); // Update with matching quantity
                 console.log("dlhaf", order.Quantity)
+            }
+        });
+        console.log("Quantities match and have been updated.");
+    } else {
+        console.log("Quantities do not match. Clearing fields.");
+        clearQuantities();
     }
-});
-console.log("Quantities match and have been updated.");
-} else {
-console.log("Quantities do not match. Clearing fields.");
-clearQuantities();
-}
 }
 
 // Helper function to clear quantities in input fields
 function clearQuantities() {
     $('input[data-optionid1]').each(function() {
-$(this).val(''); // Clear the value
-});
+        $(this).val(''); // Clear the value
+    });
 }
 
 function calculateTotalL() {
-let totalAmount = 0;
-let totalQuantity = 0;
+    let totalAmount = 0;
+    let totalQuantity = 0;
 
-// Build the current data array
-currentLunchData = [];
+    // Build the current data array
+    currentLunchData = [];
     $('.tableqtyl').each(function() {
-const quantity = parseFloat($(this).val()) || 0;
-currentLunchData.push({
-    ItemName: $(this).data('itemname'),
-    Price: $(this).data('price'),
-    OptionID: $(this).data('optionid1'),
-    Quantity: quantity,
-});
+        const quantity = parseFloat($(this).val()) || 0;
+        currentLunchData.push({
+            ItemName: $(this).data('itemname'),
+            Price: $(this).data('price'),
+            OptionID: $(this).data('optionid1'),
+            Quantity: quantity,
+        });
 
-// Calculate totals for the UI
-const price = parseFloat($(this).data('price')) || 0;
-totalAmount += quantity * price;
-totalQuantity += quantity;
-});
+        // Calculate totals for the UI
+        const price = parseFloat($(this).data('price')) || 0;
+        totalAmount += quantity * price;
+        totalQuantity += quantity;
+    });
 
-// Compare initial and current data
-const isChanged = detectArrayChanges(allItems, currentLunchData);
+    // Compare initial and current data
+    const isChanged = detectArrayChanges(allItems, currentLunchData);
 
-// Log or use the change status (1 for changes, 0 for no changes)
-console.log("Lunch Data Changed:", isChanged ? 1 : 0);
+    // Log or use the change status (1 for changes, 0 for no changes)
+    console.log("Lunch Data Changed:", isChanged ? 1 : 0);
 
-// Update totals in the UI (if required)
-// $('#lunchamt').val(totalAmount.toFixed(2));
-// $('#lunchqty').val(totalQuantity);
+    // Update totals in the UI (if required)
+    // $('#lunchamt').val(totalAmount.toFixed(2));
+    // $('#lunchqty').val(totalQuantity);
 
-return isChanged ? 1 : 0;
+    return isChanged ? 1 : 0;
 }
 
 function detectArrayChanges(initial, current) {
-console.log("Initial Data:", initial);
-console.log("Current Data:", current);
+    console.log("Initial Data:", initial);
+    console.log("Current Data:", current);
 
-// Ensure both arrays are of the same length, otherwise return 1 (changes detected)
-if (initial.length !== current.length) {
-return 1; // Different lengths mean changes
-}
-
-// Iterate through the arrays to compare each item
-for (let i = 0; i < initial.length; i++) {
-const initItem = initial[i];
-const currItem = current[i];
-
-// Only compare items where Quantity is defined
-if (initItem.Quantity !== undefined && currItem.Quantity !== undefined) {
-    const initFoodId = String(initItem.foodid); // Convert to string for comparison
-    const currOptionId = String(currItem.OptionID); // Convert to string for comparison
-
-    // Compare food IDs and quantities (ensure both are numbers for consistency)
-    if (
-        initFoodId !== currOptionId || // Compare food IDs
-        Number(initItem.Quantity) !== Number(currItem.Quantity) // Compare quantities as numbers
-    ) {
-        return 1; // Found a difference (changes detected)
+    // Ensure both arrays are of the same length, otherwise return 1 (changes detected)
+    if (initial.length !== current.length) {
+        return 1; // Different lengths mean changes
     }
-}
-}
 
-return 0; // No differences found (no changes)
+    // Iterate through the arrays to compare each item
+    for (let i = 0; i < initial.length; i++) {
+        const initItem = initial[i];
+        const currItem = current[i];
+
+        // Only compare items where Quantity is defined
+        if (initItem.Quantity !== undefined && currItem.Quantity !== undefined) {
+            const initFoodId = String(initItem.foodid); // Convert to string for comparison
+            const currOptionId = String(currItem.OptionID); // Convert to string for comparison
+
+            // Compare food IDs and quantities (ensure both are numbers for consistency)
+            if (
+                initFoodId !== currOptionId || // Compare food IDs
+                Number(initItem.Quantity) !== Number(currItem.Quantity) // Compare quantities as numbers
+            ) {
+                return 1; // Found a difference (changes detected)
+            }
+        }
+    }
+
+    return 0; // No differences found (no changes)
 }
 
 function disableFieldsBasedOnStatus(data) {

@@ -591,10 +591,10 @@ function loadPendingMonthReport(tbtn){
     todate = year_date_format(todate);
 
     let thismonth_status = tbtn.textContent.includes('*');
-    if(thismonth_status){
-        todate = new Date();
-        todate = year_date_format(todate);
-    }
+    // if(thismonth_status){
+    //     todate = new Date();
+    //     todate = year_date_format(todate);
+    // }
 
     var payload = {
         load:"load_pending_month_report",
