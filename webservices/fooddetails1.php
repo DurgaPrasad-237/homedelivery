@@ -179,6 +179,8 @@ else if($load == "loadtodaydinneritem"){
     loadtodaydinneritem($conn);
 }
 
+
+
 function checktrmdinitem($conn){
     global $tmrdate;
     $sql = "SELECT dinnerschedule.sno,fooddetails.ItemName,fooddetails.OptionID,fooddetails.subcategory from dinnerschedule
@@ -688,7 +690,7 @@ function loadfoodcategory1($conn) {
     if (count($resultquery) > 0) {
         $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resultquery);
     } else {
-        $jsonresponse = array('code' => '200', 'status' => 'error', 'message' => 'No foodtype found');
+        $jsonresponse = array('code' => '200', 'status' => 'error', 'data'=>'','message' => 'No foodtype found');
     }
     echo json_encode($jsonresponse);
 }

@@ -1130,12 +1130,13 @@ background-color: green;
 }
 #scheduling-content .scheduling_content_container{
     height:90%;
-    width:100%;
-    /* display: flex;
+    width:99%;
+    display: flex;
     flex-direction: column;
-    justify-content: space-around; */
+    /* justify-content: space-around; */ 
     padding:5px;
-    align-items: center;
+    /* align-items: center; */
+    border:2px solid red;
 }
 #scheduling-content .scheduling_content_container .schedulingboxes{
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
@@ -1153,9 +1154,9 @@ background-color: green;
     background-color:#F3681E;
     color:white;
 }
-.scheduling_content_container p{
+/* .scheduling_content_container p{
     margin-left: 2vw;;
-}
+} */
 .schedulingboxes select{
     width:8vw;
 }

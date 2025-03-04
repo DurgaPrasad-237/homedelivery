@@ -8,51 +8,6 @@
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" type="text/css" href="css/fooddetails.css">
-    <style>
-         .scheduling_dates{
-            border:2px solid black;
-            height:5vh;
-            width:95%;
-            display:flex;
-            flex-direction:row;
-            justify-content: space-around;
-            padding:5px;
-            margin:0px auto;
-        }
-        .individual_sch_dates{
-            border:2px solid green;
-            width:5vw;
-            margin:0px;
-            display:flex;
-            align-items: center;
-            justify-content: center;
-            padding:2px;
-            cursor:pointer;
-        }
-        .individual_sch_dates p{
-            margin:0px;
-        }
-        .schedule_menu_list{
-            border:2px solid blue;
-            width:95%;
-            height:65vh;
-            margin:0px auto;
-            padding:5px;
-        }
-        .foodtype_box{
-            height:15vh;
-        }
-        .inside_foodtype_box{
-            border:2px solid yellow;
-            height:100%;
-            display:flex;
-            flex-direction: row;
-            justify-content: space-around;
-            align-items: center;
-        }
-
-
-    </style>
 </head>
 
 <body style="overflow: hidden;">
@@ -234,13 +189,7 @@
                 <!--scheduling-content section-->
                 <div id="scheduling-content">
                     <div class="scheduling_content_container">
-                        <div class="scheduling_dates">
-                          
-                        </div>
-                        <div class="schedule_menu_list">
-
-                        </div>
-                        <!-- <div class="schedulingboxes">
+                        <div class="schedulingboxes">
                             <h3>Break Fast</h3>
                             <div class="tdybox">
                                 <p><b>Today</b></p>
@@ -259,8 +208,8 @@
                                 <button onclick="upddatetmitem(this,1)" class="btnbftmr">Save</button>
                             </div>
 
-                        </div> -->
-<!-- 
+                        </div>
+
                         <div class="schedulingboxes">
                             <h3>Lunch</h3>
                             <div class="tdybox">
@@ -279,9 +228,9 @@
                                 </select>
                                 <button onclick="upddatetmitem(this,2)" class="btnluntmr">Save</button>
                             </div>
-                        </div> -->
+                        </div>
 
-                        <!-- <div class="schedulingboxes">
+                        <div class="schedulingboxes">
                             <h3>Dinner</h3>
                             <div class="tdybox">
                                 <p><b>Today</b></p>
@@ -299,7 +248,7 @@
                                 </select>
                                 <button onclick="upddatetmitem(this,3)" class="btndintmr">Save</button>
                             </div>
-                        </div> -->
+                        </div>
                     </div>
                 </div>
 
@@ -319,7 +268,6 @@
         let breakfasttmritem;
         let dinnertmritem;
         let lunchtmritem;
-
 
         tomorrowdate.setDate(todaydate.getDate() + 1);
 
@@ -342,98 +290,6 @@
 
             return `${year}-${month}-${day}`;
         }
-
-        function loadSchedulingDates(){
-            let today = new Date();
-           
-
-            let scheduling_dates = document.querySelector('.scheduling_dates');
-            for (let i = 0; i < 7; i++) {
-                let para = document.createElement('p');
-                para.setAttribute('class','individual_sch_dates');
-                para.setAttribute('onclick',`loadscheduleMenu(this)`);
-                let futureDate = new Date();
-                futureDate.setDate(today.getDate() + i);
-                let formattedDate = futureDate.toISOString().split('T')[0];
-                para.setAttribute('data-schdate',`${formattedDate}`)
-                para.textContent = formattedDate;
-                // para.style.backgroundColor = colors[i]; 
-                scheduling_dates.appendChild(para);
-            }
-            loadfoodType();
-        }
-
-
-        //function for load foodtype
-        function loadfoodType(){
-            var payload = {
-                load: "loadfoodtype1"
-            };
-            
-            $.ajax({
-                type: "POST",
-                url: "./webservices/fooddetails1.php",
-                data: JSON.stringify(payload),
-                dataType: "json",
-                success: function(response){
-                    if(response.data.length > 0){
-                        let schedule_menu_list = document.querySelector('.schedule_menu_list');
-                        
-                        if (!schedule_menu_list) {
-                            console.error("Error: .schedule_menu_list not found in DOM");
-                            return;
-                        }
-                        
-                        response.data.forEach(itm => {
-                            let div = document.createElement('div');
-                            div.setAttribute('id', `${itm.type}_box`);
-                            div.setAttribute('data-foodtypeid', `${itm.sno}`);
-                            div.classList.add('foodtype_box');
-                            
-                            let header3 = document.createElement('h3');
-                            header3.textContent = itm.type;
-
-                            let insidediv = document.createElement('div');
-                            insidediv.classList.add('inside_foodtype_box');
-                           
-                            //subcategory select tag
-                            let selecttag = document.createElement('select');
-                            selecttag.setAttribute('id',`${itm.type}_subcategory`)
-
-
-                            //items select tag
-                            let itemsselecttag = document.createElement('select');
-                            itemsselecttag.setAttribute('id',`${itm.type}_items`)
-
-                            //save button
-                            let savebuttons = document.createElement('button');
-                            savebuttons.textContent = "save";
-                            savebuttons.setAttribute('onclick','updateSchedule(this)')
-
-                            insidediv.appendChild(selecttag)
-                            insidediv.appendChild(itemsselecttag)
-                            insidediv.appendChild(savebuttons)
-
-
-                            div.appendChild(header3); 
-                            div.appendChild(insidediv); 
-                            // div.appendChild(itemsselecttag); 
-                            // div.appendChild(savebuttons);
-
-                            
-
-                            schedule_menu_list.appendChild(div);  
-                        });
-                    }
-                },
-                error: function(err){
-                    console.log("Error in loading food type:", err);
-                    alert("Something went wrong while fetching food type");
-                }
-            });
-        }
-
-
 
         //function for loadtoday order
         function loadtodaybfitem() {
@@ -459,7 +315,7 @@
             })
 
         }
-        // loadtodaybfitem();
+        loadtodaybfitem();
 
           //today lunch curry item
           function loadCurryInLunch(){
@@ -483,7 +339,7 @@
                 }
             })
         }
-        // loadCurryInLunch();
+        loadCurryInLunch();
 
         //function for load today dinner item
         function loadtodaydinneritem(){
@@ -508,13 +364,12 @@
             })
 
         }
-        // loadtodaydinneritem();
+        loadtodaydinneritem();
 
         async function checkingtrigger() {
-            loadSchedulingDates();
-            // await checktmritem();
-            // await checkdinnertmitem();
-            // await checklunchitem();
+            await checktmritem();
+            await checkdinnertmitem();
+            await checklunchitem();
         }
 
          //check wheather tomorrow breakfast item set or not
@@ -702,7 +557,7 @@
                 }
             })
         }
-        // loadsubbreakfast();
+        loadsubbreakfast();
 
         //load lunch subcategory
         function loadlunchsub(){
@@ -735,7 +590,7 @@
                 }
             })
         }
-        // loadlunchsub();
+        loadlunchsub();
 
 
         //load dinner subcategory
@@ -769,7 +624,7 @@
                 }
             })
         }
-        // loaddinnersub();
+        loaddinnersub();
 
 
         //load category items

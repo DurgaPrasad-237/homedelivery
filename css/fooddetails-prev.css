@@ -1131,9 +1131,9 @@ background-color: green;
 #scheduling-content .scheduling_content_container{
     height:90%;
     width:100%;
-    /* display: flex;
+    display: flex;
     flex-direction: column;
-    justify-content: space-around; */
+    justify-content: space-around;
     padding:5px;
     align-items: center;
 }
