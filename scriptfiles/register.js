@@ -27,6 +27,7 @@ let sameasadd = document.getElementById('input_checkbox');
 let regflat = document.getElementById('regflat')
 let regstreet = document.getElementById('regstreet')
 let regarea = document.getElementById('regarea')
+let reglandmark = document.getElementById('reglandmark');
 let reglink = document.getElementById('reglink')
 let regmobile = document.getElementById('regdmobile')
 let finaldeliveryaddress;
@@ -36,11 +37,15 @@ let finalamount = 0;
 let finalquantity = 0;
 let existingOrders = [];
 let lunchidsprice = [];
+let sm = document.querySelector('#summary-modal');
+let isDragging = false;
+let offsetX,offsetY; //store the position where user clicked inside the posititon
 
 let prevdeliveryflat,prevbillingflat;
 let prevdeliverystreet,prevbillingstreet;
 let prevdeliveryarea,prevbillingarea;
 let prevdeliverymobile,prevbillingmobile;
+let prevdeliverylandmark,prevbillinglandmark;
 let prevdeliverylink;
 
 
@@ -65,6 +70,36 @@ function validateRegisterEmail(input) {
     }
 }
 
+sm.addEventListener("mousedown",(e)=>{  //capture the mouse position inside the box
+    isDragging = true;
+    offsetX = e.clientX - sm.offsetLeft;
+    offsetY = e.clientY - sm.offsetTop;
+    sm.style.cursor = "grabbing";
+})
+
+document.addEventListener("mousemove",(e)=>{ //moves dialog box based on new position
+    if(isDragging){
+        //below newx and newy limitations stays inside maindiv by limiting the newx and y
+        let newX = e.clientX - offsetX;
+        let newY = e.clientY - offsetY;
+        const mainDiv = document.querySelector(".main_container");
+        const maxX = mainDiv.clientWidth - sm.clientWidth;
+        const maxY = mainDiv.clientHeight - sm.clientHeight;
+
+        if (newX < 0) newX = 0; //prevent dragging outside the maindiv left edge
+        if (newY < 0) newY = 0; //prevent dragging outside the maindiv top edge
+        if (newX > maxX) newX = maxX;//prevent dragging outside the maindiv right edge
+        if (newY > maxY) newY = maxY;//prevent dragging outside the maindiv bottom edge
+
+        sm.style.left = newX + "px";
+        sm.style.top = newY + "px";
+    }
+})
+
+document.addEventListener("mouseup", () => {
+    isDragging = false;
+    sm.style.cursor = "grab";
+});
 
 
 //function showfooddetails
@@ -136,6 +171,7 @@ function billingdisabled(status) {
     document.getElementById("billing_street").disabled = true
     document.getElementById("billing_area").disabled = true
     document.getElementById("billing_mobile").disabled = true
+    document.getElementById("billing_landmark").disabled = true
     document.querySelector('.bscbtn').style.display = "none";
     document.querySelector('.selection-container-overlay').style.display = "none";
     
@@ -159,6 +195,7 @@ function billingenabled() {
     document.getElementById("billing_street").disabled = false
     document.getElementById("billing_area").disabled = false
     document.getElementById("billing_mobile").disabled = false
+    document.getElementById("billing_landmark").disabled = false
 }
 
 //address delivery disabled
@@ -168,6 +205,7 @@ function deliveryenabled() {
     document.getElementById("address_area").disabled = false
     document.getElementById("address_mobile").disabled = false
     document.getElementById("address_link").disabled = false
+    document.getElementById("address_landmark").disabled = false
 }
 
 //address delivery enabled
@@ -177,6 +215,7 @@ function deliverydisabled(status) {
     document.getElementById("address_area").disabled = true
     document.getElementById("address_mobile").disabled = true
     document.getElementById("address_link").disabled = true;
+    document.getElementById("address_landmark").disabled = true;
     document.querySelector('.scbtn').style.display = "none";
     document.querySelector('.selection-container-overlay').style.display = "none";
     if(status !== "Success"){
@@ -185,6 +224,7 @@ function deliverydisabled(status) {
         document.querySelector('#address_area').value =  prevdeliveryarea
         document.querySelector('#address_mobile').value =  prevdeliverymobile
         document.querySelector('#address_link').value =  prevdeliverylink
+        document.querySelector("#address_landmark").value = prevdeliverylandmark
     }
     dedit.style.display = "block";
 }
@@ -225,6 +265,7 @@ function viewMenu() {
 
 function loadMenuByDate(thisdate){
 
+    let menu_category = [];
     document.querySelectorAll('.individual_dates').forEach(el => {
         el.classList.remove('thisdate_active');
     });
@@ -247,24 +288,56 @@ function loadMenuByDate(thisdate){
                 let day_Menu_list = document.querySelector('.day_Menu_list');
              
                 day_Menu_list.innerHTML = "";
-                let pg = document.createElement('p');
-                pg.textContent = payload.menuDate;
+                // let pg = document.createElement('p');
+                // pg.textContent = payload.menuDate;
 
-               day_Menu_list.appendChild(pg)
+            //    day_Menu_list.appendChild(pg)
                response.data.forEach(itm =>{
+
+                    if(!menu_category.includes(itm.category)){
+                       menu_category.push(itm.category);
+                       let div = document.createElement('div');
+                       div.setAttribute('id',`foodtype_${itm.category}`)
+
+                       div.style.backgroundColor = getRandomDarkColor();
+
+                       let hpara = document.createElement('p');
+                       hpara.setAttribute('class','menu_foodtype_heading');
+                       hpara.textContent = itm.type.toUpperCase();
+
+                       let ispan = document.createElement('span');
+                       ispan.setAttribute('class','itemname_list')
+                       ispan.textContent = itm.ItemName;
+
+                       hpara.appendChild(ispan);
+
+                       div.appendChild(hpara);
+
+
+                       day_Menu_list.appendChild(div);
+                    }
+                    else{
+                       let ispan = document.querySelector(`#foodtype_${itm.category} .menu_foodtype_heading span`);
+                       let breaktag = document.createElement('br');
+                       ispan.appendChild(breaktag);
+                       ispan.appendChild(document.createTextNode(itm.ItemName));
+                    }
                 
-                 let div = document.createElement('div');
+                
+                //  let div = document.createElement('div');
                  
-                 div.innerHTML = `
-                 <p class="menu_foodtype_heading">${itm.type.toUpperCase()}</p>
-                 <p class="itemname_list">ItemName<span>${itm.ItemName}</span></p>
-                 `
-                 day_Menu_list.appendChild(div);
+                //  div.innerHTML = `
+                //  <p class="menu_foodtype_heading">${itm.type.toUpperCase()} <span class="itemname_list">${itm.ItemName}<br/> hello</span></p>
+                //  `
+                //  day_Menu_list.appendChild(div);
                  
                })
             }
             else{
                alert(`No Data on this date: ${thisdate.dataset.menudate}`)
+               let day_Menu_list = document.querySelector('.day_Menu_list');
+             
+               day_Menu_list.innerHTML = `<p style="color:red">The menu has not been decided yet for ${thisdate.dataset.menudate}</p>`;
             }
         },
         error:function(err){
@@ -272,6 +345,13 @@ function loadMenuByDate(thisdate){
             alert("Error to fetch menu try again later")
         }
    })
+}
+
+function getRandomDarkColor() {
+    let r = Math.floor(Math.random() * 100);  // Low red value
+    let g = Math.floor(Math.random() * 100);  // Low green value
+    let b = Math.floor(Math.random() * 100);  // Low blue value
+    return `rgb(${r}, ${g}, ${b})`;  // Returns dark RGB color
 }
 
 //function for todayorderdetails
@@ -453,7 +533,7 @@ register.addEventListener('click', () => {
     prevdeliverystreet,prevbillingstreet,
     prevdeliveryarea,prevbillingarea,
     prevdeliverymobile,prevbillingmobile,
-    prevdeliverylink] = ["","","","","","","","",""];
+    prevdeliverylink,prevdeliverylandmark,pervbillinglandmark] = ["","","","","","","","","","",""];
 
     form_tdylist.style.display = "flex";
     customerform.style.display = 'flex';
@@ -486,7 +566,7 @@ register.addEventListener('click', () => {
 submit.addEventListener('click', () => {
    
     if (!customername.value || !primaryphone.value || !email.value || !regflat.value || !regstreet.value ||
-        !regarea.value || !reglink.value || !regmobile.value
+        !regarea.value || !reglink.value || !regmobile.value ||!reglandmark.value
     ) {
         alert("fill the required fields")
         return "";
@@ -517,7 +597,10 @@ submit.addEventListener('click', () => {
         map: reglink.value,
         deliveryphone: regmobile.value,
         load: "register",
-
+        deliveryflatno:regflat.value,
+        deliverystreet:regstreet.value,
+        deliveryarea:regarea.value,
+        deliverylandmark:reglandmark.value,
     }
     console.log("regpayload",payload);
 
@@ -605,36 +688,41 @@ function fetchbyid(sinput) {
                     intialdeliveryaddress = cust.DeliveryAddress + "," + cust.Phone3 + "," + cust.Map;
                     if (cust.BillingAddress !== null) {
                         const baddressarray = cust.BillingAddress.split(",");
-                        document.getElementById("billing_flat").value = baddressarray[0]
-                        document.getElementById("billing_street").value = baddressarray[1]
-                        document.getElementById("billing_area").value = baddressarray[2]
-                        document.getElementById("billing_mobile").value = cust.Phone2
+                        document.getElementById("billing_flat").value = cust.Billing_Flatno
+                        document.getElementById("billing_street").value = cust.Billing_Street
+                        document.getElementById("billing_area").value = cust.Billing_Area
+                        document.getElementById("billing_mobile").value = cust.Billing_Phonenumber
+                        document.getElementById("billing_landmark").value = cust.Billing_Landmark
 
-                        prevbillingarea =  baddressarray[2];
-                        prevbillingflat = baddressarray[0];
-                        prevbillingmobile = cust.Phone2;
-                        prevbillingstreet = baddressarray[1];
+                        prevbillingarea =   cust.Billing_Area
+                        prevbillingflat = cust.Billing_Flatno
+                        prevbillingmobile = cust.Billing_Phonenumber
+                        prevbillingstreet = cust.Billing_Street
+                        prevbillinglandmark = cust.Billing_Landmark
 
                     } else {
                         document.getElementById("billing_flat").value = ""
                         document.getElementById("billing_street").value = ""
                         document.getElementById("billing_area").value = ""
                         document.getElementById("billing_mobile").value = ""
+                        document.getElementById("billing_landmark").value = ""
                     }
                     if (cust.DeliveryAddress !== null) {
                         const daddressarray = cust.DeliveryAddress.split(",");
-                        document.getElementById("address_flat").value = daddressarray[0]
-                        document.getElementById("address_street").value = daddressarray[1]
-                        document.getElementById("address_area").value = daddressarray[2]
-                        document.getElementById("address_mobile").value = cust.Phone3
+                        document.getElementById("address_flat").value = cust.Delivery_Flatno
+                        document.getElementById("address_street").value = cust.Delivery_Street
+                        document.getElementById("address_area").value = cust.Delivery_Area
+                        document.getElementById("address_mobile").value = cust.Delivery_Phonenumber
                         document.getElementById('address_link').value = cust.Map;
+                        document.getElementById('address_landmark').value = cust.Delivery_Landmark
 
                                                 
-                        prevdeliveryflat =  daddressarray[0];
-                        prevdeliverystreet = daddressarray[1];
-                        prevdeliveryarea =  daddressarray[2];
-                        prevdeliverymobile = cust.Phone3;
+                        prevdeliveryflat =  cust.Delivery_Flatno;
+                        prevdeliverystreet =cust.Delivery_Street;
+                        prevdeliveryarea =  cust.Delivery_Area;
+                        prevdeliverymobile =cust.Delivery_Phonenumber;
                         prevdeliverylink =  cust.Map;
+                        prevdeliverylandmark = cust.Delivery_Landmark
 
 
                         
@@ -644,6 +732,7 @@ function fetchbyid(sinput) {
                         document.getElementById("address_area").value = ""
                         document.getElementById("address_mobile").value = ""
                         document.getElementById('address_link').value = ""
+                        document.getElementById("address_landmark").value = ""
                     }
 
 
@@ -719,31 +808,54 @@ function fetchbyname(sinput) {
                         console.log(cust.DeliveryAddress);
                         if (cust.BillingAddress !== null) {
                             const baddressarray = cust.BillingAddress.split(",");
-                            document.getElementById("billing_flat").value = baddressarray[0]
-                            document.getElementById("billing_street").value = baddressarray[1]
-                            document.getElementById("billing_area").value = baddressarray[2]
-                            document.getElementById("billing_mobile").value = cust.Phone2
+                            document.getElementById("billing_flat").value = cust.Billing_Flatno
+                            document.getElementById("billing_street").value = cust.Billing_Street
+                            document.getElementById("billing_area").value = cust.Billing_Area
+                            document.getElementById("billing_mobile").value = cust.Billing_Phonenumber
+                            document.getElementById("billing_landmark").value = cust.Billing_Landmark
 
-                            prevbillingarea =  baddressarray[2];
-                            prevbillingflat = baddressarray[0];
-                            prevbillingmobile = cust.Phone2;
-                            prevbillingstreet = baddressarray[1];
+                            prevbillingarea =   cust.Billing_Area
+                            prevbillingflat = cust.Billing_Flatno
+                            prevbillingmobile = cust.Billing_Phonenumber
+                            prevbillingstreet = cust.Billing_Street
+                            prevbillinglandmark = cust.Billing_Landmark
                         }
+                        else{
+                       
+                            document.getElementById("billing_flat").value = ""
+                            document.getElementById("billing_street").value = ""
+                            document.getElementById("billing_area").value = ""
+                            document.getElementById("billing_mobile").value = ""
+                            document.getElementById("billing_landmark").value = ""
+
+                        }
+                        
 
                         if (cust.DeliveryAddress !== null) {
                             console.log(cust.DeliveryAddress)
                             const daddressarray = cust.DeliveryAddress.split(",");
-                            document.getElementById("address_flat").value = daddressarray[0]
-                            document.getElementById("address_street").value = daddressarray[1]
-                            document.getElementById("address_area").value = daddressarray[2]
-                            document.getElementById("address_mobile").value = cust.Phone3
+                            document.getElementById("address_flat").value = cust.Delivery_Flatno
+                            document.getElementById("address_street").value = cust.Delivery_Street
+                            document.getElementById("address_area").value = cust.Delivery_Area
+                            document.getElementById("address_mobile").value = cust.Delivery_Phonenumber
                             document.getElementById('address_link').value = cust.Map;
-
-                            prevdeliveryflat =  daddressarray[0];
-                            prevdeliverystreet = daddressarray[1];
-                            prevdeliveryarea =  daddressarray[2];
-                            prevdeliverymobile = cust.Phone3;
+                            document.getElementById('address_landmark').value = cust.Delivery_Landmark
+    
+                                                    
+                            prevdeliveryflat =  cust.Delivery_Flatno;
+                            prevdeliverystreet =cust.Delivery_Street;
+                            prevdeliveryarea =  cust.Delivery_Area;
+                            prevdeliverymobile =cust.Delivery_Phonenumber;
                             prevdeliverylink =  cust.Map;
+                            prevdeliverylandmark = cust.Delivery_Landmark
+                        }
+                        else{
+                            document.getElementById("address_flat").value = ""
+                            document.getElementById("address_street").value = ""
+                            document.getElementById("address_area").value = ""
+                            document.getElementById("address_mobile").value = ""
+                            document.getElementById('address_link').value = ""
+                            document.getElementById("address_landmark").value = ""
                         }
 
 
@@ -820,31 +932,53 @@ function fetchbymobile(sinput) {
                         console.log(cust.DeliveryAddress);
                         if (cust.BillingAddress !== null) {
                             const baddressarray = cust.BillingAddress.split(",");
-                            document.getElementById("billing_flat").value = baddressarray[0]
-                            document.getElementById("billing_street").value = baddressarray[1]
-                            document.getElementById("billing_area").value = baddressarray[2]
-                            document.getElementById("billing_mobile").value = cust.Phone2
+                            document.getElementById("billing_flat").value = cust.Billing_Flatno
+                            document.getElementById("billing_street").value = cust.Billing_Street
+                            document.getElementById("billing_area").value = cust.Billing_Area
+                            document.getElementById("billing_mobile").value = cust.Billing_Phonenumber
+                            document.getElementById("billing_landmark").value = cust.Billing_Landmark
 
-                            prevbillingarea =  baddressarray[2];
-                            prevbillingflat = baddressarray[0];
-                            prevbillingmobile = cust.Phone2;
-                            prevbillingstreet = baddressarray[1];
+                            prevbillingarea =   cust.Billing_Area
+                            prevbillingflat = cust.Billing_Flatno
+                            prevbillingmobile = cust.Billing_Phonenumber
+                            prevbillingstreet = cust.Billing_Street
+                            prevbillinglandmark = cust.Billing_Landmark
+                        }
+                        else{
+                       
+                            document.getElementById("billing_flat").value = ""
+                            document.getElementById("billing_street").value = ""
+                            document.getElementById("billing_area").value = ""
+                            document.getElementById("billing_mobile").value = ""
+                            document.getElementById("billing_landmark").value = ""
+                     
                         }
 
                         if (cust.DeliveryAddress !== null) {
                             console.log(cust.DeliveryAddress)
                             const daddressarray = cust.DeliveryAddress.split(",");
-                            document.getElementById("address_flat").value = daddressarray[0]
-                            document.getElementById("address_street").value = daddressarray[1]
-                            document.getElementById("address_area").value = daddressarray[2]
-                            document.getElementById("address_mobile").value = cust.Phone3
+                            document.getElementById("address_flat").value = cust.Delivery_Flatno
+                            document.getElementById("address_street").value = cust.Delivery_Street
+                            document.getElementById("address_area").value = cust.Delivery_Area
+                            document.getElementById("address_mobile").value = cust.Delivery_Phonenumber
                             document.getElementById('address_link').value = cust.Map;
-
-                            prevdeliveryflat =  daddressarray[0];
-                            prevdeliverystreet = daddressarray[1];
-                            prevdeliveryarea =  daddressarray[2];
-                            prevdeliverymobile = cust.Phone3;
+                            document.getElementById('address_landmark').value = cust.Delivery_Landmark
+    
+                                                    
+                            prevdeliveryflat =  cust.Delivery_Flatno;
+                            prevdeliverystreet =cust.Delivery_Street;
+                            prevdeliveryarea =  cust.Delivery_Area;
+                            prevdeliverymobile =cust.Delivery_Phonenumber;
                             prevdeliverylink =  cust.Map;
+                            prevdeliverylandmark = cust.Delivery_Landmark
+                        }
+                        else{
+                            document.getElementById("address_flat").value = ""
+                            document.getElementById("address_street").value = ""
+                            document.getElementById("address_area").value = ""
+                            document.getElementById("address_mobile").value = ""
+                            document.getElementById('address_link').value = ""
+                            document.getElementById("address_landmark").value = ""
                         }
 
 
@@ -881,6 +1015,7 @@ sameasadd.addEventListener('click', () => {
         document.getElementById("billing_street").value = document.getElementById("address_street").value
         document.getElementById("billing_area").value = document.getElementById("address_area").value
         document.getElementById("billing_mobile").value = document.getElementById("address_mobile").value
+        document.getElementById("billing_landmark").value = document.getElementById("address_landmark").value;
         document.querySelector('.bscbtn').style.display = "flex";
         document.querySelector('.selection-container-overlay').style.display = "block";
         bedit.style.display = "none";
@@ -937,7 +1072,8 @@ function addNewdelivery(){
         ! document.querySelector('#da_area').value ||
         ! document.querySelector('#da_street').value ||
         ! document.getElementById('da_deph').value ||
-        ! document.getElementById('da_link').value
+        ! document.getElementById('da_link').value ||
+        ! document.getElementById('da_landmark').value
     ){
         alert("enter the required fields");
         return;
@@ -947,7 +1083,8 @@ function addNewdelivery(){
         ! document.querySelector('#billing_flat').value ||
         ! document.querySelector('#billing_street').value ||
         ! document.querySelector('#billing_area').value ||
-        ! document.getElementById('billing_mobile').value
+        ! document.getElementById('billing_mobile').value ||
+        ! document.getElementById('billing_landmark').value
     ){
         alert("enter the billing fields");
         return;
@@ -975,7 +1112,16 @@ function addNewdelivery(){
         deliveryaddress: deliveryaddress,
         deliverymobile: document.getElementById('da_deph').value,
         billingmobile: document.getElementById('billing_mobile').value,
-        map: document.getElementById('da_link').value
+        map: document.getElementById('da_link').value,
+
+        deliveryflatno:document.querySelector('#billing_flat').value,
+        deliverystreet:document.querySelector('#billing_street').value ,
+        deliveryarea:document.querySelector('#da_area').value ,
+        deliverylandmark: document.getElementById('da_landmark').value,
+        billingflatno:document.querySelector('#billing_flat').value,
+        billingstreet:document.querySelector('#billing_street').value,
+        billingarea:document.querySelector('#billing_area').value,
+        billinglandmark:document.getElementById('billing_landmark').value,
     }
 
     return $.ajax({
@@ -1009,13 +1155,14 @@ dsbtn.addEventListener('click', () => {
     const addressarea = document.getElementById("address_area").value
     const deliverymobile = document.getElementById("address_mobile").value;
     const addresslink = document.getElementById("address_link").value;
+    const addresslandmark = document.getElementById("address_landmark").value;
 
     if (!validateFlatNumber(addressflat)) {
         alert("invalid flatno")
         return;
     }
 
-    if (!addressflat || !addressstreet || !addressarea || !deliverymobile || !addresslink) {
+    if (!addressflat || !addressstreet || !addressarea || !deliverymobile || !addresslink || !addresslandmark) {
         alert("fill the requried fields");
         return;
     }
@@ -1031,7 +1178,11 @@ dsbtn.addEventListener('click', () => {
         deliveryphone: deliverymobile,
         map: addresslink,
         customerid: customerid,
-        load: "add_delivery_address"
+        load: "add_delivery_address",
+        deliveryflatno:addressflat,
+        deliverystreet:addressstreet,
+        deliveryarea:addressarea,
+        deliverylandmark:addresslandmark
         // load: "insertnew",
         // customername: document.getElementById('customer_name').value,
         // email: document.getElementById('customer_email').value,
@@ -1058,6 +1209,7 @@ dsbtn.addEventListener('click', () => {
                 document.getElementById("address_area").value = addressarea
                 document.getElementById("address_mobile").value = deliverymobile;
                 document.getElementById("address_link").value = addresslink;
+                document.getElementById("address_landmark").value = addresslandmark;
             
 
                 deliverydisabled(response.status);
@@ -1104,13 +1256,14 @@ bsbtn.addEventListener('click', () => {
         const billinstreet = document.getElementById("billing_street").value;
         const billingarea = document.getElementById("billing_area").value
         const billingmobile = document.getElementById("billing_mobile").value;
+        const billinglandmark = document.getElementById("billing_landmark").value;
 
         if (!validateFlatNumber(billingflat)) {
             alert("invalid flatno")
             return;
         }
 
-        if (!billingflat || !billinstreet || !billingarea || !billingmobile) {
+        if (!billingflat || !billinstreet || !billingarea || !billingmobile ||!billinglandmark) {
             alert("fill the requried fields");
             return;
         }
@@ -1124,7 +1277,12 @@ bsbtn.addEventListener('click', () => {
             billingaddress: billingflat + "," + billinstreet + "," + billingarea,
             billingphone: billingmobile,
             customerid: customerid,
-            load: "add_billing_address"
+            load: "add_billing_address",
+            billingflatno:billingflat,
+            billingstreet:billinstreet,
+            billingarea:billingarea,
+            billinglandmark:billinglandmark
+
         }
         $.ajax({
             type: "POST",
@@ -1138,6 +1296,7 @@ bsbtn.addEventListener('click', () => {
                     prevbillingflat = document.getElementById("billing_flat").value;
                     prevbillingmobile =  document.getElementById("billing_mobile").value
                     prevbillingstreet =  document.getElementById("billing_street").value
+                    prevbillinglandmark = document.getElementById("billing_landmark").value
                     alert("Successfully updated")
                     billingdisabled(response.status);
                 } else {
@@ -2825,7 +2984,7 @@ function openSummaryModal(event) {
         return
     }
     document.getElementById('summary-modal').style.display = 'block';
-    document.getElementById('overlay').style.display = 'block';
+    // document.getElementById('overlay').style.display = 'block';
 }
 
 // function closeSummaryModal(event) {

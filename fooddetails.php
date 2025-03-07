@@ -9,48 +9,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" type="text/css" href="css/fooddetails.css">
     <style>
-         .scheduling_dates{
-            border:2px solid black;
-            height:5vh;
-            width:95%;
-            display:flex;
-            flex-direction:row;
-            justify-content: space-around;
-            padding:5px;
-            margin:0px auto;
-        }
-        .individual_sch_dates{
-            border:2px solid green;
-            width:5vw;
-            margin:0px;
-            display:flex;
-            align-items: center;
-            justify-content: center;
-            padding:2px;
-            cursor:pointer;
-        }
-        .individual_sch_dates p{
-            margin:0px;
-        }
-        .schedule_menu_list{
-            border:2px solid blue;
-            width:95%;
-            height:65vh;
-            margin:0px auto;
-            padding:5px;
-        }
-        .foodtype_box{
-            height:15vh;
-        }
-        .inside_foodtype_box{
-            border:2px solid yellow;
-            height:100%;
-            display:flex;
-            flex-direction: row;
-            justify-content: space-around;
-            align-items: center;
-        }
-
+        
 
     </style>
 </head>
@@ -62,6 +21,7 @@
             <div class="side-container">
                 <ul>
                     <li onclick="toggleSection('prices-content', this)">Prices</li>
+                    <li onclick="toggleSection('items-menu', this)">FoodType</li>
                     <li onclick="toggleSection('items-menu-content', this)">Category Menu</li>
                     <li onclick="toggleSection('sub-items-menu-content', this)">Items Menu</li>
                     <li onclick="toggleSection('scheduling-content', this);checkingtrigger()">Scheduling</li>
@@ -146,6 +106,38 @@
                             </div>
                         </div>
 
+
+                    </div>
+                </div>
+
+
+                <!-- foodtypes -->
+                <div id="items-menu" class="content-section">
+                    <!-- <h2>Items Menu Section</h2> -->
+
+                    <div class="addlun">
+                        <h3>Add Item</h3>
+                        <div class="input_lun">
+                            <input type="text" id="category_name" placeholder="Enter category Name">
+                            <button type="submit" id="addBtn" name="add" style="background-color: #28a745; color: white; border: none; padding: 10px 20px; cursor: pointer;">Save</button>
+
+<button type="submit" id="updateBtn" class="btn btn-primary" name="update" style="display: none;  padding:15px 20px; background-color: #ffc107;">Update </button>
+
+<button class="btn btn-primary cancelBtn" style="display: none; padding: 15px 20px; background-color: #dc3545; color: white; border: none; cursor: pointer;">Cancel</button>
+                        </div>
+                        <div class="existing-categories">
+                                    <table class="category-table">
+                                <thead>
+                                    <tr>
+                                        <th>Item Name</th>
+                                        <th>Edit</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="category-list">
+                                    <!-- Dynamic items will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
 
                     </div>
                 </div>
@@ -343,15 +335,22 @@
             return `${year}-${month}-${day}`;
         }
 
+        //trim function
+        function trimOperation(string1,string2){
+            let string = string1+'_'+string2;
+            return string.trim();
+        }
+
         function loadSchedulingDates(){
             let today = new Date();
            
 
             let scheduling_dates = document.querySelector('.scheduling_dates');
+            scheduling_dates.innerHTML = "";
             for (let i = 0; i < 7; i++) {
                 let para = document.createElement('p');
                 para.setAttribute('class','individual_sch_dates');
-                para.setAttribute('onclick',`loadscheduleMenu(this)`);
+                para.setAttribute('onclick',`loadscheduleMenuByDate(this)`);
                 let futureDate = new Date();
                 futureDate.setDate(today.getDate() + i);
                 let formattedDate = futureDate.toISOString().split('T')[0];
@@ -362,6 +361,60 @@
             }
             loadfoodType();
         }
+
+        async function loadscheduleMenuByDate(thisdiv) {
+            document.querySelectorAll('.individual_sch_dates').forEach(x => {
+                x.classList.remove('active_date');
+            });
+
+            thisdiv.classList.add('active_date');
+
+            let allselects = document.querySelectorAll('.inside_foodtype_box select');
+            allselects.forEach(sel => {
+                sel.value = " ";
+            });
+
+            let today = new Date();
+            let todayFormatted = today.toISOString().split('T')[0];
+            let checktddate = (todayFormatted === thisdiv.textContent);
+
+            var payload = {
+                load: "loadMenubyDate",
+                menuDate: thisdiv.textContent
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "./webservices/register.php",
+                data: JSON.stringify(payload),
+                dataType: "json",
+                success: async function (response) {
+                    console.log(response);
+                    if (response.data.length > 0) {
+                        for (const itm of response.data) {
+                            let subcategorySelector = trimOperation(itm.type, 'subcategory');
+                            let subcategory = document.querySelector(`#${subcategorySelector}`);
+                            subcategory.value = itm.subsno;
+
+                            // WAIT until items are loaded before setting the value
+                            await loaditembysubcategory({ value: itm.subsno });
+
+                            let itemselector = trimOperation(itm.type, 'items');
+                            let items = document.querySelector(`#${itemselector}`);
+                            items.value = itm.OptionID;
+                        }
+
+                        document.querySelectorAll('.schsavebtn').forEach(dis => {
+                            dis.disabled = checktddate;
+                        });
+                    } else {
+                        alert("Menu not decided");
+                    }
+                }
+            });
+        }
+
+
 
 
         //function for load foodtype
@@ -378,6 +431,7 @@
                 success: function(response){
                     if(response.data.length > 0){
                         let schedule_menu_list = document.querySelector('.schedule_menu_list');
+                        schedule_menu_list.innerHTML = "";
                         
                         if (!schedule_menu_list) {
                             console.error("Error: .schedule_menu_list not found in DOM");
@@ -386,7 +440,7 @@
                         
                         response.data.forEach(itm => {
                             let div = document.createElement('div');
-                            div.setAttribute('id', `${itm.type}_box`);
+                            div.setAttribute('id', `${trimOperation(itm.type,'box')}`);
                             div.setAttribute('data-foodtypeid', `${itm.sno}`);
                             div.classList.add('foodtype_box');
                             
@@ -398,17 +452,30 @@
                            
                             //subcategory select tag
                             let selecttag = document.createElement('select');
-                            selecttag.setAttribute('id',`${itm.type}_subcategory`)
+                            selecttag.setAttribute('id',`${trimOperation(itm.type,'subcategory')}`)
+                            selecttag.setAttribute('onchange','loaditembysubcategory(this)')
+                            selecttag.setAttribute('class','subcategory')
+                            let option = document.createElement('option');
+                            option.textContent = "Select sub category"
+                            option.value = " ";
+
+                            selecttag.appendChild(option);
 
 
                             //items select tag
                             let itemsselecttag = document.createElement('select');
-                            itemsselecttag.setAttribute('id',`${itm.type}_items`)
+                            itemsselecttag.setAttribute('id',`${trimOperation(itm.type,'items')}`)
+                            itemsselecttag.setAttribute('class','fditems')
+                            let itmoption = document.createElement('option');
+                            itmoption.textContent = "Select item"
+                            itmoption.value = " ";
+                            itemsselecttag.appendChild(itmoption)
 
                             //save button
                             let savebuttons = document.createElement('button');
                             savebuttons.textContent = "save";
-                            savebuttons.setAttribute('onclick','updateSchedule(this)')
+                            savebuttons.classList.add('schsavebtn')
+                            savebuttons.setAttribute('onclick',`updateSchedule(this,"${itm.type}")`)
 
                             insidediv.appendChild(selecttag)
                             insidediv.appendChild(itemsselecttag)
@@ -424,6 +491,7 @@
 
                             schedule_menu_list.appendChild(div);  
                         });
+                        loadAllSubcategory();
                     }
                 },
                 error: function(err){
@@ -432,6 +500,120 @@
                 }
             });
         }
+
+        //update schedule
+        function updateSchedule(selectbutton,foodtype){
+            let grandparentDiv = selectbutton.closest('div')?.parentElement.closest('div');
+            let divid = grandparentDiv.id;
+
+            let foodtypeid = document.getElementById(divid).dataset.foodtypeid;
+            let selecteddate = document.querySelector('.active_date')
+          
+
+            let closestFditems = selectbutton.closest('div')?.querySelector('.fditems');
+
+            let closestsubcategory = selectbutton.closest('div')?.querySelector('.subcategory');
+
+            let scheduletablename = (foodtype === "breakfast")
+                                        ? `${foodtype}schedule` :(foodtype === "lunch") ? 
+                                        `${foodtype}schedule`:`${foodtype}schedule`
+
+            
+            if(!selecteddate){
+                alert("Date required")
+                return;
+            }
+
+            if(!closestFditems.value || closestFditems.value === " "){
+                alert("Item required")
+            }
+
+            if(!closestsubcategory.value || closestsubcategory.value === " "){
+                alert("sub category required")
+            }
+            
+           
+            var payload = {
+                selecteddate:selecteddate.textContent,
+                load:"setitem",
+                OptionID:closestFditems.value,
+                ssubcategory: closestsubcategory.value,
+                // updateactivity:updateactivity,
+                foodtype:foodtype,
+                foodtypeID:foodtypeid,
+                scheduletablename:scheduletablename
+            }
+            console.log("payload",payload,typeof(payload.foodtype));
+
+            $.ajax({
+                type: "POST",
+                url: "./webservices/fooddetails1.php",
+                data: JSON.stringify(payload),
+                dataType: "json",
+                success:function(response){
+                    console.log(response);
+                    if(response.status === "success"){
+                        alert("Sucessfully Updated");
+                    }
+                },
+                error:function(err){
+                    console.error("updateing error",err);
+                    alert("Something wrong try again later")
+                }
+
+            })
+
+        }
+        
+
+        //function for load subcategory
+        function loaditembysubcategory(thischange) {
+            if(thischange.value === " "){
+                alert("Please select the subcategory");
+                return;
+            }
+            return new Promise((resolve, reject) => {
+                var payload = {
+                    ssubcategory: thischange.value,
+                    load: "loaditemsbysubcategory"
+                };
+
+                console.log('loaditemsbysubcategory', payload);
+
+                $.ajax({
+                    type: "POST",
+                    url: "./webservices/fooddetails1.php",
+                    data: JSON.stringify(payload),
+                    dataType: "json",
+                    success: function (response) {
+                        console.log(response);
+                        if (response.data.length > 0) {
+                            let selectitemid = trimOperation(response.data[0].type, "items");
+                            let items = document.querySelector(`#${selectitemid}`);
+                            items.value = " ";
+                            Array.from(items.options).forEach(option => {
+                                option.style.display = "none";
+                            });
+                            response.data.forEach(itm => {
+                                let option = items.querySelector(`option[value="${itm.OptionID}"]`);
+                                let nulloption = items.querySelector(`option[value=" "]`);
+                                nulloption.style.display = "block";
+                                if (option) {
+                                    option.style.display = "block";
+                                }
+                            });
+                        }
+                        resolve(); // Resolve after AJAX completes
+                    },
+                    error: function (err) {
+                        console.log("Error fetching items through subcategory", err);
+                        alert("Something went wrong");
+                        reject(err); // Reject if AJAX fails
+                    }
+                });
+            });
+        }
+
 
 
 
@@ -673,28 +855,63 @@
 
 
         //load subcategory of breakfast
-        function loadsubbreakfast(){
+        function loadAllSubcategory(){
             var payload = {
                 foodtype:"1",
-                load:"loadsubbreakfast",
+                load:"loadallsubcategory",
             }
             $.ajax({
                 type: "POST",
                 url: "./webservices/fooddetails1.php",
                 data: JSON.stringify(payload),
                 dataType: "json",
-                success:function(response){
-                    if(response.data.length > 0){
-                        let subcategory = document.querySelector('.subcategory');
-                        if(subcategory){
-                            subcategory.innerHTML = `<option value="">Select the category</option>`; 
-                            response.data.forEach(itm=>{
-                               let option = document.createElement('option');
-                               option.value = itm.SNO;
-                               option.textContent = itm.subcategory;
-                                subcategory.appendChild(option);
-                            })
-                        }
+                success: function(response) {
+                    console.log("responseall", response);
+                    if (response.data.length > 0) {
+                        response.data.forEach(sub => {
+
+                            let subcategorySelector = trimOperation(sub.type, 'subcategory');
+                            let subcategory = document.querySelector(`#${subcategorySelector}`);
+
+                           
+                            if (subcategory) {
+                                let optionExists = Array.from(subcategory.options).some(option => option.value === sub.SNO);
+                                if(!optionExists){
+                                    let options = document.createElement('option');
+                               
+
+                                    options.textContent = sub.subcategory;
+                                    options.value = sub.SNO;
+
+
+                                    subcategory.appendChild(options);
+                                }
+                               
+                            
+                            } else {
+                                console.warn(`Subcategory element not found for selector: ${subcategorySelector}`);
+                            }
+                        });
+
+                        response.data.forEach(itm=>{
+                            let itemsselector = trimOperation(itm.type,'items');
+                            let items = document.querySelector(`#${itemsselector}`);
+                            
+                            if(items){
+                                let optionExists = Array.from(items.options).some(option => option.value === itm.OptionID);
+                                if(!optionExists){
+                                    let itemsoption = document.createElement('option');
+                                    
+                                    itemsoption.textContent = itm.ItemName
+                                    itemsoption.value = itm.OptionID
+
+                                    items.appendChild(itemsoption);
+                                }     
+                            }
+                            else{
+                                console.warn(`item element not found for selector: ${itemsselector}`);   
+                            }
+                        })
                     }
                 },
                 error:function(err){
@@ -702,7 +919,7 @@
                 }
             })
         }
-        // loadsubbreakfast();
+      
 
         //load lunch subcategory
         function loadlunchsub(){
@@ -1034,7 +1251,7 @@
 
         // Function to toggle sections with active class
         function toggleSection(sectionId, element) {
-            const sections = ['prices-content', 'items-menu-content', 'sub-items-menu-content','scheduling-content'];
+            const sections = ['prices-content', 'items-menu', 'items-menu-content', 'sub-items-menu-content','scheduling-content'];
             sections.forEach(id => {
 
                 document.getElementById(id).style.display = (id === sectionId) ? 'block' : 'none';
@@ -1612,6 +1829,126 @@
             cancelBtn.style.display = 'none';
             addSubItemSection.classList.remove('edit-mode');
         }
+        let additem = document.querySelector("#addBtn");
+         additem.addEventListener('click', () => {
+            // e.preventDefault();
+            var categoryName = document.getElementById("category_name").value.trim();
+            if (categoryName === "") {
+            alert("ItemName cannot be empty!");
+          return;
+        }
+
+            var payload = {
+                sno: "",
+                type: document.getElementById("category_name").value,
+                load: "additem"
+            }
+            $.ajax({
+                type: "POST",
+                url: "./webservices/fooddetails1.php",
+                data: JSON.stringify(payload),
+                dataType: "json",
+                success: function(response) {
+                    alert(response.status);
+                    loaditem();
+                    // if (response.status === "success") {
+                    //     loadamenity();
+                    // }
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+                
+            })
+        if (categoryName === categoryName) {
+          return;
+        }
+        })
+        
+        function loaditem() {
+    var payload = {
+        sno: "",
+        type: "",
+        load: "loaditem"
+    };
+
+    $.ajax({
+        type: "POST",
+        url: "./webservices/fooddetails1.php",
+        data: JSON.stringify(payload),
+        dataType: "json",
+        success: function(response) {
+            console.log("Response received:", response); // Debugging
+
+            let tbd = document.querySelector(".category-list");
+            tbd.innerHTML = ""; // Clear previous data
+
+            if (response.code === "200" && response.data.length > 0) {
+                response.data.forEach(x => {
+                    let tdrow = document.createElement('tr');
+                    tdrow.innerHTML = `<td>${x.type}</td>
+                                       <td><button class="edit-btn" onclick="updateitem(${x.sno}, '${x.type}')">Edit</button></td>`;
+                    tbd.appendChild(tdrow);
+                });
+            } else {
+                tbd.innerHTML = "<tr><td colspan='2'>No records found</td></tr>";
+            }
+        },
+        error: function(err) {
+            console.error("Error loading items:", err);
+        }
+    });
+}
+function updateitem(sno, type) {
+    console.log(sno);
+    document.getElementById("category_name").value = type;
+
+    let update = document.querySelector('#updateBtn');
+    let cncl = document.querySelector('.cancelBtn');
+    let add = document.querySelector('#addBtn');
+
+    update.style.display = "block";
+    cncl.style.display = "block";
+    add.style.display = "none";
+
+    // Remove previous event listeners
+    update.replaceWith(update.cloneNode(true));
+    update = document.querySelector('#updateBtn');
+
+    update.addEventListener('click', function() {
+        var payload = {
+            sno: sno,
+            type: document.getElementById("category_name").value,
+            load: "updateitem"
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "./webservices/fooddetails1.php",
+            data: JSON.stringify(payload),
+            dataType: "json",
+            success: function(response) {
+                alert("Record updated successfully");
+                update.style.display = "none";
+                cncl.style.display = "none";
+                add.style.display = "block";
+                loaditem();
+            },
+            error: function(err) {
+                console.log("Error updating item:", err);
+            }
+        });
+    });
+}
+loaditem();
+        // JavaScript to display success message
+        document.querySelector('.cnclbtn').addEventListener('click', function() {
+            document.getElementById("category-name").value = '';
+            document.querySelector('#update').style.display = 'none';
+            document.querySelector('.cnclbtn').style.display = 'none';
+            document.getElementById('add').style.display = 'block';
+        });
+
     </script>
 </body>
 

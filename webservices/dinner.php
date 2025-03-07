@@ -36,6 +36,16 @@ $foodtype = $data['foodtype'] ?? "";
 $orders = $data['orders'] ?? "";
 $date = $data['date'] ?? "";
 
+$deliveryflatno = $data['deliveryflatno'] ?? "";
+$deliverystreet = $data['deliverystreet'] ?? "";
+$deliveryarea = $data['deliveryarea'] ?? "";
+$deliverylandmark = $data['deliverylandmark'] ?? "";
+
+$billingflatno = $data['billingflatno'] ?? "";
+$billingstreet = $data['billingstreet'] ?? "";
+$billingarea = $data['billingarea'] ?? "";
+$billinglandmark = $data['billinglandmark'] ?? "";
+
 
 $cat = $data['cat'] ?? "";
 $subcategory = $data['subcategory'] ?? "";
@@ -1162,10 +1172,17 @@ ORDER BY
 
 
 function insertnew($conn) {
-    global $customername,$billingaddress,$deliveryaddress,$email,$periodicity,$deliverymobile,$billingmobile,$primaryphone,$map;
+    global $customername,$billingaddress,$deliveryaddress,$email,$periodicity,$deliverymobile,$billingmobile,$primaryphone,$map,
+    $deliveryflatno,$deliverystreet,$deliveryarea,$deliverylandmark,$billingflatno,$billinglandmark,$billingarea,$billingstreet;
 
-    $insertReceiptQuery = "INSERT INTO `customers`(`CustomerName`, `Phone1`, `Phone2`, `Phone3`, `BillingAddress`, `DeliveryAddress`, `Email`,`Map`)
-     VALUES ('$customername','$primaryphone','$billingmobile','$deliverymobile','$billingaddress','$deliveryaddress','$email','$map')";
+    $insertReceiptQuery = "INSERT INTO `customers`(
+   `CustomerName`, `Phone1`, `Phone2`, `Phone3`, `BillingAddress`, `DeliveryAddress`, `Email`, `Map`, `Delivery_Flatno`, 
+   `Delivery_Street`, `Delivery_Area`, `Delivery_Landmark`, `Delivery_Phonenumber`, `Billing_Flatno`, `Billing_Street`,
+    `Billing_Area`, `Billing_Landmark`, `Billing_Phonenumber`)
+     VALUES 
+    ('$customername','$primaryphone','$billingmobile','$deliverymobile','$billingaddress','$deliveryaddress','$email','$map',
+    '$deliveryflatno','$deliverystreet','$deliveryarea','$deliverylandmark','$deliverymobile',
+     '$billingflatno','$billingstreet','$billingarea','$billinglandmark','$billingmobile')";
     $resultisertquery = setData($conn,$insertReceiptQuery);
     if ($resultisertquery == "Record created") {
         $lastReceiptId = mysqli_insert_id($conn);

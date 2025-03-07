@@ -22,6 +22,16 @@ $periodicity = $data['periodicity'] ?? "";
 $map = $data['map'] ?? "";
 $menuDate = $data['menuDate'] ?? "";
 
+$deliveryflatno = $data['deliveryflatno'] ?? "";
+$deliverystreet = $data['deliverystreet'] ?? "";
+$deliveryarea = $data['deliveryarea'] ?? "";
+$deliverylandmark = $data['deliverylandmark'] ?? "";
+
+$billingflatno = $data['billingflatno'] ?? "";
+$billingstreet = $data['billingstreet'] ?? "";
+$billingarea = $data['billingarea'] ?? "";
+$billinglandmark = $data['billinglandmark'] ?? "";
+
 if($load == "register"){
     register($conn);
 }
@@ -46,7 +56,7 @@ else if($load == "loadMenubyDate"){
 
 function loadMenuByDate($conn){
     global $menuDate;
-    $selectquery = "SELECT s.Date, f.OptionID, f.ItemName, f.category,f.subcategory,ft.type
+    $selectquery = "SELECT s.Date, f.OptionID, f.ItemName, f.category,f.subcategory as subsno,ft.type,sb.subcategory
                     FROM (
                         SELECT date, foodid FROM breakfastschedule
                         UNION ALL
@@ -56,6 +66,7 @@ function loadMenuByDate($conn){
                     ) AS s
                     JOIN fooddetails AS f ON s.FoodID = f.OptionID
                     JOIN foodtype AS ft on f.category = ft.sno
+                    JOIN subcategory AS sb on f.subcategory = sb.SNO
                     WHERE s.Date = '$menuDate'";
     $resultquery = getData($conn,$selectquery);
 
@@ -85,11 +96,16 @@ function loadMenuByDate($conn){
 
 //add billing address
 function add_billingaddress($conn){
-    global $customerid,$billingaddress,$billingphone;
+    global $customerid,$billingaddress,$billingphone,$billingflatno,$billinglandmark,$billingstreet,$billingarea;
 
     $insertsql = "UPDATE `customers` 
               SET `BillingAddress` = '$billingaddress', 
-                  `Phone2` = '$billingphone'
+                  `Phone2` = '$billingphone',
+                  `Billing_Flatno` = '$billingflatno',
+                  `Billing_Street` = '$billingstreet',
+                  `Billing_Area` = '$billingarea',
+                  `Billing_Landmark` = '$billinglandmark',
+                  `Billing_Phonenumber` = '$billingphone'
               WHERE `CustomerID` = '$customerid'";
 
     $sqlresult = setData($conn,$insertsql);
@@ -106,12 +122,17 @@ function add_billingaddress($conn){
 
 //add delivery address
 function add_deliveryaddress($conn){
-    global $customerid,$deliveryaddress,$map,$deliveryphone;
+    global $customerid,$deliveryaddress,$map,$deliveryphone,$deliveryflatno,$deliverystreet,$deliveryarea,$deliverylandmark;
 
     $insertsql = "UPDATE `customers` 
               SET `DeliveryAddress` = '$deliveryaddress', 
                   `Phone3` = '$deliveryphone', 
-                  `Map` = '$map' 
+                  `Map` = '$map',
+                  `delivery_Flatno` = '$deliveryflatno',
+                  `delivery_Street` = '$deliverystreet',
+                  `delivery_Area` = '$deliveryarea',
+                  `delivery_Landmark` = '$deliverylandmark',
+                  `delivery_Phonenumber` = '$deliveryphone'
               WHERE `CustomerID` = '$customerid'";
 
     $sqlresult = setData($conn,$insertsql);
@@ -129,10 +150,13 @@ function add_deliveryaddress($conn){
 
 //register the customer
 function register($conn){
-    global $customername,$primaryphone,$email,$deliveryaddress,$deliveryphone,$map;
+    global $customername,$primaryphone,$email,$deliveryaddress,$deliveryphone,$map,
+            $deliveryflatno,$deliverystreet,$deliveryarea,$deliverylandmark;
 
     $checksql = "SELECT * FROM `customers` WHERE `Phone1` = '$primaryphone' OR `Email` = '$email'";
     $resultsql = getData($conn,$checksql);
+
+    
 
     if(count($resultsql) > 0){
         echo json_encode(['code' => '200', 'status' => "Exist"]);
@@ -143,8 +167,8 @@ function register($conn){
     // $insertsql = "INSERT INTO `customers`(`CustomerName`, `Phone1`, `Phone2`, `Phone3`, `FlatNo`, `Street`, `Area`, `Landmark`, `BillingAddress`, `DeliveryAddress`, `email`, `periodicity`, `Map`) 
     // VALUES ('customername','primaryphone','billingphone','deliveryphone','flatno','street','area','landmark','billingaddress','deliveryaddress','email','periodicity','map')";
     
-    $insertsql = "INSERT INTO `customers`(`CustomerName`, `Phone1`,`Email`,DeliveryAddress,Phone3,Map) 
-    VALUES ('$customername','$primaryphone','$email','$deliveryaddress','$deliveryphone','$map')";
+    $insertsql = "INSERT INTO `customers`(`CustomerName`, `Phone1`,`Email`,DeliveryAddress,Phone3,Map,Delivery_Flatno,Delivery_Street,Delivery_Area,Delivery_landmark,Delivery_Phonenumber) 
+    VALUES ('$customername','$primaryphone','$email','$deliveryaddress','$deliveryphone','$map','$deliveryflatno','$deliverystreet','$deliveryarea','$deliverylandmark','$deliveryphone')";
 
     $sqlresult = setData($conn,$insertsql);
 

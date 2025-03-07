@@ -129,7 +129,7 @@ function loadPendingMonthsReport($conn){
 
 //pendings
 function pendings($conn){
-    global $previousmonth;
+    global $todaydate;
 
     $selectquery = "
         SELECT
@@ -147,7 +147,7 @@ function pendings($conn){
             SELECT payments.customer_id 
             FROM payments 
             WHERE payments.unpaid_amount > 0
-            AND payments.from_date < '$previousmonth' 
+            AND payments.from_date < '$todaydate' 
         )
         AND payments.unpaid_amount > 0  
         GROUP BY payments.customer_id

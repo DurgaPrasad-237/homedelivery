@@ -440,11 +440,11 @@ function pendingreports(){
 
    //first date of the previous month
    let today = new Date();
-   let firstDayPrevMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-   firstDayPrevMonth = year_date_format(firstDayPrevMonth);
+//    let firstDayPrevMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+   let todaydate = year_date_format(today);
 
    var payload = {
-    previousmonth:firstDayPrevMonth,
+    todaydate:todaydate,
     load:"pendings"
    }
    console.log(payload);

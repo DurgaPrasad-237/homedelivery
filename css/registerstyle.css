@@ -877,9 +877,9 @@ table-layout: auto;
     width: 120px;
 }
 
-.reg_address input:nth-child(6) {
+/* .reg_address input:nth-child(6) {
     visibility: hidden;
-}
+} */
 
 .date-container {
     font-family: Arial, sans-serif;
@@ -943,20 +943,25 @@ table-layout: auto;
 }
 .thisdate_active{
     box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+    transform: scale(1.2);
+    color:#F3681E
  
 }
-.menu_foodtype_heading{
-    background-color: rgba(133, 39, 39, 0.915);
-    padding:5px;
-    color:white;
+.menu_foodtype_heading {
+    /* background-color: rgba(133, 39, 39, 0.915); */
+    padding: 5px;
+    color: white;
+    display: flex;
+    justify-content: space-between; /* Keeps breakfast on the left */
+    margin:0px;
 }
-.itemname_list{
-    display:flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-    width:100%;
+
+.itemname_list {
+    display: flex;
+    flex-direction: column; /* Stacks ItemName & Hello vertically */
+    text-align: right; /* Aligns text to the right */
 }
+
 
 
 .date {

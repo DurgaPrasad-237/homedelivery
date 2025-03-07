@@ -2,6 +2,19 @@ body{
     height:80vh;
 }
 
+.category-table .edit-btn {
+    padding: 5px 10px;
+    font-size: 12px; /* Adjust size as needed */
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.category-table .edit-btn:hover {
+    background-color: #0056b3;
+}
 
 .edit-buttonfd {
     background-color: #4c4c4d;
@@ -100,7 +113,7 @@ body{
 
 .category-table th,
 .category-table td {
-    padding: 15px;
+    padding: 20px;
     text-align: center;
     width: 100px;
     max-width: 100px;
@@ -536,7 +549,7 @@ background-color: green;
 
 .btn-primary1 {
     height: 35px;
-    width: 24%;
+    width: 10%;
     padding: 10px;
 }
 
@@ -712,6 +725,7 @@ background-color: green;
 
 #update {
     background-color: #ffc107;
+    
 }
 
 #update:hover {
@@ -1130,13 +1144,12 @@ background-color: green;
 }
 #scheduling-content .scheduling_content_container{
     height:90%;
-    width:99%;
+    width:100%;
     display: flex;
     flex-direction: column;
-    /* justify-content: space-around; */ 
+    justify-content: space-around;
     padding:5px;
-    /* align-items: center; */
-    border:2px solid red;
+    align-items: center;
 }
 #scheduling-content .scheduling_content_container .schedulingboxes{
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
@@ -1154,9 +1167,9 @@ background-color: green;
     background-color:#F3681E;
     color:white;
 }
-/* .scheduling_content_container p{
+.scheduling_content_container p{
     margin-left: 2vw;;
-} */
+}
 .schedulingboxes select{
     width:8vw;
 }

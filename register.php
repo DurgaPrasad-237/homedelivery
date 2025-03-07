@@ -71,8 +71,12 @@
                     <input id="da_street" placeholder="Street" />
                 </div>
                 <div>
+                    <label>LandMark</label>
+                    <input id="da_landmark" placeholder="Landmark" />
+                </div>
+                <div>
                     <label>Delivery Ph</label>
-                    <input type="text" oninput="validateRegisterPhoneNumber(this)"  id="da_deph" placeholder="Delivery Ph" />
+                    <input type="text" maxlength="10" oninput="validateRegisterPhoneNumber(this)"  id="da_deph" placeholder="Delivery Ph" />
                 </div>
                 <div>
                     <label>Add Link</label>
@@ -137,9 +141,10 @@
                             <input placeholder="flatno/houseno" class="regaddress_input" id="regflat">
                             <input placeholder="Street" class="regaddress_input" id="regstreet">
                             <input placeholder="Area" class="regaddress_input" id="regarea">
+                            <input placeholder="LandMark" class="regaddress_input" id="reglandmark" maxlength="15" />
                             <input oninput="validateRegisterPhoneNumber(this)" type="text" maxlength="10" placeholder="Delivery_Mobile" class="regaddress_input" id="regdmobile">
                             <input placeholder="Address link" class="regaddress_input" id="reglink">
-                            <input placeholder="Address link" class="regaddress_input">
+                            <!-- <input placeholder="Address link" class="regaddress_input"> -->
                         </div>
                         <button class="btngenerate" id="Submit">Submit</button>
                     </div>
@@ -184,6 +189,7 @@
                             <input placeholder="flatno/houseno" class="address_input" id="address_flat" disabled>
                             <input placeholder="Street" class="address_input" id="address_street" disabled>
                             <input placeholder="Area" class="address_input" id="address_area" disabled>
+                            <input placeholder="Landmark" class="address_input" id="address_landmark" disabled>
                             <input type="text" oninput="validateRegisterPhoneNumber(this)"  placeholder="Mobile" class="address_input" id="address_mobile" disabled>
                             <input placeholder="Address link" class="address_input" id="address_link" disabled>
                             <button class="editbtn" id="deditbtn">Edit</button>
@@ -202,6 +208,7 @@
                             <input placeholder="flatno/houseno" class="address_input" id="billing_flat" disabled>
                             <input placeholder="Street" class="address_input" id="billing_street" disabled>
                             <input placeholder="Area" class="address_input" id="billing_area" disabled>
+                            <input placeholder="Landmark" class="address_input" id="billing_landmark" disabled>
                             <input type="text" oninput="validateRegisterPhoneNumber(this)"  placeholder="Mobile" class="address_input" id="billing_mobile" disabled>
                             <input placeholder="Address link" class="address_input" id="billing_link" disabled>
                             <button class="editbtn" id="beditbtn">Edit</button>
@@ -471,7 +478,7 @@
             <!-- <div class="buttons">
                 <button id="insert-button" onclick="placeorder(event)">Place Order</button>
             </div> -->
-            <div id="overlay"></div>
+            <!-- <div id="overlay"></div> -->
             <div id="summary-modal">
                 <h4 class="title"><b>Place Order</b></h4>
                 <button onclick="closeSummaryModal(event)" type="submit" id="closesummary">X</button>
