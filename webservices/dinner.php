@@ -582,7 +582,7 @@ function fetchheader($conn)
 // }
 function setitemsb($conn)
 {
-    global $cid, $ordertype, $dates, $orderid;
+    global $cid, $ordertype, $dates, $orderid,$totalamount;
     $orderid = null;
     if (empty($dates)) {
         $jsonresponse = array('code' => '400', 'status' => 'error', 'message' => "Date range is missing");
@@ -605,37 +605,55 @@ function setitemsb($conn)
             $quantity = $item['quantity'];
             $foodid = $item['foodid'];
             $subcategory = $item['subcategory'];
+            $totalamount = $item['price'] * $quantity;
+            if($subcategory == 1 || $subcategory == 9){
+                $foodtypequery = ($ordertype == 1) ? 'breakfastschedule' : 'dinnerschedule';
             $query = "
-                SELECT DISTINCT
-            f.item_name AS ItemName, 
-            f.price AS Price, 
-            f.fd_oid AS OptionID, 
-            1 AS category
-                
-        FROM 
-            fooddetails_log f
-                JOIN 
-                fooddetails f2 ON f.fd_oid = '$foodid'
+            SELECT 
+                COALESCE(f.item_name, 'No Item') AS ItemName, 
+                COALESCE(f.price, 0) AS Price, 
+                COALESCE(f.fd_oid, 0) AS OptionID, 
+                1 AS category, 
+                COALESCE(f2.subcategory, 0) AS subcategory,
+                COALESCE(SUM(o.quantity), 0) AS Quantity  
+            FROM 
+                (SELECT 1 AS dummy) AS d 
                 LEFT JOIN 
-                orders o ON f.fd_oid = o.FoodID 
-                AND o.FoodTypeID = '1'
-                AND o.OrderDate = '$date'  
-        WHERE 
-                f2.subcategory = '1' 
+                `$foodtypequery` bs ON bs.Date = '$date' 
+            LEFT JOIN 
+                fooddetails_log f ON bs.FoodID = f.fd_oid
       AND f.fromdate = (
                     SELECT MAX(f3.fromdate) 
                     FROM fooddetails_log f3 
                     WHERE f3.fd_oid = f.fd_oid 
                     AND f3.fromdate <= '$date'
-                );";
+                )
+            LEFT JOIN 
+                fooddetails f2 ON f.fd_oid = f2.OptionID  -- Ensure correct column match
+            LEFT JOIN 
+                orders o ON f.fd_oid = o.FoodID 
+                AND o.FoodTypeID = '$ordertype'
+                AND o.OrderDate = '$date'  
+            WHERE 
+                (f2.subcategory = '$subcategory' OR f2.subcategory IS NULL) -- Ensures empty record if no match
+            GROUP BY 
+                f.item_name, f.price, f.fd_oid, f2.subcategory
+            ORDER BY 
+                f.fd_oid;";
+        
 
         $result = $conn->query($query);
         if ($result && $result->num_rows > 0) {
             $row = $result->fetch_assoc();
-                $totalamount = 0;
+               if($totalamount==0){
                 $totalamount = $row['Price'] * $quantity;
+               }
             $foodid = $row['OptionID'];
+             
+                
+            }
         }
+            
 
             // Check if order exists
             $checkQuery = "SELECT * FROM `orders` WHERE `CustomerID` = '$cid' AND `OrderDate` = '$date' AND `FoodID` = '$foodid' AND `FoodTypeID` = '$ordertype' AND Quantity<> 0";
@@ -647,19 +665,9 @@ function setitemsb($conn)
                 $ordersnorow = $checkResult->fetch_assoc();
                 $ordersno = $ordersnorow['SNO'];
         $status = ($quantity === "0") ? ', od.Status = 0' : '';
+
                 $updateQuery = "UPDATE orders od
-                JOIN (
-                    SELECT 
-                        f.fd_oid AS FoodID, 
-                        f.Price AS Price
-                    FROM fooddetails_log f
-                    WHERE f.fd_oid = '$foodid'
-                    AND f.fromdate = (
-                        SELECT MAX(f1.fromdate) 
-                        FROM fooddetails_log f1 
-                        WHERE f1.fd_oid = '$foodid' AND f1.fromdate <= '$date'
-                    )
-                ) fd ON fd.FoodID = od.FoodID
+                       
                 SET 
                     od.Quantity = '$quantity',
             od.TotalAmount = '$totalamount'
@@ -669,9 +677,11 @@ function setitemsb($conn)
                     AND od.CustomerID = '$cid'
                     AND od.FoodID = '$foodid'
             AND od.FoodTypeID = '$ordertype'
-            AND od.Quantity <> 0;
+                            AND (
+                                od.Quantity <> 0 
+                                OR '$foodid' = '0' 
+                            );";
 
-        ";
 
         $updateResult = $conn->query($updateQuery);
         if ($conn->affected_rows > 0) {
@@ -701,13 +711,59 @@ function setitemsb($conn)
             setData($conn, $logQuery);
                     $ordersno = mysqli_insert_id($conn);
                     // $result = payments($cid, $date, $conn);
-            $jsonResponse = array('code' => '200', 'status' => 'success', 'message' => "Record updated successfully", 'sql' => "$orderid");
+                    $jsonResponse = array('code' => '200', 'status' => 'success', 'message' => "Record updated successfully", 'sql' =>  $query);
         } else {
             $jsonResponse = array('code' => '304', 'status' => 'warning', 'message' => "No changes made to the existing record");
         }
                 $responses[] = "Updated order for FoodID: $foodid on $date";
             } else if ($quantity > 0) {
                 // Insert new order
+                if($subcategory == 1 || $subcategory == 9){
+                    $foodtypequery = ($ordertype == 1) ? 'breakfastschedule' : 'dinnerschedule';
+                    $query = "
+                    SELECT 
+                        COALESCE(f.item_name, 'No Item') AS ItemName, 
+                        COALESCE(f.price, 0) AS Price, 
+                        COALESCE(f.fd_oid, 0) AS OptionID, 
+                        1 AS category, 
+                        COALESCE(f2.subcategory, 0) AS subcategory,
+                        COALESCE(SUM(o.quantity), 0) AS Quantity  
+                    FROM 
+                        (SELECT 1 AS dummy) AS d 
+                    LEFT JOIN 
+                        `$foodtypequery` bs ON bs.Date = '$date' 
+                    LEFT JOIN 
+                        fooddetails_log f ON bs.FoodID = f.fd_oid
+                        AND f.fromdate = (
+                            SELECT MAX(f3.fromdate) 
+                            FROM fooddetails_log f3 
+                            WHERE f3.fd_oid = f.fd_oid 
+                            AND f3.fromdate <= '$date'
+                        )
+                    LEFT JOIN 
+                        fooddetails f2 ON f.fd_oid = f2.OptionID  -- Ensure correct column match
+                    LEFT JOIN 
+                        orders o ON f.fd_oid = o.FoodID 
+                        AND o.FoodTypeID = '$ordertype'
+                        AND o.OrderDate = '$date'  
+                    WHERE 
+                        (f2.subcategory = '$subcategory' OR f2.subcategory IS NULL) -- Ensures empty record if no match
+                    GROUP BY 
+                        f.item_name, f.price, f.fd_oid, f2.subcategory
+                    ORDER BY 
+                        f.fd_oid;";
+                
+        
+                    $result = $conn->query($query);
+                    if ($result && $result->num_rows > 0) {
+                        $row = $result->fetch_assoc();
+                    
+                        $totalamount = $row['Price'] * $quantity;
+                        $foodid = $row['OptionID'];
+                        $subcategory = ($foodid == 0) ? 0 : $subcategory;
+                    }
+                }
+               
                 $orderidfetch = "SELECT OrderID FROM orders 
                     WHERE OrderDate = '$date' 
                     AND CustomerId = '$cid' 
@@ -737,7 +793,7 @@ function setitemsb($conn)
                     $logQuery = "INSERT INTO `logs`(`CustomerID`, `OrderSno`,`OrderID`, `Quantity`, `Price`, `FoodType`) 
                                  VALUES ('$cid','$ordersno','$orderid','$quantity','$totalamount','$ordertype')";
             setData($conn, $logQuery);
-                    $result = payments($cid, $date, $conn);
+                    // $result = payments($cid, $date, $conn);
                     $jsonResponse = array('code' => '201', 'status' => 'success', 'message' => "New record added successfully");
                 } else {
                     $jsonResponse = array('code' => '500', 'status' => 'error', 'message' => "Failed to add the new record");
@@ -747,7 +803,7 @@ function setitemsb($conn)
         }
     }
 
-    $jsonResponse = array('code' => '200', 'status' => 'success', 'message' => "Orders processed successfully", 'details' => $responses);
+    // $jsonResponse = array('code' => '200', 'status' => 'success', 'message' => "Orders processed successfully", 'details' => $responses);
     echo json_encode($jsonResponse);
 }
 
@@ -1441,7 +1497,7 @@ LEFT JOIN
     orders o ON o.OrderDate = d.day 
     AND (
     (o.FoodTypeID = 1 AND o.CustomerID = '$cid' AND o.FoodID = wl.FoodID AND o.Quantity <> 0)
-    OR (o.FoodID = 0 AND o.SubCategorySno = 0)
+    OR (o.FoodID = 0 AND o.SubCategorySno = 0 AND o.Quantity <> 0)
     )
 GROUP BY 
     d.day, f.item_name, f.price, f.fd_oid, wl.FoodID, o.OrderID
@@ -1550,7 +1606,7 @@ function getitems($conn)
     orders o ON o.OrderDate = d.day 
     AND (
     (o.FoodTypeID = 3 AND o.CustomerID = '$cid' AND o.FoodID = wl.FoodID AND o.Quantity <> 0)
-    OR (o.FoodID = 0 AND o.SubCategorySno = 0)
+    OR (o.FoodID = 0 AND o.SubCategorySno = 0 AND o.Quantity <> 0)
     )
     GROUP BY 
     d.day, f.item_name, f.price, f.fd_oid, wl.FoodID, o.OrderID
@@ -1617,38 +1673,87 @@ function setitems($conn)
     }
 }
 
+// function fetchitemsb($conn)
+// {
+//     global $day, $fromdate,$cid;
+//     $day = date('l', strtotime($fromdate));
+//     $selectQuery = "SELECT 
+//     f.item_name AS ItemName, 
+//     f.price AS Price, 
+//     f.fd_oid AS OptionID, 
+//     1 AS category, 
+//         f2.subcategory as subcategory,
+//     COALESCE(SUM(o.quantity), 0) AS Quantity  
+//     FROM 
+//     fooddetails_log f
+//     JOIN 
+//     fooddetails f2 ON f.fd_oid = f2.OptionID
+//     LEFT JOIN 
+//     orders o ON f.fd_oid = o.FoodID 
+//     AND o.FoodTypeID = '1'
+//     AND o.OrderDate = '$fromdate'  
+//     AND o.CustomerID = '$cid'
+//     WHERE 
+//     f2.subcategory = '1' 
+//     AND f.fromdate = (
+//         SELECT MAX(f3.fromdate) 
+//         FROM fooddetails_log f3 
+//         WHERE f3.fd_oid = f.fd_oid 
+//         AND f3.fromdate <= '$fromdate'
+//     )
+//     GROUP BY 
+//     f.item_name, f.price, f.fd_oid
+//     ORDER BY 
+//     f.fd_oid;
+//     ";
+//     $resultquery = getdata($conn, $selectQuery);
+
+//     if (count($resultquery) > 0) {
+//         $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resultquery);
+//         echo json_encode($jsonresponse);
+//     } else {
+//         $jsonresponse = array('code' => '200', 'status' => 'error', 'message' => 'No items found');
+//         echo json_encode($jsonresponse);
+//     }
+// }
 function fetchitemsb($conn)
 {
     global $day, $fromdate,$cid;
     $day = date('l', strtotime($fromdate));
     $selectQuery = "SELECT 
-    f.item_name AS ItemName, 
-    f.price AS Price, 
-    f.fd_oid AS OptionID, 
+    COALESCE(f.item_name, 'No Item') AS ItemName, 
+    COALESCE(f.price, 0) AS Price, 
+    COALESCE(f.fd_oid, 0) AS OptionID, 
     1 AS category, 
-        f2.subcategory as subcategory,
+    COALESCE(f2.subcategory, 1) AS subcategory,
     COALESCE(SUM(o.quantity), 0) AS Quantity  
     FROM 
-    fooddetails_log f
-    JOIN 
-    fooddetails f2 ON f.fd_oid = f2.OptionID
+        (SELECT 1 AS dummy) AS d 
     LEFT JOIN 
-    orders o ON f.fd_oid = o.FoodID 
-    AND o.FoodTypeID = '1'
-    AND o.OrderDate = '$fromdate'  
-    AND o.CustomerID = '$cid'
-    WHERE 
-    f2.subcategory = '1' 
-    AND f.fromdate = (
-        SELECT MAX(f3.fromdate) 
-        FROM fooddetails_log f3 
-        WHERE f3.fd_oid = f.fd_oid 
-        AND f3.fromdate <= '$fromdate'
+        breakfastschedule bs ON bs.Date = '$fromdate' 
+    LEFT JOIN 
+        fooddetails_log f ON bs.FoodID = f.fd_oid
+        AND f.fromdate = (
+            SELECT MAX(f3.fromdate) 
+            FROM fooddetails_log f3 
+            WHERE f3.fd_oid = f.fd_oid 
+            AND f3.fromdate <= '$fromdate'
     )
+    LEFT JOIN 
+        fooddetails f2 ON f.fd_oid = f2.OptionID  
+    LEFT JOIN 
+        orders o ON (f.fd_oid = o.FoodID OR (f.fd_oid IS NULL AND o.FoodID = 0))  
+        AND o.FoodTypeID = '1'
+        AND o.OrderDate = '$fromdate'
+        AND o.CustomerID = '$cid'
+    WHERE 
+        (f2.subcategory = '1' OR f2.subcategory IS NULL) 
     GROUP BY 
-    f.item_name, f.price, f.fd_oid
+        f.item_name, f.price, f.fd_oid, f2.subcategory
     ORDER BY 
-    f.fd_oid;
+        f.fd_oid;
+
+
     ";
     $resultquery = getdata($conn, $selectQuery);
 
@@ -1661,39 +1766,89 @@ function fetchitemsb($conn)
     }
 }
 
+
+
+// function getitemsb($conn)
+// {
+//     global $day, $fromdate,$cid;
+//     $day = date('l', strtotime($fromdate));
+//     $selectQuery = "SELECT 
+//     f.item_name AS ItemName, 
+//     f.price AS Price, 
+//     f.fd_oid AS OptionID, 
+//     3 AS category, 
+//       f2.subcategory as subcategory,
+//     COALESCE(SUM(o.quantity), 0) AS Quantity  
+//     FROM 
+//     fooddetails_log f
+//     JOIN 
+//     fooddetails f2 ON f.fd_oid = f2.OptionID
+//     LEFT JOIN 
+//     orders o ON f.fd_oid = o.FoodID 
+//     AND o.FoodTypeID = '3'
+//     AND o.OrderDate = '$fromdate' 
+//     AND o.CustomerID = '$cid'
+//     WHERE 
+//     f2.subcategory = '9' 
+//     AND f.fromdate = (
+//         SELECT MAX(f3.fromdate) 
+//         FROM fooddetails_log f3 
+//         WHERE f3.fd_oid = f.fd_oid 
+//         AND f3.fromdate <= '$fromdate'
+        
+//     )
+//     GROUP BY 
+//     f.item_name, f.price, f.fd_oid
+//     ORDER BY 
+//     f.fd_oid;
+//     ";
+//     $resultquery = getdata($conn, $selectQuery);
+
+//     if (count($resultquery) > 0) {
+//         $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resultquery);
+//         echo json_encode($jsonresponse);
+//     } else {
+//         $jsonresponse = array('code' => '200', 'status' => 'error', 'message' => 'No items found');
+//         echo json_encode($jsonresponse);
+//     }
+// }
 function getitemsb($conn)
 {
     global $day, $fromdate,$cid;
     $day = date('l', strtotime($fromdate));
     $selectQuery = "SELECT 
-    f.item_name AS ItemName, 
-    f.price AS Price, 
-    f.fd_oid AS OptionID, 
+    COALESCE(f.item_name, 'No Item') AS ItemName, 
+    COALESCE(f.price, 0) AS Price, 
+    COALESCE(f.fd_oid, 0) AS OptionID, 
     3 AS category, 
-      f2.subcategory as subcategory,
+    COALESCE(f2.subcategory, 9) AS subcategory,
     COALESCE(SUM(o.quantity), 0) AS Quantity  
     FROM 
-    fooddetails_log f
-    JOIN 
-    fooddetails f2 ON f.fd_oid = f2.OptionID
+    (SELECT 1 AS dummy) AS d 
     LEFT JOIN 
-    orders o ON f.fd_oid = o.FoodID 
-    AND o.FoodTypeID = '3'
-    AND o.OrderDate = '$fromdate' 
-    AND o.CustomerID = '$cid'
-    WHERE 
-    f2.subcategory = '9' 
+    dinnerschedule bs ON bs.Date = '$fromdate' 
+    LEFT JOIN 
+    fooddetails_log f ON bs.FoodID = f.fd_oid
     AND f.fromdate = (
         SELECT MAX(f3.fromdate) 
         FROM fooddetails_log f3 
         WHERE f3.fd_oid = f.fd_oid 
         AND f3.fromdate <= '$fromdate'
-        
     )
+    LEFT JOIN 
+    fooddetails f2 ON f.fd_oid = f2.OptionID  
+    LEFT JOIN 
+    orders o ON (f.fd_oid = o.FoodID OR (f.fd_oid IS NULL AND o.FoodID = 0))  
+    AND o.FoodTypeID = '3'
+    AND o.OrderDate = '$fromdate'
+    AND o.CustomerID = '$cid'
+    WHERE 
+    (f2.subcategory = '9' OR f2.subcategory IS NULL) 
     GROUP BY 
-    f.item_name, f.price, f.fd_oid
+    f.item_name, f.price, f.fd_oid, f2.subcategory
     ORDER BY 
     f.fd_oid;
+
     ";
     $resultquery = getdata($conn, $selectQuery);
 
@@ -1705,6 +1860,7 @@ function getitemsb($conn)
         echo json_encode($jsonresponse);
     }
 }
+
 
 
 function loadQuantity($conn)
@@ -1769,7 +1925,8 @@ function loadQuantity($conn)
 
 function checkprice($conn)
 {
-    global $fromdate, $todate;
+    global $fromdate, $todate,$ordertype;
+    $foodtypequery = ($ordertype == 1) ? 'breakfastschedule' : 'dinnerschedule';
     $selectQuery = "WITH RECURSIVE days AS (
     SELECT '$fromdate' AS day
     UNION ALL
@@ -1779,23 +1936,21 @@ function checkprice($conn)
     )
     SELECT 
     d.day AS Date,
-    COALESCE(f.price, 100.00) AS Price,
-    f.item_name as Item
+            COALESCE(f.price, 0.00) AS Price,
+            COALESCE(f.item_name,'No Item') AS Item,
+            COALESCE(f.fd_oid, 0) AS OptionID,
+            COALESCE(fd.subcategory,0) AS subcategory,
     FROM 
     days d
     LEFT JOIN 
-    week_log wl ON wl.weeksno = WEEKDAY(d.day) + 1 
-    AND wl.fromdate = (
-        SELECT MAX(wl_inner.fromdate)
-        FROM week_log wl_inner
-        WHERE wl_inner.weeksno = wl.weeksno AND wl_inner.fromdate <= d.day
-    )
+            `$foodtypequery` bs ON bs.Date = d.day
     LEFT JOIN 
-    fooddetails_log f ON wl.optionid = f.fd_oid 
+            fooddetails_log f ON bs.FoodID = f.fd_oid 
+    LE
     AND f.fromdate = (
         SELECT MAX(f_inner.fromdate) 
         FROM fooddetails_log f_inner
-        WHERE f_inner.fd_oid = wl.optionid AND f_inner.fromdate <= d.day
+                WHERE f_inner.fd_oid = bs.FoodID AND f_inner.fromdate <= d.day
     )
     ORDER BY 
     d.day ASC;

@@ -1330,11 +1330,14 @@ let catid = 0;
 let addressflat
 let addressstreet
 let address_area
+let addresslandmark
 let deliverymobile
-let addresslink
+let addresslink        
 let baddressflat 
 let baddressstreet
 let billingmobile
+let baddressarea
+let billinglandmark;
 
 function checkaddress(){
     addressflat = document.getElementById("address_flat").value;
@@ -1342,11 +1345,23 @@ function checkaddress(){
     address_area = document.getElementById("address_area").value
     deliverymobile = document.getElementById("address_mobile").value;
     addresslink = document.getElementById("address_link").value;
+    addresslandmark = document.getElementById("address_landmark").value;
 
     baddressflat = document.getElementById("billing_flat").value;
     baddressstreet = document.getElementById("billing_street").value;
     baddressarea = document.getElementById("billing_area").value
     billingmobile = document.getElementById("billing_mobile").value;
+    billinglandmark = document.getElementById("billing_landmark").value;
+
+    if((addressflat.trim() === prevdeliveryflat.trim()) && (addressstreet.trim() === prevdeliverystreet.trim()) && (address_area.trim() === prevdeliveryarea.trim())
+    && (deliverymobile.trim() === prevdeliverymobile.trim()) && (addresslink.trim() === prevdeliverylink.trim()) && (addresslandmark.trim() === prevdeliverylandmark.trim())){
+       return true;
+    }
+    else{
+       return false;
+    }
+
+   
 
     finaldeliveryaddress = addressflat + "," + addressstreet + "," + address_area + "," + deliverymobile + "," + addresslink;
     billingaddress = baddressflat + "," + baddressstreet + "," + baddressarea;
@@ -1369,17 +1384,17 @@ async function placeorder(event) {
         return ""
     }
 
-    intialdeliveryaddress = intialdeliveryaddress.replace(/\s/g, "");
-    finaldeliveryaddress = finaldeliveryaddress.replace(/\s/g, "");
+    // intialdeliveryaddress = intialdeliveryaddress.replace(/\s/g, "");
+    // finaldeliveryaddress = finaldeliveryaddress.replace(/\s/g, "");
 
 
 
-    if (intialdeliveryaddress !== finaldeliveryaddress) {
-        finaldeliveryaddress = addressflat + "," + addressstreet + "," + address_area
-        response = await getlastid(finaldeliveryaddress, billingaddress);
-        customerid = response.cid;
-        console.log(response);
-    }
+    // if (intialdeliveryaddress !== finaldeliveryaddress) {
+    //     finaldeliveryaddress = addressflat + "," + addressstreet + "," + address_area
+    //     response = await getlastid(finaldeliveryaddress, billingaddress);
+    //     customerid = response.cid;
+    //     console.log(response);
+    // }
 
 
     
@@ -1398,17 +1413,17 @@ async function placeorder(event) {
         return ""
     }
 
-    intialdeliveryaddress = intialdeliveryaddress.replace(/\s/g, "");
-    finaldeliveryaddress = finaldeliveryaddress.replace(/\s/g, "");
+    // intialdeliveryaddress = intialdeliveryaddress.replace(/\s/g, "");
+    // finaldeliveryaddress = finaldeliveryaddress.replace(/\s/g, "");
 
 
 
-    if (intialdeliveryaddress !== finaldeliveryaddress) {
-        finaldeliveryaddress = addressflat + "," + addressstreet + "," + address_area
-        response = await getlastid(finaldeliveryaddress, billingaddress);
-        // customerid = response.cid;
-        console.log(response);
-    }
+    // if (intialdeliveryaddress !== finaldeliveryaddress) {
+    //     finaldeliveryaddress = addressflat + "," + addressstreet + "," + address_area
+    //     response = await getlastid(finaldeliveryaddress, billingaddress);
+    //     // customerid = response.cid;
+    //     console.log(response);
+    // }
 
 
 
@@ -1464,6 +1479,14 @@ async function getlastid(finaldeliveryaddress, billingaddress) {
         email: document.getElementById('customer_email').value,
         primaryphone: document.getElementById('customer_phone').value,
         // periodicity: document.getElementById('payment_period').value,
+        deliveryflatno:document.getElementById("address_flat").value,
+        deliverystreet:document.getElementById('address_street').value,
+        deliveryarea:document.getElementById('address_area').value,
+        deliverylandmark:document.getElementById('address_landmark').value,
+        billingflatno:document.getElementById('billing_flat').value,
+        billingstreet:document.getElementById('billing_street').value,
+        billingarea:document.getElementById('billing_area').value,
+        billinglandmark:document.getElementById('billing_landmark').value,
         billingaddress: billingaddress,
         deliveryaddress: finaldeliveryaddress,
         deliverymobile: document.getElementById('address_mobile').value,
@@ -1519,7 +1542,7 @@ response.data.slice(0, 15).forEach((x, index) => {
 <td>
 <input type='number' min='0' class='tableqty' id='tableqty-${x.Date.replaceAll('-', '')}' 
 data-optionid='${x.OptionID}' data-price='${x.Price}' data-index='${index}' data-category='${x.category}'
-data-initial='${x.Quantity}' value='${x.Quantity}' ${disabled}>
+            data-initial='${x.Quantity}' data-subcategory='${x.subcategory}' value='${x.Quantity}' ${disabled}>
 </td>
 <td><input type='text' class='reason' id='reason-${x.Date.replaceAll('-', '')}'></td>
             <td><button class="table-btn" onclick="update('${x.Date}', this,'${x.category}','${x.OptionID}','${x.Price}','${x.OrderID}','${x.subcategory}')" disabled>Edit</button></td>
@@ -1537,7 +1560,7 @@ response.data.slice(15, 30).forEach((x, index) => {
 <td>
 <input type='number' min='0' class='tableqty' id='tableqty-${x.Date.replaceAll('-', '')}' 
 data-optionid='${x.OptionID}' data-price='${x.Price}' data-index='${index}'  data-category='${x.category}'
-data-initial='${x.Quantity}' value='${x.Quantity}' ${disabled}>
+            data-initial='${x.Quantity}' data-subcategory='${x.subcategory}' value='${x.Quantity}' ${disabled}>
 </td>
 <td><input type='text' class='reason' id='reason-${x.Date.replaceAll('-', '')}'></td>
             <td><button class="table-btn" onclick="update('${x.Date}', this,'${x.category}','${x.OptionID}','${x.Price}','${x.OrderID}','${x.subcategory}')" disabled>Edit</button></td>
@@ -1613,7 +1636,7 @@ response.data.slice(0, 15).forEach((x, index) => {
 <td>
     <input type='number' min='0' class='tableqtyd' id='tableqtyd-${x.Date.replaceAll('-', '')}' 
         data-optionid='${x.OptionID}' data-price='${x.Price}' data-index='${index}'  data-category='${x.category}'
-        data-initial='${x.Quantity}' value='${x.Quantity}' ${disabled}>
+        data-initial='${x.Quantity}' data-subcategory='${x.subcategory}' value='${x.Quantity}' ${disabled}>
 </td>
 <td><input type='text'  class='reason' id='reason-${x.Date.replaceAll('-', '')}'></td>
 <td><button class="table-btn" onclick="update('${x.Date}', this,'${x.category}','${x.OptionID}','${x.Price}','${x.OrderID}','${x.subcategory}')" disabled>Edit</button></td>
@@ -1631,7 +1654,7 @@ response.data.slice(15, 30).forEach((x, index) => {
 <td>
     <input type='number' min='0' class='tableqtyd' id='tableqtyd-${x.Date.replaceAll('-', '')}' 
         data-optionid='${x.OptionID}' data-price='${x.Price}' data-index='${index}'  data-category='${x.category}'
-        data-initial='${x.Quantity}' value='${x.Quantity}' ${disabled}>
+        data-initial='${x.Quantity}' data-subcategory='${x.subcategory}' value='${x.Quantity}' ${disabled}>
 </td>
 <td><input type='text'  class='reason' id='reason-${x.Date.replaceAll('-', '')}'></td>
 <td><button class="table-btn" onclick="update('${x.Date}', this,'${x.category}','${x.OptionID}','${x.Price}','${x.OrderID}','${x.subcategory}')" disabled>Edit</button></td>
@@ -2371,7 +2394,7 @@ const reason = row.find(`#reason-${Date.replaceAll('-', '')}`).val();
 checkaddress();
 
 if (!addressflat || !addressstreet || !address_area || !deliverymobile || !addresslink) {
-    alert("Please the fill the delivery address")
+    alert("Please the fill the delivery address")   
     return ""
 }
 if (!baddressflat || !baddressstreet || !baddressarea || !billingmobile) {
@@ -2379,56 +2402,61 @@ if (!baddressflat || !baddressstreet || !baddressarea || !billingmobile) {
     return ""
 }
 
-intialdeliveryaddress = intialdeliveryaddress.replace(/\s/g, "");
-finaldeliveryaddress = finaldeliveryaddress.replace(/\s/g, "");
+// intialdeliveryaddress = intialdeliveryaddress.replace(/\s/g, "");
+// finaldeliveryaddress = finaldeliveryaddress.replace(/\s/g, "");
 
+// console.log("intial",intialdeliveryaddress);
+// console.log("final",finaldeliveryaddress);
+// if(!checkaddress()){
+//     response = await getlastid();
+//     customerid = response.cid;
+// }
 
-
-if (intialdeliveryaddress !== finaldeliveryaddress) {
-    finaldeliveryaddress = addressflat + "," + addressstreet + "," + address_area
-    response = await getlastid(finaldeliveryaddress, billingaddress);
-    customerid = response.cid;
-        console.log("3818", response);
-}
+// if (intialdeliveryaddress !== finaldeliveryaddress) {
+//     finaldeliveryaddress = addressflat + "," + addressstreet + "," + address_area
+//     response = await getlastid(finaldeliveryaddress, billingaddress);
+//     customerid = response.cid;
+//         console.log("3818", response);
+// }
 
 
     if (!reason.trim() & ((newQuantity == 0) || (initialValue != 0 & currentValue !== initialValue))) {
-alert("Please provide a reason for updating the quantity.");
-return;
-}
+        alert("Please provide a reason for updating the quantity.");
+        return;
+    }
 
     let confirmationMessageAdd = 'Do you want to place order for ' + Date + '?';
     let confirmationMessageUpdate = 'Do you want to update order for ' + Date + '?';
     let confirmationMessageDelete = 'Do you want to cancel order for ' + Date + '?';
-let confirmation = '';
-    if (initialValue == 0) {
-confirmation = confirm(confirmationMessageAdd);
-    } else if (currentValue == 0) {
-confirmation = confirm(confirmationMessageDelete);
-    } else {
-confirmation = confirm(confirmationMessageUpdate);
-}
-    console.log("Confirmation", confirmation);
+    let confirmation = '';
+        if (initialValue == 0) {
+    confirmation = confirm(confirmationMessageAdd);
+        } else if (currentValue == 0) {
+    confirmation = confirm(confirmationMessageDelete);
+        } else {
+    confirmation = confirm(confirmationMessageUpdate);
+    }
+        console.log("Confirmation", confirmation);
 
-if (!confirmation) {
-console.log('User cancelled the operation.');
-return;
-}
+    if (!confirmation) {
+    console.log('User cancelled the operation.');
+    return;
+    }
 
 
-var payload = {
-load: "updateQuantity",
-date: Date, 
-quantity: quantity,
-reason: reason.trim(),
-cid: customerid,
-foodtype: category,
-subcategory:subcategory,
-foodid: (optionid === "null") ? 0 : optionid,
-price: price,
-orderid: orderid
+    var payload = {
+    load: "updateQuantity",
+    date: Date, 
+    quantity: quantity,
+    reason: reason.trim(),
+    cid: customerid,
+    foodtype: category,
+    subcategory:subcategory,
+    foodid: (optionid === 'null') ? 0 : optionid,
+    price: price,
+    orderid: orderid
 
-};
+    };
 
 console.log("update:", payload);
 
@@ -3494,8 +3522,8 @@ function getallb() {
     var payload = {
         load: "getitemsb",
         day: dayName,
-        fromdate: fromDate,
-        cid:customerid
+        cid:customerid,
+        fromdate: fromDate
     };
 
     $.ajax({
@@ -3636,12 +3664,13 @@ function comparePricesD(initial, final) {
 
 
 
-function checkprice(fromdate, todate, previousPrice) {
-    console.log("Fetching Breakfast Prices...");
+function checkprice(fromdate, todate, previousOptionID,foodtype) {
+    console.log("Fetching Breakfast OptionIDs...");
     var payload = {
         load: "checkprice",
         fromdate: fromdate,
-        todate: todate
+        todate: todate,
+        category:foodtype
     };
     $.ajax({
         url: './webservices/dinner.php',
@@ -3649,19 +3678,22 @@ function checkprice(fromdate, todate, previousPrice) {
         dataType: 'json',
         data: JSON.stringify(payload),
         success: function(response) {
-            console.log("Price Data Received:", response.data);
-            let priceChanges = [];
+            console.log("OptionID Data Received:", response.data);
+            let optionChanges = [];
             response.data.forEach(item => {
+                console.log( "Prev Item",previousOptionID)
                 let date = item.Date;
-                let newPrice = parseFloat(item.Price);
+                let newOptionID = item.OptionID;
+                console.log( "New Item",newOptionID)
                 let itemName = item.Item;
-                if (previousPrice !== null && previousPrice !== newPrice) {
-                    priceChanges.push(`New price ${newPrice} for ${itemName} from ${date}`);
+                if ((previousOptionID !== null && previousOptionID !== newOptionID) || (previousOptionID!== null && previousOptionID !== 0 && newOptionID == 0)) {
+                    optionChanges = [];
+                    optionChanges.push(`Current item is not available between ${fromdate} and ${todate}`);
                 }
-                previousPrice = newPrice;
+                previousOptionID = newOptionID;
             });
-            if (priceChanges.length > 0) {
-                alert(priceChanges.join("\n"));
+            if (optionChanges.length > 0) {
+                alert(optionChanges.join("\n"));
             }
         },
         error: function(error) {
@@ -3706,9 +3738,10 @@ async function submitForB(event) {
         category: 1,
         items: items,
         cid: customerid,
-        day: dayName,
+        // day: dayName,
         dates: []
     };
+    console.log("setitemsb",payload);
 
     if (fromDate && toDate) {
         const from = new Date(fromDate);
@@ -3734,10 +3767,9 @@ async function submitForB(event) {
         dataType: 'json',
         data: JSON.stringify(payload)
     }).then(response => {
-        if (response.status !== 'success') {
-            throw new Error(response.message);
-        }
+        
         alert(response.message);
+      console.log("our query",response.sql)
         todayorderdetails(customerid);
         fetchall();
         fetchallb();
@@ -3814,9 +3846,7 @@ async function submitForD(event) {
         dataType: 'json',
         data: JSON.stringify(payload)
     }).then(response => {
-        if (response.status !== 'success') {
-            throw new Error(response.message);
-        }
+        
         alert(response.message);
         todayorderdetails(customerid);
         getall();
@@ -4103,8 +4133,16 @@ $('#mealqtylb').val(totalQuantity); // Default to 0 if no valid quantities
 // });
 
 
-$('#from-date-b, #to-date-b').on('change', handleDateChangeB);
-$('#from-date-d, #to-date-d').on('change', handleDateChangeD);
+$('#from-date-b, #to-date-b').on('change', function() {
+    handleDateChangeB();
+    // fetchallb();
+});
+
+$('#from-date-d, #to-date-d').on('change', function() {
+    handleDateChangeD();
+    getallb();
+});
+
 
 // Function for the first date pair (B)
 function handleDateChangeB() {
@@ -4114,7 +4152,7 @@ function handleDateChangeB() {
     if (fromDateB > toDateB) {
         toDateB = fromDateB;
     }
-
+    let previousOptionID = null;
 const foodtype = 1;
     let alertshown = 0;
 
@@ -4124,13 +4162,13 @@ const foodtype = 1;
             alertshown = 1;
         });
 
-const payload = { 
-load: 'datechange',
-fromdate: fromDateB,
-todate: toDateB,
-            foodtype: foodtype,
-cid: customerid
-};
+        const payload = { 
+        load: 'datechange',
+        fromdate: fromDateB,
+        todate: toDateB,
+                    foodtype: foodtype,
+        cid: customerid
+        };
 
 $.ajax({
 url: './webservices/dinner.php',
@@ -4146,7 +4184,7 @@ success: function(data) {
                         // Pattern matches, update fields
                         const referencePattern = Object.values(groupedData)[0]; // Use first day's pattern
                         referencePattern.forEach(order => {
-                            const inputField = $(`.tableqtyb[data-foodid="${order.FoodID}"]`);
+                            const inputField = $(`.tableqtyb[data-foodid]`);
                             if (inputField.length > 0) {
                                 inputField.val(order.Quantity);
                             }
@@ -4158,7 +4196,7 @@ success: function(data) {
                 } else {
                     $('.tableqtyb').val(0);
                 }
-
+                checkprice(fromDateB, toDateB, previousOptionID,foodtype);
 // initialQuantitySumB = calculateTotalSum('.tableqtyb');
 },
 error: function(error) {
@@ -4174,7 +4212,7 @@ function handleDateChangeD() {
     if (fromDateD > toDateD) {
         toDateD = fromDateD;
     }
-
+    let previousOptionID = null;
 const foodtype = 3;
     let alertshown = 0;
 
@@ -4218,7 +4256,7 @@ console.log(data);
                 } else {
                     $('.tableqtydb').val(0);
                 }
-
+                checkprice(fromDateD, toDateD, previousOptionID,foodtype);
 // initialQuantitySumD = calculateTotalSum('.tableqtydb');
 },
 error: function(error) {

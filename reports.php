@@ -200,7 +200,7 @@
 
                 <div class="summary_body">
                     <div class="food_list">
-                        <div class="breakfast_list">
+                        <!-- <div class="breakfast_list">
                             <h3>BreakFast</h3>
                         </div>
 
@@ -213,7 +213,7 @@
                         </div>
                         <div class="total_amount_footer">
 
-                        </div>
+                        </div> -->
                     </div>
 
                     <div class="payment_list">

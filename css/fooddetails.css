@@ -1225,7 +1225,8 @@ background-color: green;
    
 }
 .foodtype_box{
-    height:15vh;
+    height:20vh;
+    position: relative; 
 }
 .inside_foodtype_box{
     /* border:2px solid yellow; */
@@ -1241,6 +1242,7 @@ background-color: green;
 .active_date{
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     background-color: #F3681E;
+  
 }
 
 

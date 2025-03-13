@@ -253,169 +253,78 @@ orderhistory.addEventListener('click',()=>{
         data: JSON.stringify(payload),
         dataType:"json",
         success: function (response) {
-        console.log("viehistory",response);
+        console.log(response);
 
         document.querySelector('.payment_list').style.display = "none";
         document.querySelector('.food_list').style.display = "flex";
         document.querySelector('.summary_body').style.display = "flex";
-
-        let foodList = document.querySelector('.food_list');
-        
-        // Clear any existing content
-        foodList.innerHTML = "";
-        let sections = {};
-        let totalAmounts = {};
-
-        response.data.forEach(itm => {
-            if (!sections[itm.type]) {
-                let sectionDiv = document.createElement('div');
-                sectionDiv.classList.add(`${itm.type}_list`);
-                sectionDiv.innerHTML = `<h3>${itm.type.charAt(0).toUpperCase() + itm.type.slice(1)} <span class="${itm.type}_amount">0</span></h3>`;
-                
-                let tableHeader = document.createElement('div');
-                tableHeader.innerHTML = `
-                    <p><b>Date</b></p>
-                
-                    <p><b>SC</b></p>
-                    <p><b>Q</b></p>
-                    <p><b>₹</b></p>
-                    <p><b>info</b></p>
-                `;
-                sectionDiv.appendChild(tableHeader);
-                
-                foodList.appendChild(sectionDiv);
-                sections[itm.type] = sectionDiv;
-
-                totalAmounts[itm.type] = 0;
-
-            }
-        });
+        let breakfastlist = document.querySelector('.breakfast_list');
+        let lunchlist = document.querySelector('.lunch_list');
+        let dinnerlist = document.querySelector('.dinner_list');
 
 
-         // Step 2: Populate the sections with data
-         response.data.forEach(itm => {
-            let rowDiv = document.createElement('div');
-            rowDiv.innerHTML = `
+
+        breakfastlist.innerHTML = "";
+        lunchlist.innerHTML = "";
+        dinnerlist.innerHTML = "";
+     // Clear previous data if necessary
+        breakfastlist.innerHTML = `<h3>BreakFast<span class="bfamount">0</span></h3>
+            <div>
+                <p><b>Date</b></p>
+                <p><b>Item</b></p>
+                <p><b>Sub ategory</b></p>
+                <p><b>Quantity</b></p>
+                <p><b>Amount</b></p>
+            </div>`;
+        lunchlist.innerHTML = `<h3>Lunch <span class="lnamount">0</span></h3>
+            <div>
+                 <p><b>Date</b></p>
+                <p><b>Item</b></p>
+                <p><b>Sub ategory</b></p>
+                <p><b>Quantity</b></p>
+                <p><b>Amount</b></p>
+            </div>`;
+        dinnerlist.innerHTML = `<h3>Dinner <span class="dnamount">0</span></h3>
+            <div>
+                <p><b>Date</b></p>
+                <p><b>Item</b></p>
+                <p><b>Sub ategory</b></p>
+                <p><b>Quantity</b></p>
+                <p><b>Amount</b></p>
+            </div>`;
+
+        // Process the response data
+        response.data.forEach((itm) => {
+            let divele = document.createElement('div');
+            
+            divele.innerHTML = `
                 <p>${itm.OrderDate}</p>
-              
+                <p>${itm.ItemName}</p>
                 <p>${itm.subcategory}</p>
                 <p>${itm.Quantity}</p>
                 <p>${itm.TotalAmount}</p>
-                <p><i class="fa-solid fa-circle-info" onmouseover="checkfooditems('${itm.OrderDate}','${itm.type}','${itm.ItemName}',this)"></i></p>
             `;
-
-            sections[itm.type].appendChild(rowDiv);
-
-            // Update total amounts
-            totalAmounts[itm.type] += parseInt(itm.TotalAmount);
-            document.querySelector(`.${itm.type}_amount`).textContent = totalAmounts[itm.type];
+            if (itm.type === "breakfast") {
+                bfamount += parseInt(itm.TotalAmount);
+                breakfastlist.appendChild(divele);
+                document.querySelector('.bfamount').textContent = bfamount;
+            } else if (itm.type === "lunch") {
+                lnamount += parseInt(itm.TotalAmount);
+                lunchlist.appendChild(divele);
+                document.querySelector('.lnamount').textContent = lnamount;
+            } else if (itm.type === "dinner") {
+                dnamount += parseInt(itm.TotalAmount);
+                dinnerlist.appendChild(divele);
+                document.querySelector('.dnamount').textContent = dnamount;
+            }
         });
-
-        // Step 3: Add Total Amount Footer
-        let totalAmountFooter = document.createElement('div');
-        totalAmountFooter.classList.add('total_amount_footer');
-
-        let totalAmount = Object.values(totalAmounts).reduce((sum, amount) => sum + amount, 0);
-        totalAmountFooter.innerHTML = `<h3>Total Amount: <span>${totalAmount}</span></h3>`;
-        foodList.appendChild(totalAmountFooter);
-
+        document.querySelector('.total_amount_footer').innerHTML = `<h3>Total Amount:<span>${bfamount+lnamount+dnamount}</span></h3>`;
     },
     error:function(err){
         console.log(err);
     }
     })
 })
-
-async function checkfooditems(orderdate,foodtype,Itemname,thisinfo){
-    console.log(Itemname);
-    let parentElement = thisinfo.parentElement; // Declare first
-    
-    // Remove existing popup if present
-    let existingDiv = parentElement.querySelector('.custom-popup');
-    if (existingDiv) {
-        existingDiv.remove();
-    }
-    
-    let cdiv = document.createElement('div');
-    cdiv.classList.add('custom-popup'); // Add a class for easy identification
-    
-    parentElement.style.position = "relative";
-    
-    cdiv.style.width = "20vw";
-    cdiv.style.height = "auto";
-    cdiv.style.position = "absolute";
-    cdiv.style.border = "2px solid black";
-    cdiv.style.left = "-40vh";
-    cdiv.style.top = "0px";
-    cdiv.style.backgroundColor = "white";
-    cdiv.style.display = "none";
-    cdiv.style.flexDirection = "column";
-    cdiv.style.overflowY = "auto";
-    
-    // if (foodtype.toLowerCase().trim() === "lunch") {
-        if (Itemname.toLowerCase().trim() === "curryset") {
-            let response = await currySetItems(orderdate, foodtype);
-            console.log("data", response);
-            if (response.data.length > 0) {
-                response.data.forEach(itm => {
-                    let p = document.createElement('p');
-                    p.style.margin = "5px 0";
-                    p.style.width = "100%";
-                    cdiv.style.top = "-100px";
-                    p.innerHTML = `<b>${itm.subcategory}</b> =>${itm.ItemName}`;
-                    cdiv.appendChild(p);
-                });
-                parentElement.appendChild(cdiv); // Append first
-                cdiv.style.display = "flex"; // Then display it
-            }
-        // }
-    } else {
-        let p = document.createElement('p');
-        p.style.margin = "5px 0";
-        p.style.width = "100%";
-        p.textContent = Itemname;
-        cdiv.appendChild(p);
-        parentElement.appendChild(cdiv);
-        cdiv.style.display = "flex";
-    }
-    
-    thisinfo.addEventListener('mouseleave', () => {
-        cdiv.style.display = "none";
-    });
-    
-
-}
-
-async function currySetItems(od,foodtype){
-    let tablename = foodtype+"schedule";
-    tablename = tablename.trim();
-    return new Promise((resolve,reject) =>{
-
-   
-    var payload = {
-        load:"checkcurrysetitems",
-        orderdate:od,
-        tablename:tablename
-    }
-
-    console.log("payload",payload);
-    $.ajax({
-        type:"POST",
-        url: "./webservices/reports.php",
-        data: JSON.stringify(payload),
-        dataType:"json",
-        success:function(response){
-            resolve(response);
-        },
-        error:function(err){
-            console.log("error to fetch lunch items",err);
-            reject(err);
-
-        }
-    })
-    })
-}
-
 
 paymenthistory.addEventListener('click',()=>{
     document.querySelector('.payment_list').style.display = "flex";

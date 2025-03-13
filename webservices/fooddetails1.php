@@ -33,6 +33,7 @@ $selecteddate = $data['selecteddate'] ?? '';
 $updateactivity = $data['updateactivity'] ?? '';
 $scheduletablename = $data['scheduletablename'] ?? '';
 $foodtypeID = $data['foodtypeID'] ?? '';
+$lunchids = $data['lunchids'] ?? '';
 
 if ($load == "add") {
     addcom($conn, $category, $ItemName, $Price, $from_date, $to_date);
@@ -190,6 +191,41 @@ else if($load == "loadtodaydinneritem"){
 else if($load == "loaditemsbysubcategory"){
     loaditemsbysubcategory($conn);
 }
+else if($load == "setlunchitem"){
+    updatelunchschedule($conn);
+}
+
+function updatelunchschedule($conn){
+    global $lunchids,$scheduletablename,$selecteddate;
+    $values = []; // Initialize an empty array
+
+    //delete query
+    $dropquery = "DELETE FROM `{$scheduletablename}` WHERE `Date` = '$selecteddate'";
+    $resultdrop = setData($conn,$dropquery);
+
+    if($resultdrop != "Record created"){
+        $jsonresponse = array('code' => '500', 'status' => "fail");
+        echo json_encode($jsonresponse);
+        return;
+    }
+
+    foreach ($lunchids as $lId) {
+        $values[] = "('$selecteddate', '$lId')"; // Append values to the array
+    }
+    
+    if (!empty($values)) {
+        $valuesString = implode(',', $values); // Convert array into a string
+        $insert = "INSERT INTO `{$scheduletablename}` (`Date`, `FoodID`) VALUES $valuesString";
+        $resultinsert = setData($conn, $insert);
+
+        if($resultinsert == "Record created"){
+            $jsonresponse = array('code' => '200', 'status' => "success");
+            echo json_encode($jsonresponse);
+        }
+       
+    }
+}
+
 
 function updateitem($conn){
     global $type;

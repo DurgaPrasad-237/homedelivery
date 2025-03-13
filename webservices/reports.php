@@ -30,6 +30,7 @@ $relatedmonth = $data['relatedmonth'] ?? "";
 $paiddate = $data['paiddate'] ?? "";
 $previousmonth = $data['previousmonth'] ?? "";
 $thismonth = $data['thismonth'] ?? "";
+$tablename = $data['tablename'] ?? "";
 
 if($load == "load_report"){
     loadReport($conn);
@@ -67,6 +68,28 @@ else if($load == "load_pending_month_report"){
 else if($load == "infopendings"){
     infopendings($conn);
 }
+else if($load == "checkcurrysetitems"){
+    checkcurrysetitems($conn);
+}
+
+
+function checkcurrysetitems($conn){
+    global $orderdate,$tablename;
+    $sql = "SELECT subcategory.subcategory,fooddetails.ItemName,lunchschedule.FoodID from lunchschedule
+    join fooddetails on lunchschedule.FoodID = fooddetails.OptionID
+    join subcategory on fooddetails.subcategory = subcategory.SNO
+    where lunchschedule.Date = '$orderdate'";
+    $resultsql = getData($conn,$sql);
+    if(count($resultsql) > 0){
+         $jsonresponse = array('code' => '200','status' => "Success",'data'=>$resultsql);
+    }
+    else{
+        $jsonresponse = array('code' => '200','status' => "Success",'data'=>'');
+    }
+    echo json_encode($jsonresponse); 
+
+}
+
 
 function infopendings($conn){
     global $cid;
@@ -219,14 +242,15 @@ function paymentHistory($conn){
 function orderHistory($conn){
     global $cid,$fromdate,$todate;
 
-    $selectquery = "SELECT fooddetails.ItemName,subcategory.subcategory,orders.OrderDate,orders.Quantity,orders.TotalAmount,foodtype.type
+    $selectquery = "SELECT fooddetails.ItemName,subcategory.subcategory,orders.OrderDate,orders.Quantity,orders.TotalAmount,foodtype.type,
+    foodtype.sno
     from orders
     join fooddetails on orders.FoodID = fooddetails.OptionID
     join foodtype on orders.FoodTypeID = foodtype.sno
     join subcategory on fooddetails.subcategory = subcategory.SNO
     where orders.CustomerID = $cid and orders.OrderDate BETWEEN '$fromdate' and '$todate' and orders.Quantity > 0
     and orders.status = 2
-    ORDER by orders.OrderDate asc";
+    ORDER by foodtype.sno asc,orders.OrderDate asc";
 
     $resultquery = getData($conn,$selectquery);
 

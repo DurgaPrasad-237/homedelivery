@@ -9,7 +9,23 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" type="text/css" href="css/fooddetails.css">
     <style>
-        
+        .foodtype_box p{
+            margin:0px;
+            position: absolute;
+            top: 40px; /* Adjust based on your layout */
+            left: 10px;
+            font-weight: 700;
+            display:flex;
+            flex-wrap: wrap;
+          
+        }
+        .foodtype_box p span{
+            padding:10px;
+            font-size: 12px;
+            width:auto;
+            border-radius: 5px;
+            background-color: rgba(174, 174, 174, 0.79);
+        }
 
     </style>
 </head>
@@ -311,6 +327,9 @@
         let breakfasttmritem;
         let dinnertmritem;
         let lunchtmritem;
+        let selected_lunch_items = [];
+        let selected_lunch_id = [];
+        // let selectedlunch = [];
 
 
         tomorrowdate.setDate(todaydate.getDate() + 1);
@@ -363,6 +382,18 @@
         }
 
         async function loadscheduleMenuByDate(thisdiv) {
+
+            document.querySelectorAll('.subcategory').forEach(sb=>{
+                sb.disabled = false;
+            })
+
+            selected_lunch_items = [];
+            let displayParagraph = document.querySelector('.selectedItemsParagraph');
+            displayParagraph.innerHTML = "";
+            console.log("lunchitems",selected_lunch_items)
+            
+
+            console.log("before button",selected_lunch_items)
             document.querySelectorAll('.individual_sch_dates').forEach(x => {
                 x.classList.remove('active_date');
             });
@@ -389,19 +420,42 @@
                 data: JSON.stringify(payload),
                 dataType: "json",
                 success: async function (response) {
-                    console.log(response);
+                    selected_lunch_items = [];
+                    console.log("udresponse",selected_lunch_items)
+                    console.log("helo",response);
                     if (response.data.length > 0) {
                         for (const itm of response.data) {
+
+                            if(itm.type === "lunch"){
+                                let subcategory = itm.subcategory.trim(); 
+                                subcategory = subcategory.replace(/\s+/g, ""); 
+                                selected_lunch_items.push({ 
+                                    category: subcategory, 
+                                    cid: itm.subsno, 
+                                    item: itm.ItemName, 
+                                    foodid: itm.OptionID
+                                })
+                                let grandparent = document.querySelector(`#${itm.type}_box`);
+                                updateDisplay(grandparent,itm.subcategory,itm.ItemName,itm.OptionID);
+                            }
+
+
                             let subcategorySelector = trimOperation(itm.type, 'subcategory');
                             let subcategory = document.querySelector(`#${subcategorySelector}`);
-                            subcategory.value = itm.subsno;
+                            if(itm.type !== "lunch"){
+                                subcategory.value = itm.subsno;
+                            }
+                           
 
                             // WAIT until items are loaded before setting the value
                             await loaditembysubcategory({ value: itm.subsno });
 
                             let itemselector = trimOperation(itm.type, 'items');
                             let items = document.querySelector(`#${itemselector}`);
-                            items.value = itm.OptionID;
+                            if(itm.type !== "lunch"){
+                                items.value = itm.OptionID;
+                            }
+                          
                         }
 
                         document.querySelectorAll('.schsavebtn').forEach(dis => {
@@ -429,8 +483,10 @@
                 data: JSON.stringify(payload),
                 dataType: "json",
                 success: function(response){
+                    console.log("foodtype",response);
                     if(response.data.length > 0){
                         let schedule_menu_list = document.querySelector('.schedule_menu_list');
+                        schedule_menu_list.disabled = true;
                         schedule_menu_list.innerHTML = "";
                         
                         if (!schedule_menu_list) {
@@ -439,6 +495,8 @@
                         }
                         
                         response.data.forEach(itm => {
+                            
+
                             let div = document.createElement('div');
                             div.setAttribute('id', `${trimOperation(itm.type,'box')}`);
                             div.setAttribute('data-foodtypeid', `${itm.sno}`);
@@ -453,8 +511,24 @@
                             //subcategory select tag
                             let selecttag = document.createElement('select');
                             selecttag.setAttribute('id',`${trimOperation(itm.type,'subcategory')}`)
-                            selecttag.setAttribute('onchange','loaditembysubcategory(this)')
                             selecttag.setAttribute('class','subcategory')
+                            selecttag.disabled = true;
+
+                            selecttag.addEventListener('change', function () {
+                                loaditembysubcategory(this);
+                            });
+
+                            let lunch_para;
+                            if (itm.type.toLowerCase() === "lunch") {
+                                selecttag.addEventListener('change', function () {
+                                    display_lunch_items(this);
+                                });
+                               
+                            }
+                                                    
+                            // if(itm.type.toLowerCase() === "lunch"){
+                            //     selecttag.setAttribute('onchange','display_lunch_items(this)')
+                            // }
                             let option = document.createElement('option');
                             option.textContent = "Select sub category"
                             option.value = " ";
@@ -463,9 +537,14 @@
 
 
                             //items select tag
+                           
                             let itemsselecttag = document.createElement('select');
+                            itemsselecttag.disabled = true;
                             itemsselecttag.setAttribute('id',`${trimOperation(itm.type,'items')}`)
                             itemsselecttag.setAttribute('class','fditems')
+                            if(itm.type.toLowerCase() === "lunch"){
+                               itemsselecttag.setAttribute('onchange','display_lunch_items(this)')
+                            }
                             let itmoption = document.createElement('option');
                             itmoption.textContent = "Select item"
                             itmoption.value = " ";
@@ -483,6 +562,11 @@
 
 
                             div.appendChild(header3); 
+                            if(itm.type.toLowerCase() === "lunch"){
+                              let createpara = document.createElement('p');
+                              createpara.setAttribute('class','selectedItemsParagraph')
+                              div.appendChild(createpara)
+                            }
                             div.appendChild(insidediv); 
                             // div.appendChild(itemsselecttag); 
                             // div.appendChild(savebuttons);
@@ -501,6 +585,99 @@
             });
         }
 
+//for luch box items display function
+function display_lunch_items(thisselect) {
+    let parentdiv = thisselect.parentElement;
+    let grandparentdiv = parentdiv.parentElement;
+
+    let subcategorySelect = grandparentdiv.querySelector(".subcategory");
+    let selectedSubcategory = subcategorySelect.options[subcategorySelect.selectedIndex].text.trim();
+    selectedSubcategory = selectedSubcategory.trim();
+
+    let fooditemsselect = grandparentdiv.querySelector(".fditems");
+    let selectedfooditems = fooditemsselect.options[fooditemsselect.selectedIndex]?.text.trim();
+    selectedfooditems = selectedfooditems.trim();
+
+    console.log("subcategoryselect:", subcategorySelect.value, "name:", selectedSubcategory);
+    console.log("fooditems:", fooditemsselect.value, "name:", selectedfooditems);
+
+
+    let selectedsubcategoryvalue = subcategorySelect.value;
+    let selecteditemid = fooditemsselect.value;
+
+    console.log("sd",typeof(selecteditemid))
+
+    if(selecteditemid === " "){
+        selectedfooditems = " ";
+    }
+    if(selectedsubcategoryvalue === " "){
+        selectedSubcategory = " ";
+    }
+
+   
+   
+
+    if (!selectedSubcategory || selectedsubcategoryvalue === " ") return;
+    
+    if (!selectedfooditems || selecteditemid === " ") return;
+
+    //check exisiting cid
+    let existingItem  = selected_lunch_items.find(item => item.cid === selectedsubcategoryvalue) ?? -1;
+    console.log("existingitem",existingItem)
+   
+    if(existingItem  === -1){
+        selected_lunch_items.push({ 
+        category: selectedSubcategory, 
+        cid: selectedsubcategoryvalue, 
+        item: selectedfooditems, 
+        foodid: selecteditemid
+    });
+    }
+    else{
+        existingItem.item = selectedfooditems;  
+        existingItem.foodid = selecteditemid;
+    }
+    // // Update UI only when an item is selected
+    if (!thisselect.classList.contains('subcategory')) {
+        updateDisplay(grandparentdiv, selectedSubcategory, selectedfooditems, selecteditemid);
+    }
+}
+
+function updateDisplay(gpd, category, item, selecteditemid) {
+    console.log("uddd",selected_lunch_items)
+    let displayParagraph = gpd.querySelector('.selectedItemsParagraph');
+    displayParagraph.innerHTML = "";
+    selected_lunch_items.forEach(itm =>{
+        let categoryspan = document.createElement('span');
+        let icon = document.createElement('i'); 
+        categoryspan.textContent = `${itm.category}:${itm.item}`;
+        categoryspan.style.position = "relative"; 
+        categoryspan.style.marginRight = "10px";
+        categoryspan.dataset.cid =  itm.cid
+        icon.style.marginLeft = "8px"; 
+        icon.classList.add('fa-solid', 'fa-xmark','itemclose'); 
+        icon.style.cursor = "pointer"
+        categoryspan.appendChild(icon);
+        displayParagraph.appendChild(categoryspan)
+
+        icon.addEventListener('click', (e) => {
+            let clickedCid = e.target.parentElement.dataset.cid;
+
+            // Remove the item from the array
+            selected_lunch_items = selected_lunch_items.filter(item => item.cid !== clickedCid);
+
+            // Refresh the UI
+            e.target.parentElement.remove();  
+            console.log("Updated List:", selected_lunch_items);
+        });
+    })  
+
+    console.log("displapyparagraph",displayParagraph);
+}
+
+
+
+
         //update schedule
         function updateSchedule(selectbutton,foodtype){
             let grandparentDiv = selectbutton.closest('div')?.parentElement.closest('div');
@@ -517,57 +694,88 @@
             let scheduletablename = (foodtype === "breakfast")
                                         ? `${foodtype}schedule` :(foodtype === "lunch") ? 
                                         `${foodtype}schedule`:`${foodtype}schedule`
-
             
+            let load = "setitem"
+
+             
             if(!selecteddate){
                 alert("Date required")
                 return;
             }
 
-            if(!closestFditems.value || closestFditems.value === " "){
+            if(foodtype === "lunch"){
+                load = 'setlunchitem'
+                selected_lunch_id = [];
+                selected_lunch_items.forEach(itm=>{
+                    if(itm.foodid === " "){
+                        alert("select the item");
+                        return;
+                    }
+                    console.log("fooid",itm.foodid)
+                   selected_lunch_id.push(parseInt(itm.foodid))
+                })
+
+                if(selected_lunch_id.length === 0){
+                    alert("Please select the lunch items")
+                }
+
+                
+            }
+            else{
+                if(!closestFditems.value || closestFditems.value === " "){
                 alert("Item required")
+                return
             }
 
-            if(!closestsubcategory.value || closestsubcategory.value === " "){
-                alert("sub category required")
+                if(!closestsubcategory.value || closestsubcategory.value === " "){
+                    alert("sub category required")
+                    return;
+                }
             }
+
+          
             
            
             var payload = {
                 selecteddate:selecteddate.textContent,
-                load:"setitem",
+                load:load,
                 OptionID:closestFditems.value,
                 ssubcategory: closestsubcategory.value,
                 // updateactivity:updateactivity,
                 foodtype:foodtype,
                 foodtypeID:foodtypeid,
-                scheduletablename:scheduletablename
+                scheduletablename:scheduletablename,
+                lunchids:selected_lunch_id
             }
             console.log("payload",payload,typeof(payload.foodtype));
 
-            $.ajax({
-                type: "POST",
-                url: "./webservices/fooddetails1.php",
-                data: JSON.stringify(payload),
-                dataType: "json",
-                success:function(response){
-                    console.log(response);
-                    if(response.status === "success"){
-                        alert("Sucessfully Updated");
-                    }
-                },
-                error:function(err){
-                    console.error("updateing error",err);
-                    alert("Something wrong try again later")
-                }
+            // $.ajax({
+            //     type: "POST",
+            //     url: "./webservices/fooddetails1.php",
+            //     data: JSON.stringify(payload),
+            //     dataType: "json",
+            //     success:function(response){
+            //         console.log(response);
+            //         if(response.status === "success"){
+            //             alert("Sucessfully Updated");
+            //         }
+            //     },
+            //     error:function(err){
+            //         console.error("updateing error",err);
+            //         alert("Something wrong try again later")
+            //     }
 
-            })
+            // })
 
         }
         
 
         //function for load subcategory
         function loaditembysubcategory(thischange) {
+            // let grandparenetelement = thischange.parentElement.parentElement;
+            // let grandparentid = grandparenetelement.getAttribute('id');
+          
+
             if(thischange.value === " "){
                 alert("Please select the subcategory");
                 return;
@@ -586,21 +794,31 @@
                     data: JSON.stringify(payload),
                     dataType: "json",
                     success: function (response) {
-                        console.log(response);
+                        // if(grandparentid.toLowerCase() === )
+                        document.querySelector(`#${trimOperation(response.data[0].type,'items')}`).disabled = false;
+                        console.log("loaditem",response);
+                        
                         if (response.data.length > 0) {
                             let selectitemid = trimOperation(response.data[0].type, "items");
                             let items = document.querySelector(`#${selectitemid}`);
+
+                            console.log("items",items)
+                           
                             items.value = " ";
                             Array.from(items.options).forEach(option => {
                                 option.style.display = "none";
                             });
+
+                        
                             response.data.forEach(itm => {
-                                let option = items.querySelector(`option[value="${itm.OptionID}"]`);
-                                let nulloption = items.querySelector(`option[value=" "]`);
-                                nulloption.style.display = "block";
-                                if (option) {
-                                    option.style.display = "block";
-                                }
+                                        let option = items.querySelector(`option[value="${itm.OptionID}"]`);
+                                
+                                        let nulloption = items.querySelector(`option[value=" "]`);
+                                        nulloption.style.display = "block";
+                                        if (option) {
+                                            option.style.display = "block";
+                                        }
+                
                             });
                         }
                         resolve(); // Resolve after AJAX completes
@@ -856,6 +1074,7 @@
 
         //load subcategory of breakfast
         function loadAllSubcategory(){
+            let usingSubcategories = ['tiffin','dinner','fry','curry','puluse','pachadi','pappu'];
             var payload = {
                 foodtype:"1",
                 load:"loadallsubcategory",
@@ -869,47 +1088,62 @@
                     console.log("responseall", response);
                     if (response.data.length > 0) {
                         response.data.forEach(sub => {
-
-                            let subcategorySelector = trimOperation(sub.type, 'subcategory');
-                            let subcategory = document.querySelector(`#${subcategorySelector}`);
-
-                           
-                            if (subcategory) {
-                                let optionExists = Array.from(subcategory.options).some(option => option.value === sub.SNO);
-                                if(!optionExists){
-                                    let options = document.createElement('option');
-                               
-
-                                    options.textContent = sub.subcategory;
-                                    options.value = sub.SNO;
-
-
-                                    subcategory.appendChild(options);
-                                }
-                               
                             
-                            } else {
-                                console.warn(`Subcategory element not found for selector: ${subcategorySelector}`);
+                            let subcategoryname = removeSpaces(sub.subcategory);
+
+                            if (usingSubcategories.includes(subcategoryname)) {
+
+                                let subcategorySelector = trimOperation(sub.type, 'subcategory');
+                                let subcategory = document.querySelector(`#${subcategorySelector}`);
+
+                            
+                            
+                                if (subcategory) {
+                                    let optionExists = Array.from(subcategory.options).some(option => option.value === sub.SNO);
+                                
+                                    if(!optionExists){
+                                        
+                                        let options = document.createElement('option');
+                                
+
+                                        options.textContent = sub.subcategory;
+                                        options.value = sub.SNO;
+
+
+                                        subcategory.appendChild(options);
+                                    }
+                                
+                                
+                                } else {
+                                    console.warn(`Subcategory element not found for selector: ${subcategorySelector}`);
+                                }
                             }
                         });
 
                         response.data.forEach(itm=>{
-                            let itemsselector = trimOperation(itm.type,'items');
-                            let items = document.querySelector(`#${itemsselector}`);
-                            
-                            if(items){
-                                let optionExists = Array.from(items.options).some(option => option.value === itm.OptionID);
-                                if(!optionExists){
-                                    let itemsoption = document.createElement('option');
-                                    
-                                    itemsoption.textContent = itm.ItemName
-                                    itemsoption.value = itm.OptionID
 
-                                    items.appendChild(itemsoption);
-                                }     
-                            }
-                            else{
-                                console.warn(`item element not found for selector: ${itemsselector}`);   
+                            let subcategoryname = removeSpaces(itm.subcategory);
+
+                            if (usingSubcategories.includes(subcategoryname)) {
+
+
+                                let itemsselector = trimOperation(itm.type,'items');
+                                let items = document.querySelector(`#${itemsselector}`);
+                                
+                                if(items){
+                                    let optionExists = Array.from(items.options).some(option => option.value === itm.OptionID);
+                                    if(!optionExists){
+                                        let itemsoption = document.createElement('option');
+                                        
+                                        itemsoption.textContent = itm.ItemName
+                                        itemsoption.value = itm.OptionID
+
+                                        items.appendChild(itemsoption);
+                                    }     
+                                }
+                                else{
+                                    console.warn(`item element not found for selector: ${itemsselector}`);   
+                                }
                             }
                         })
                     }
@@ -918,6 +1152,10 @@
                     console.log(err)
                 }
             })
+        }
+
+        function removeSpaces(str){
+            return str.replace(/\s+/g, "").toLowerCase(); 
         }
       
 
