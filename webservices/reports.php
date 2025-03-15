@@ -120,7 +120,7 @@ function loadPendingMonthsReport($conn){
             customers.CustomerName AS CustomerName,
             customers.CustomerID AS CustomerID,
             customers.Email AS Email,
-            customers.Phone2,
+            customers.Billing_Phonenumber AS Billingnumber,
             SUM(payments.unpaid_amount) AS total_unpaid, 
             SUM(payments.total_amount) AS total_amount, 
             SUM(payments.paid_amount) AS total_paid
@@ -159,7 +159,7 @@ function pendings($conn){
  		customers.CustomerName AS CustomerName,
         customers.CustomerID AS CustomerID,
         customers.Email as Email,
-        customers.Phone2,
+        customers.Billing_Phonenumber as Billingnumber,
        SUM(payments.unpaid_amount) AS total_unpaid, 
        SUM(payments.total_amount) AS total_amount, 
        SUM(payments.paid_amount) AS total_paid
@@ -308,7 +308,7 @@ function load_payments($conn){
     payments.unpaid_amount,
     payments.customer_id,
     customers.Email,
-    customers.Phone2
+    customers.Billing_Phonenumber AS BillingNumber
     FROM 
         orders
     JOIN 
@@ -504,10 +504,10 @@ $selectsql = "
     SELECT 
         c.CustomerID AS CustomerID,
         c.CustomerName AS name,
-        c.Phone3 AS BillingNumber,
+        c.Billing_Phonenumber AS BillingNumber,
         c.Email AS mail,
         o.OrderDate,
-        c.Phone2 AS DeliveryNumber,
+        c.Delivery_Phonenumber AS DeliveryNumber,
         SUM(CASE WHEN ft.Type = 'Breakfast' THEN o.TotalAmount ELSE 0 END) AS breakfast,
         SUM(CASE WHEN ft.Type = 'Lunch' THEN o.TotalAmount ELSE 0 END) AS lunch,
         SUM(CASE WHEN ft.Type = 'Dinner' THEN o.TotalAmount ELSE 0 END) AS dinner,
@@ -523,8 +523,8 @@ $selectsql = "
         status s ON o.Status = s.Sno
     $x
     GROUP BY 
-        c.CustomerID, c.CustomerName, c.Phone3, c.Email, o.OrderDate, 
-        c.Phone2, s.Status
+        c.CustomerID, c.CustomerName, c.Delivery_Phonenumber, c.Email, o.OrderDate, 
+        c.Billing_Phonenumber, s.Status
     ORDER BY 
         o.OrderDate ASC
 ";

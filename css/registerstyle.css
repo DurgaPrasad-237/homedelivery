@@ -240,7 +240,8 @@ body {
 }
 
 .register,
-.Report {
+.Report,
+.kot {
     border: 2px solid #F3681E;
     padding: 10px;
     margin-left: 5vh;
@@ -257,19 +258,21 @@ body {
 }
 
 .register:hover,
-.Report:hover {
+.Report:hover,
+.kot:hover {
     background-color: white;
     color: #FFC857;
     font-weight: bold;
 }
 
-.Report a {
+.Report a ,
+.kot a{
     color: white;
     text-decoration: none;
     display: block;
 }
 
-.Report:hover a {
+.Report:hover a ,.kot:hover a{
     color: #FFC857;
 }
 
@@ -885,12 +888,12 @@ table-layout: auto;
     font-family: Arial, sans-serif;
     text-align: center;
     justify-self: end;
-    margin-left: 55%;
+    margin-left: 40%;
    
     width:15vw;
     display:flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
 
     /* margin-top: 20px; */
@@ -1324,13 +1327,13 @@ width: 50px; /* First column */
 
 
 #lunch-options-containers {
-max-height: 300px; /* Set the maximum height for scrolling */
+
 overflow-y: auto; /* Enable vertical scrolling */
 overflow-x: hidden; /* Disable horizontal scrolling */
-border: 1px solid #ddd; /* Optional: Add a border for better visibility */
-margin-top: 10px;
-height: 28vh;
 
+margin-top: 10px;
+
+height: 47vh;
 
 }
 #lunch-box-b{
@@ -1480,7 +1483,7 @@ border-radius: 10px;
     background-color: white;
     color:black;
 }
-.register,.Report{
+.register,.Report,.kot{
    display:flex;
    flex-direction: row;
    justify-content: space-around;
@@ -1492,8 +1495,18 @@ border-radius: 10px;
     display: flex;
     margin: 10px 10px 10px 0;
 }
+.lunch-tabs-container {
+    display: flex;
+    margin: 10px 10px 10px 0;
+}
+
 
 .tabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.tabsl{
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
@@ -1508,13 +1521,29 @@ border-radius: 10px;
     cursor: pointer;
     transition: 0.3s;
 }
+.tabl {
+    padding: 10px 20px;
+    background-color: rgb(142, 94, 0);
+    color: rgb(255, 217, 177);
+    border: 2px solid #ffc7574a;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
 
 .tab:hover {
     background-color: rgba(255, 170, 0, 0.81);
     color: white;
 }
+.tabl:hover {
+    background-color: rgba(255, 170, 0, 0.81);
+    color: white;
+}
 
 .tab.active {
+    background: rgb(0, 0, 0);
+}
+.tabl.active {
     background: rgb(0, 0, 0);
 }
 
@@ -1576,4 +1605,30 @@ border-radius: 10px;
 
 .title{
     margin: 5px;
+}
+
+#lunch-bulk-table {
+    height: auto;
+    overflow-y: auto;
+}
+
+#lunch-bulk-table::-webkit-scrollbar {
+    display: none;
+}
+#lunch-bulk-table thead th{
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-radius: 5px;
+    border-bottom: 2px solid #ccc;
+}
+
+#lunch-bulk-table tbody tr td{
+    height: 10px;
+}
+.table-container {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+
 }

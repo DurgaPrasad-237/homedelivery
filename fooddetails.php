@@ -26,6 +26,7 @@
             border-radius: 5px;
             background-color: rgba(174, 174, 174, 0.79);
         }
+        
 
     </style>
 </head>
@@ -41,6 +42,7 @@
                     <li onclick="toggleSection('items-menu-content', this)">Category Menu</li>
                     <li onclick="toggleSection('sub-items-menu-content', this)">Items Menu</li>
                     <li onclick="toggleSection('scheduling-content', this);checkingtrigger()">Scheduling</li>
+                    <li onclick="toggleSection('delivery-scheduling', this)">Delivery Scheduling</li>
                 </ul>
             </div>
 
@@ -308,6 +310,46 @@
                                 <button onclick="upddatetmitem(this,3)" class="btndintmr">Save</button>
                             </div>
                         </div> -->
+                        </div>
+                    </div>
+                    <div id="delivery-scheduling">
+                    <div class="schedulingboxes">
+                        <center>
+                            <h2>Delivery Scheduling </h2>
+                        </center>
+                        <div class="tdybox">
+                            <h4>Today</h4><br>
+                            <input type="date" id="schtdydate" readonly>
+                            <select class="foodtype-tdy" id="foodtype-tdy" onchange="loadnameds()"></select>
+                            <select class="name-tdy" id="name-tdy" onchange="loadcontactds()">
+                                <option value="" disabled selected>
+                                    Select Name
+                                </option>
+                            </select>
+                            <select class="contact-tdy" id="contact-tdy" placeholder="Contact Number" readonly>
+                                <option value="" disabled selected>
+                                    Select Contact
+                                </option>
+                            </select>
+                            <button onclick="savetdy(event)" class="btntoday">Save</button>
+                        </div>
+                        <br>
+                        <div class="tmrbox">
+                            <h4>Tomorrow</h4><br>
+                            <input type="date" id="schtmdydate" readonly>
+                            <select class="foodtype-tmr" id="foodtype-tmr" onchange="loadnamesds()"></select>
+                            <select class="name-tmr" id="name-tmr" onchange="loadcontactsds()">
+                                <option value="" disabled selected>
+                                    Select Name
+                                </option>
+                            </select>
+                            <select class="contact-tmr" id="contact-tmr" readonly>
+                                <option value="" disabled selected>
+                                    Select Contact
+                                </option>
+                            </select>
+                            <button onclick="savetmr(event)" class="btntommorrow">Save</button>
+                        </div>
                     </div>
                 </div>
 
@@ -408,6 +450,10 @@
             let today = new Date();
             let todayFormatted = today.toISOString().split('T')[0];
             let checktddate = (todayFormatted === thisdiv.textContent);
+            console.log("checkdate",checktddate)
+            document.querySelectorAll('.schsavebtn').forEach(dis => {
+                dis.disabled = checktddate;
+            });
 
             var payload = {
                 load: "loadMenubyDate",
@@ -431,10 +477,11 @@
                                 subcategory = subcategory.replace(/\s+/g, ""); 
                                 selected_lunch_items.push({ 
                                     category: subcategory, 
-                                    cid: itm.subsno, 
+                                    cid: parseInt(itm.subsno), 
                                     item: itm.ItemName, 
-                                    foodid: itm.OptionID
+                                    foodid: parseInt(itm.OptionID)
                                 })
+                                console.log(selected_lunch_items);
                                 let grandparent = document.querySelector(`#${itm.type}_box`);
                                 updateDisplay(grandparent,itm.subcategory,itm.ItemName,itm.OptionID);
                             }
@@ -457,10 +504,6 @@
                             }
                           
                         }
-
-                        document.querySelectorAll('.schsavebtn').forEach(dis => {
-                            dis.disabled = checktddate;
-                        });
                     } else {
                         alert("Menu not decided");
                     }
@@ -519,12 +562,12 @@
                             });
 
                             let lunch_para;
-                            if (itm.type.toLowerCase() === "lunch") {
-                                selecttag.addEventListener('change', function () {
-                                    display_lunch_items(this);
-                                });
+                            // if (itm.type.toLowerCase() === "lunch") {
+                            //     selecttag.addEventListener('change', function () {
+                            //         display_lunch_items(this);
+                            //     });
                                
-                            }
+                            // }
                                                     
                             // if(itm.type.toLowerCase() === "lunch"){
                             //     selecttag.setAttribute('onchange','display_lunch_items(this)')
@@ -589,62 +632,53 @@
 function display_lunch_items(thisselect) {
     let parentdiv = thisselect.parentElement;
     let grandparentdiv = parentdiv.parentElement;
-
-    let subcategorySelect = grandparentdiv.querySelector(".subcategory");
-    let selectedSubcategory = subcategorySelect.options[subcategorySelect.selectedIndex].text.trim();
-    selectedSubcategory = selectedSubcategory.trim();
-
-    let fooditemsselect = grandparentdiv.querySelector(".fditems");
-    let selectedfooditems = fooditemsselect.options[fooditemsselect.selectedIndex]?.text.trim();
-    selectedfooditems = selectedfooditems.trim();
-
-    console.log("subcategoryselect:", subcategorySelect.value, "name:", selectedSubcategory);
-    console.log("fooditems:", fooditemsselect.value, "name:", selectedfooditems);
+    let valueofselectedsubcategory;
+    let textofselectedsubcategory;
+    let textofselectedfditems;
+    let valueofselectedfditems;
 
 
-    let selectedsubcategoryvalue = subcategorySelect.value;
-    let selecteditemid = fooditemsselect.value;
 
-    console.log("sd",typeof(selecteditemid))
+        let subcategoryselect = grandparentdiv.querySelector(".subcategory"); 
+        textofselectedsubcategory = subcategoryselect.options[subcategoryselect.selectedIndex].text.trim();
+        valueofselectedsubcategory = parseInt(subcategoryselect.value);
 
-    if(selecteditemid === " "){
-        selectedfooditems = " ";
-    }
-    if(selectedsubcategoryvalue === " "){
-        selectedSubcategory = " ";
-    }
 
-   
-   
+        let fditemsselect = grandparentdiv.querySelector(".fditems");
+        textofselectedfditems = fditemsselect.options[fditemsselect.selectedIndex].text.trim();
+        valueofselectedfditems = parseInt(fditemsselect.value);
 
-    if (!selectedSubcategory || selectedsubcategoryvalue === " ") return;
-    
-    if (!selectedfooditems || selecteditemid === " ") return;
 
-    //check exisiting cid
-    let existingItem  = selected_lunch_items.find(item => item.cid === selectedsubcategoryvalue) ?? -1;
-    console.log("existingitem",existingItem)
-   
-    if(existingItem  === -1){
+    console.log("textofselectedsubcategory",textofselectedsubcategory);
+    console.log("valueofselectedsubcategory",valueofselectedsubcategory);
+    console.log("textofselectedfditems",textofselectedfditems);
+    console.log("valueofselectedfditems",valueofselectedfditems)
+ 
+
+    let existingcategory = selected_lunch_items.find(item => item.cid === valueofselectedsubcategory) ?? -1;
+    if(existingcategory === -1){
         selected_lunch_items.push({ 
-        category: selectedSubcategory, 
-        cid: selectedsubcategoryvalue, 
-        item: selectedfooditems, 
-        foodid: selecteditemid
-    });
+        category: textofselectedsubcategory, 
+        cid: valueofselectedsubcategory, 
+        item: textofselectedfditems, 
+        foodid: valueofselectedfditems
+        })
     }
     else{
-        existingItem.item = selectedfooditems;  
-        existingItem.foodid = selecteditemid;
+       existingcategory.foodid = valueofselectedfditems;
+       existingcategory.cid = valueofselectedsubcategory
+       existingcategory.category= textofselectedsubcategory
+       existingcategory.item = textofselectedfditems
     }
-    // // Update UI only when an item is selected
-    if (!thisselect.classList.contains('subcategory')) {
-        updateDisplay(grandparentdiv, selectedSubcategory, selectedfooditems, selecteditemid);
-    }
+    console.log("elements",selected_lunch_items)
+   
+    updateDisplay(grandparentdiv, textofselectedsubcategory, textofselectedfditems, valueofselectedfditems);
+   
+ 
 }
 
 function updateDisplay(gpd, category, item, selecteditemid) {
-    console.log("uddd",selected_lunch_items)
+    console.log("update display",selected_lunch_items)
     let displayParagraph = gpd.querySelector('.selectedItemsParagraph');
     displayParagraph.innerHTML = "";
     selected_lunch_items.forEach(itm =>{
@@ -717,6 +751,7 @@ function updateDisplay(gpd, category, item, selecteditemid) {
 
                 if(selected_lunch_id.length === 0){
                     alert("Please select the lunch items")
+                    return;
                 }
 
                 
@@ -733,9 +768,13 @@ function updateDisplay(gpd, category, item, selecteditemid) {
                 }
             }
 
-          
-            
-           
+
+            let userResponse = confirm(`Items you want to add\n${selected_lunch_items.map(itm => `-${itm.item}`).join("\n")}`);
+
+            if(!userResponse){
+                return;
+            }
+
             var payload = {
                 selecteddate:selecteddate.textContent,
                 load:load,
@@ -749,23 +788,23 @@ function updateDisplay(gpd, category, item, selecteditemid) {
             }
             console.log("payload",payload,typeof(payload.foodtype));
 
-            // $.ajax({
-            //     type: "POST",
-            //     url: "./webservices/fooddetails1.php",
-            //     data: JSON.stringify(payload),
-            //     dataType: "json",
-            //     success:function(response){
-            //         console.log(response);
-            //         if(response.status === "success"){
-            //             alert("Sucessfully Updated");
-            //         }
-            //     },
-            //     error:function(err){
-            //         console.error("updateing error",err);
-            //         alert("Something wrong try again later")
-            //     }
+            $.ajax({
+                type: "POST",
+                url: "./webservices/fooddetails1.php",
+                data: JSON.stringify(payload),
+                dataType: "json",
+                success:function(response){
+                    console.log(response);
+                    if(response.status === "success"){
+                        alert("Sucessfully Updated");
+                    }
+                },
+                error:function(err){
+                    console.error("updateing error",err);
+                    alert("Something wrong try again later")
+                }
 
-            // })
+            })
 
         }
         
@@ -1074,7 +1113,7 @@ function updateDisplay(gpd, category, item, selecteditemid) {
 
         //load subcategory of breakfast
         function loadAllSubcategory(){
-            let usingSubcategories = ['tiffin','dinner','fry','curry','puluse','pachadi','pappu'];
+            let usingSubcategories = ['tiffin','dinner','fry','curry','pulusu','pachadi','pappu'];
             var payload = {
                 foodtype:"1",
                 load:"loadallsubcategory",
@@ -1489,7 +1528,7 @@ function updateDisplay(gpd, category, item, selecteditemid) {
 
         // Function to toggle sections with active class
         function toggleSection(sectionId, element) {
-            const sections = ['prices-content', 'items-menu', 'items-menu-content', 'sub-items-menu-content','scheduling-content'];
+            const sections = ['prices-content', 'items-menu', 'items-menu-content', 'sub-items-menu-content','scheduling-content','delivery-scheduling'];
             sections.forEach(id => {
 
                 document.getElementById(id).style.display = (id === sectionId) ? 'block' : 'none';
@@ -1575,10 +1614,12 @@ function updateDisplay(gpd, category, item, selecteditemid) {
                     if (response.data && response.data.length > 0) {
                         response.data.forEach(item => {
                             const activityLabel = item.activity == 1 ? "Deactivate" : "Activate";
+                            const editLabel = item.subcategory == "Main Items" ? "Fixed" : "Edit";
+                            let disabled = (item.subcategory == "Main Items") ? "disabled" : "enabled";
                             const row = `<tr>
                         <td>${item.subcategory}</td>
-                        <td><button onclick="editItem(${item.SNO}, '${item.subcategory}')">Edit</button></td>
-                        <td><button onclick="activity(${item.SNO}, ${item.activity})">${activityLabel}</button></td>
+                        <td><button onclick="editItem(${item.SNO}, '${item.subcategory}')" ${disabled}> ${editLabel}</button></td>
+                        <td><button onclick="activity(${item.SNO}, ${item.activity})" >${activityLabel}</button></td>
                     </tr>`;
                             tbody.insertAdjacentHTML("beforeend", row);
                         });
@@ -1589,9 +1630,8 @@ function updateDisplay(gpd, category, item, selecteditemid) {
                 error: function(err) {
                     console.error("Error loading items:", err);
                 }
-            });
-        }
-
+            });
+        }
         //  for category screen  {
         let editSubcategoryId = null; // To track the subcategory being edited
 
@@ -2186,6 +2226,364 @@ loaditem();
             document.querySelector('.cnclbtn').style.display = 'none';
             document.getElementById('add').style.display = 'block';
         });
+
+function loadfoodtypeds() {
+            var payload = {
+                load: "loadfoodtypeds"
+            };
+            $.ajax({
+                type: "POST",
+                url: "./webservices/fooddetails1.php",
+                data: JSON.stringify(payload),
+                dataType: "json",
+                success: function(response) {
+                    let dropdown = document.getElementById("foodtype-tdy");
+                    dropdown.innerHTML = "<option value='' disabled selected>Select Food Type</option>";
+                    response.data.forEach(x => {
+                        let option = document.createElement('option');
+                        option.value = x.sno;
+                        option.text = x.type;
+                        dropdown.appendChild(option);
+                    });
+                    dropdown.addEventListener('change', function() {
+                        let selectedFoodType = this.value;
+                        if (selectedFoodType) {
+                            // If a food type is selected, show the 'name-tdy' dropdown
+                            document.getElementById("name-tdy").style.display = "block";
+                            loadnameds(selectedFoodType); // Call loadnameds when food type is selected
+                        }
+                    });
+                },
+                error: function(err) {
+                    console.error("Error loading foodtype:", err);
+                }
+            });
+        }
+        loadfoodtypeds();
+
+        // delivery scheduling page foodtype for tommorrow
+
+        function loadfoodtypesds() {
+            var payload = {
+                load: "loadfoodtypesds"
+            };
+            $.ajax({
+                type: "POST",
+                url: "./webservices/fooddetails1.php",
+                data: JSON.stringify(payload),
+                dataType: "json",
+                success: function(response) {
+                    let dropdown = document.getElementById("foodtype-tmr");
+                    dropdown.innerHTML = "<option value='' disabled selected>Select Food Type</option>";
+                    response.data.forEach(x => {
+                        let option = document.createElement('option');
+                        option.value = x.sno;
+                        option.text = x.type;
+                        dropdown.appendChild(option);
+                    });
+
+
+                },
+                error: function(err) {
+                    console.error("Error loading foodtype:", err);
+                }
+            });
+        }
+        loadfoodtypesds();
+
+
+
+        // delivery scheduling page name for today 
+
+        function loadnameds(selectedFoodtype) {
+            var payload = {
+                load: "loadnameds",
+                foodtype: selectedFoodtype // Send foodtype if necessary for filtering names
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "./webservices/fooddetails1.php",
+                data: JSON.stringify(payload),
+                dataType: "json",
+                success: function(response) {
+                    let dropdown = document.getElementById("name-tdy");
+                    dropdown.innerHTML = "<option value='' disabled selected>Select Name</option>";
+
+                    // Ensure response contains data
+                    if (response.data && response.data.length > 0) {
+                        response.data.forEach(x => {
+                            let option = document.createElement('option');
+                            option.value = x.ID; // Ensure 'ID' is the correct value
+                            option.text = x.Name; // Display the name in the dropdown
+                            dropdown.appendChild(option);
+                        });
+                    } else {
+                        alert('No names found for this food type');
+                    }
+                },
+                error: function(err) {
+                    console.error("Error loading names:", err);
+                }
+            });
+        }
+
+
+        // delivery scheduling page name for tommorrow
+
+        function loadnamesds(selectedFoodtype) {
+            var payload = {
+                foodtype: selectedFoodtype,
+                load: "loadnameds"
+            };
+            $.ajax({
+                type: "POST",
+                url: "./webservices/fooddetails1.php",
+                data: JSON.stringify(payload),
+                dataType: "json",
+                success: function(response) {
+                    let dropdown = document.getElementById("name-tmr");
+                    dropdown.innerHTML = "<option value='' disabled selected>Select Name</option>";
+                    response.data.forEach(x => {
+                        let option = document.createElement('option');
+                        option.value = x.ID;
+                        option.text = x.Name;
+                        dropdown.appendChild(option);
+                    });
+                },
+                error: function(err) {
+                    console.error("Error loading name:", err);
+                }
+            });
+        }
+        loadnamesds(selectedFoodtype);
+
+        // delivery scheduling page name for today 
+        // Function to load contact information based on selected name
+        function loadcontactds() {
+            var selectedNameID = document.getElementById("name-tdy").value; // Get the selected Name ID
+
+            console.log("Selected Name ID: ", selectedNameID); // Debugging log to check selected value
+
+            if (selectedNameID) {
+                var payload = {
+                    load: "loadcontactds", // Identifying the action in the PHP backend
+                    id: selectedNameID // Send the selected name ID to the server
+                };
+                console.log("Payload:", payload); // Debugging payload
+
+                $.ajax({
+                    type: "POST",
+                    url: "./webservices/fooddetails1.php",
+                    data: JSON.stringify(payload),
+                    dataType: "json",
+                    success: function(response) {
+                        let contactDropdown = document.getElementById("contact-tdy");
+
+                        // Clear the dropdown before populating it
+                        contactDropdown.innerHTML = "<option value='' disabled selected>Select Contact</option>";
+
+                        if (response.status === 'success') {
+                            if (response.data.length > 0) {
+                                // Loop through the response data and add each contact to the dropdown
+                                response.data.forEach(function(contact) {
+                                    let option = document.createElement('option');
+                                    option.value = contact.ID; // Assuming the ID is the value for the contact
+                                    option.text = contact.Contact; // Display the contact number in the dropdown
+                                    contactDropdown.appendChild(option);
+                                });
+                            } else {
+                                alert('No contact found for the selected name.');
+                            }
+                        } else {
+                            alert(response.message); // If there are no contacts, show an alert
+                        }
+                    },
+                    error: function(err) {
+                        console.error("Error loading contact:", err);
+                    }
+                });
+            } else {
+                alert("Please select a name first.");
+            }
+        }
+
+        // Bind to the 'change' event of the name-tdy dropdown
+        document.getElementById("name-tdy").addEventListener('change', loadcontactds);
+
+
+
+
+
+
+        // delivery scheduling page name for today 
+
+        function loadcontactsds() {
+            var selectedNameID = document.getElementById("name-tmr").value; // Get the selected Name ID
+
+            console.log("Selected Name ID: ", selectedNameID); // Debugging log to check selected value
+
+            if (selectedNameID) {
+                var payload = {
+                    load: "loadcontactsds", // Identifying the action in the PHP backend
+                    id: selectedNameID // Send the selected name ID to the server
+                };
+                console.log("Payload:", payload); // Debugging payload
+
+                $.ajax({
+                    type: "POST",
+                    url: "./webservices/fooddetails1.php",
+                    data: JSON.stringify(payload),
+                    dataType: "json",
+                    success: function(response) {
+                        let contactDropdown = document.getElementById("contact-tmr");
+
+                        // Clear the dropdown before populating it
+                        contactDropdown.innerHTML = "<option value='' disabled selected>Select Contact</option>";
+
+                        if (response.status === 'success') {
+                            if (response.data.length > 0) {
+                                // Loop through the response data and add each contact to the dropdown
+                                response.data.forEach(function(contact) {
+                                    let option = document.createElement('option');
+                                    option.value = contact.ID; // Assuming the ID is the value for the contact
+                                    option.text = contact.Contact; // Display the contact number in the dropdown
+                                    contactDropdown.appendChild(option);
+                                });
+                            } else {
+                                alert('No contact found for the selected name.');
+                            }
+                        } else {
+                            alert(response.message); // If there are no contacts, show an alert
+                        }
+                    },
+                    error: function(err) {
+                        console.error("Error loading contact:", err);
+                    }
+                });
+            } else {
+                alert("Please select a name first.");
+            }
+        }
+
+        // Bind to the 'change' event of the name-tdy dropdown
+        document.getElementById("name-tmr").addEventListener('change', loadcontactsds);
+
+
+        // save button for tdy 
+        function savetdy(event) {
+            console.log("today save button");
+
+            const date = $('#schtdydate').val();
+            // const foodtype = $('#foodtype-tdy').val();
+            const name = $('#name-tdy option:selected').text(); // This gets the text of the selected option
+
+            const contact = $('#contact-tdy option:selected').text();
+            const foodtype = $('#foodtype-tdy option:selected').val();
+
+            if (!name || !contact || !foodtype) {
+                alert('Please fill all the required fields.');
+            }
+
+            const payload = {
+                load: "savetdy",
+                id: $('#name-tdy').val(),
+                date: $('#schtdydate').val(),
+                foodtype: $('#foodtype-tdy').val(),
+                name: $('#name-tdy option:selected').text(), // This gets the text of the selected option
+
+                contact: $('#contact-tdy option:selected').text(),
+            };
+            console.log("today button", payload);
+
+            $.ajax({
+                type: "POST",
+                url: "./webservices/fooddetails1.php",
+                data: JSON.stringify(payload),
+                dataType: "json",
+                success: function(response) {
+                    console.log("Response Data: ", response.data);
+                    alert(response.message);
+
+                    resetfields('tdy');
+
+
+                },
+                error: function(err) {
+                    console.error("Error loading data: ", err);
+                }
+            });
+        }
+
+
+
+
+
+        // save button for tmr
+        function savetmr(event) {
+            console.log("tommorrow save button");
+
+            const date = $('#schtdydate').val();
+            // const foodtype = $('#foodtype-tdy').val();
+            const name = $('#name-tmr option:selected').text(); // This gets the text of the selected option
+
+            const contact = $('#contact-tmr option:selected').text();
+            const foodtype = $('#foodtype-tmr option:selected').val();
+
+
+            if (!name || !contact || !foodtype) {
+                alert('Please fill all the required fields.');
+            }
+
+            const payload = {
+                load: "savetmr",
+                id: $('#name-tmr').val(),
+                date: $('#schtmdydate').val(),
+                foodtype: $('#foodtype-tmr').val(),
+                name: $('#name-tmr option:selected').text(), // This gets the text of the selected option
+
+                contact: $('#contact-tmr option:selected').text(),
+            };
+            console.log("tommorrow button", payload);
+
+            $.ajax({
+                type: "POST",
+                url: "./webservices/fooddetails1.php",
+                data: JSON.stringify(payload),
+                dataType: "json",
+                success: function(response) {
+                    console.log("Response Data: ", response.data);
+                    alert(response.message);
+                    resetfields('tmr');
+                },
+                error: function(err) {
+                    console.error("Error loading data: ", err);
+                }
+            });
+        }
+
+        function resetfields(x) {
+            console.log(x);
+
+            // Reset food type dropdown
+            let foodTypeDropdown = document.getElementById(`foodtype-${x}`);
+            foodTypeDropdown.innerHTML = "<option value='' disabled selected>Select Food Type</option>";
+
+            // Reset name dropdown
+            let nameDropdown = document.getElementById(`name-${x}`);
+            nameDropdown.innerHTML = "<option value='' disabled selected>Select Name</option>";
+
+            // Reset contact dropdown
+            let contactDropdown = document.getElementById(`contact-${x}`);
+            contactDropdown.innerHTML = "<option value='' disabled selected>Select Contact</option>";
+
+            // Reload the food types dropdown so the options appear again
+            if (x === "tdy") {
+                loadfoodtypeds();
+            } else if (x === "tmr") {
+                loadfoodtypesds(); // Create a similar function for tomorrow's dropdowns if needed
+            }
+        }
 
     </script>
 </body>

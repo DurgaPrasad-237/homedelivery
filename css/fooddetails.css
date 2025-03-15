@@ -113,7 +113,7 @@ body{
 
 .category-table th,
 .category-table td {
-    padding: 20px;
+    padding: 15px;
     text-align: center;
     width: 100px;
     max-width: 100px;
@@ -549,7 +549,7 @@ background-color: green;
 
 .btn-primary1 {
     height: 35px;
-    width: 10%;
+    width: 24%;
     padding: 10px;
 }
 
@@ -564,7 +564,7 @@ background-color: green;
     flex-direction: row;
 }
 
-.side-container {
+/* .side-container {
     width: 20%;
     height: 76vh;
     background-color: grey;
@@ -593,7 +593,7 @@ background-color: green;
     background-color: #eee;
     width: 150px;
     font-weight: bold;
-}
+} */
 .head-container {
     height: 7vh;
     width: 100%;
@@ -921,11 +921,13 @@ background-color: green;
 .side-container {
     width: 20%;
     height: 76vh;
-    background-color: grey;
-    color: black;
+    background-color: #F5EFEA;
+    color: white;
     display: flex;
     flex-direction: column;
+    gap:5%;
     padding-top: 20px;
+    font-weight: bold;
 }
 
 .side-container ul {
@@ -940,12 +942,19 @@ background-color: green;
     cursor: pointer;
     transition: 0.3s;
     padding-left: 20px;
+    border: 1px solid #F3681E;
+    background-color: #F3681E;
+    border-radius: 10px;
+    margin-bottom: 25px; 
+    margin-left: 1vh;
+    margin-right: 1vh;
 }
 
 .side-container ul li:hover,
 .side-container ul li.active {
-    background-color: #eee;
-    width: 150px;
+    background-color: white;
+    color: #FFC857;
+    width: 138px;
     font-weight: bold;
 }
 
@@ -1136,8 +1145,14 @@ background-color: green;
 .lun_table1 tbody tr:hover {
     background-color: #f1f1f1;
 }
+#items-menu-content{
+    align-items: center;
+    justify-content: space-around;
+    margin-left: 10vh;
+    margin-right: 10vh;
+}
 #scheduling-content{
-    border:2px solid black;
+   
    height:80vh;
    width:54.5vw;
 }
@@ -1188,6 +1203,22 @@ background-color: green;
 .tmrbox{
     float: right;
 }
+.lun_table thead th {
+    min-width: 145px;
+    background-color: #F3681E;
+    border-radius: 0px;
+    width: 145px;
+}
+.lun_table1 th:nth-child(1){
+    width:140px;
+    min-width:140px;
+}
+.lun_table1 th:nth-child(3),
+.lun_table1 th:nth-child(2){
+    width:65px;
+    min-width:65px;
+}
+
 .scheduling_dates{
     /* border:2px solid black; */
     height:5vh;
@@ -1245,5 +1276,60 @@ background-color: green;
   
 }
 
+/*  */
+.tdybox, .tmrbox {
+    display: flex;
+    flex-wrap: wrap; /* This allows wrapping if the screen is small enough */
+    justify-content: space-around; /* Distributes the space between items */
+    align-items: center; /* Aligns items vertically in the center */
+}
 
+.tdybox select, .tmrbox select {
+    margin: 5px; /* Add margin between dropdowns */
+    min-width: 150px; /* Set a minimum width for dropdowns */
+}
+.schedulingboxes {
+    display: flex;
+    flex-direction: column; /* Stack the Today and Tomorrow sections */
+    align-items: flex-start;
+    width: 100%;
+    margin:2%;
 
+}
+
+/* Styling the Today and Tomorrow boxes */
+.tdybox {
+    display: flex;
+    flex-wrap: wrap; /* Allow the content to wrap */
+    justify-content: space-between; /* Space out the content */
+    align-items: center; /* Align the items vertically */
+    margin-bottom: 0px;
+}
+.tmrbox {
+    display: flex;
+    flex-wrap: wrap; /* Allow the content to wrap */
+    justify-content: space-between; /* Space out the content */
+    align-items: center; /* Align the items vertically */
+    margin-bottom: 0px;
+}
+
+/* Styling each select dropdown */
+.tdybox select, .tmrbox select {
+    margin: 5px;
+    min-width: 155px;
+    max-width: 200px; /* Prevent dropdowns from expanding too wide */
+}
+
+.schedulingboxes h4 {
+    display: inline-block;
+    margin-right: 20px; /* Optional: space between h4 tags */
+}
+.btntommorrow,.btntoday {
+    background-color: green;
+    color:white;
+}
+
+.lun_table1 thead th{
+    background-color:#F3681E;
+
+}

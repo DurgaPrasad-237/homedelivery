@@ -34,6 +34,10 @@ $updateactivity = $data['updateactivity'] ?? '';
 $scheduletablename = $data['scheduletablename'] ?? '';
 $foodtypeID = $data['foodtypeID'] ?? '';
 $lunchids = $data['lunchids'] ?? '';
+$id = $data["id"] ?? '';
+$name = $data["name"] ?? '';
+$contact = $data["contact"] ?? '';
+$date = $data["date"] ?? '';
 
 if ($load == "add") {
     addcom($conn, $category, $ItemName, $Price, $from_date, $to_date);
@@ -193,6 +197,30 @@ else if($load == "loaditemsbysubcategory"){
 }
 else if($load == "setlunchitem"){
     updatelunchschedule($conn);
+}
+else if($load == "loadfoodtypeds"){
+    loadfoodtypeds($conn);
+}
+else if($load == "loadfoodtypesds"){
+    loadfoodtypesds($conn);
+}
+else if($load == "loadnameds"){
+    loadnameds($conn);
+}
+else if($load == "loadnamesds"){
+    loadnamesds($conn);
+}
+else if($load == "loadcontactds"){
+    loadcontactds($conn);
+}
+else if($load == "savetdy"){
+    savetdy($conn);
+}
+else if($load == "savetmr"){
+    savetmr($conn);
+}
+else if($load == "loadcontactsds"){
+    loadcontactsds($conn);
 }
 
 function updatelunchschedule($conn){
@@ -498,7 +526,7 @@ function setitem($conn){
         }
         $resultmrorder = setData($conn,$sqltmrorder);
         if($resultmrorder == 'Record created'){
-            $sqlosno = "SELECT SNO,CustomerID,Quantity,OrderID,TotalAmount,FoodTypeID from Orders WHERE FoodTypeID = $foodtypeID and Status = 1 and FoodID = $OptionID and OrderDate = '$selecteddate'";
+            $sqlosno = "SELECT SNO,CustomerID,Quantity,OrderID,TotalAmount,FoodTypeID from orders WHERE FoodTypeID = $foodtypeID and Status = 1 and FoodID = $OptionID and OrderDate = '$selecteddate'";
             $sqlosnoresult = getData($conn,$sqlosno);
         if(count($sqlosnoresult) > 0){
             $jsonresponse = insertToLog($sqlosnoresult,$conn);
@@ -892,7 +920,7 @@ function loadfoodcategory1($conn) {
     if (count($resultquery) > 0) {
         $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resultquery);
     } else {
-        $jsonresponse = array('code' => '200', 'status' => 'error', 'data'=>'','message' => 'No foodtype found');
+        $jsonresponse = array('code' => '200', 'status' => 'error', 'message' => 'No foodtype found');
     }
     echo json_encode($jsonresponse);
 }
@@ -1581,4 +1609,149 @@ function updatecom($conn, $category, $OptionID, $ItemName, $Price, $from_date, $
         echo json_encode($jsonresponse);
     }
 }
+
+// foodtype for ds screen today
+function loadfoodtypeds($conn) {
+    $selectQuery = "SELECT * FROM foodtype ORDER BY sno ASC";
+    $resultquery = getdata($conn, $selectQuery);
+
+    if (count($resultquery) > 0) {
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resultquery);
+    } else {
+        $jsonresponse = array('code' => '200', 'status' => 'error', 'message' => 'No foodtype found');
+    }
+    echo json_encode($jsonresponse);
+}
+
+// foodtype for ds screen today
+function loadfoodtypesds($conn) {
+    $selectQuery = "SELECT * FROM foodtype ORDER BY sno ASC";
+    $resultquery = getdata($conn, $selectQuery);
+
+    if (count($resultquery) > 0) {
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resultquery);
+    } else {
+        $jsonresponse = array('code' => '200', 'status' => 'error', 'message' => 'No foodtype found');
+    }
+    echo json_encode($jsonresponse);
+}
+
+// name for ds screen today
+function loadnameds($conn) {
+    $selectQuery = "SELECT * FROM `deliveryinfo`";
+    $resultquery = getdata($conn, $selectQuery);
+
+    if (count($resultquery) > 0) {
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resultquery);
+    } else {
+        $jsonresponse = array('code' => '200', 'status' => 'error', 'message' => 'No name found');
+    }
+    echo json_encode($jsonresponse);
+}
+// name for ds screen today
+function loadnamesds($conn) {
+    $selectQuery = "SELECT * FROM `deliveryinfo`";
+    $resultquery = getdata($conn, $selectQuery);
+
+    if (count($resultquery) > 0) {
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resultquery);
+    } else {
+        $jsonresponse = array('code' => '200', 'status' => 'error', 'message' => 'No name found');
+    }
+    echo json_encode($jsonresponse);
+}
+
+// name for ds screen today
+function loadcontactds($conn) {
+global $id;
+
+        // SQL query to get contacts for the selected name
+        $selectQuery = "SELECT Contact,ID FROM `deliveryinfo` WHERE ID= '$id'";
+
+        // Assuming getdata is a function that executes the query and returns the result
+        $resultquery = getdata($conn, $selectQuery);
+
+        // Check if the result is not empty
+        if (count($resultquery) > 0) {
+            // Success response with contact data
+            $jsonresponse = array(
+                'code' => 200, 
+                'status' => 'success', 
+                'data' => $resultquery
+            );
+        } else {
+            // No contact found for the given name
+            $jsonresponse = array(
+                'code' => 404,  // Changed to 404 since the resource (contacts) was not found
+                'status' => 'error', 
+                'message' => 'No contact found'
+            );
+        }
+
+
+    // Output the JSON response
+    echo json_encode($jsonresponse);
+}
+
+
+// name for ds screen today
+function loadcontactsds($conn) {
+    global $id;
+    $selectQuery = "SELECT Contact,ID FROM `deliveryinfo`WHERE ID= '$id'";
+    $resultquery = getdata($conn, $selectQuery);
+
+    if (count($resultquery) > 0) {
+        $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resultquery);
+    } else {
+        $jsonresponse = array('code' => '200', 'status' => 'error', 'message' => 'No contact found');
+    }
+    echo json_encode($jsonresponse);
+}
+
+function savetdy($conn){
+    global $id, $name, $contact, $date,$foodtype;
+    $checkquery = "SELECT * FROM deliveryschedule WHERE ID = '$id' AND Date = '$date' AND FoodType = '$foodtype'";
+    $resultcheck = getData($conn, $checkquery);
+
+
+    if(count($resultcheck) > 0){
+        $jsonresponse = array('code' => '500', 'status' => 'error', 'message' => "Delivery Boy with same date and id exists!" );
+    }
+    else{
+        $insertquery = "INSERT INTO `deliveryschedule`(`Name`, `Contact`, `Date`,`ID`,`FoodType`) VALUES ('$name','$contact','$date','$id','$foodtype')";
+        $resultquery = setData($conn, $insertquery);
+    
+        if ($resultquery == "Record created") {
+            $jsonresponse = array('code' => '200', 'status' => 'success', 'message' => "Record Inserted");
+        } else {
+            $jsonresponse = array('code' => '500', 'status' => 'error', 'message' => "Insert Failed" );
+        }
+    }
+   
+    echo json_encode($jsonresponse);
+}
+
+function savetmr($conn){
+    global $id, $name, $contact, $date,$foodtype;
+    $checkquery = "SELECT * FROM deliveryschedule WHERE ID = '$id' AND Date = '$date' AND FoodType = '$foodtype'";
+    $resultcheck = getData($conn, $checkquery);
+
+
+    if(count($resultcheck) > 0){
+        $jsonresponse = array('code' => '500', 'status' => 'error', 'message' => "Delivery Boy with same date and id exists!" );
+    }
+    else{
+        $insertquery = "INSERT INTO `deliveryschedule`(`Name`, `Contact`, `Date`,`ID`,`FoodType`) VALUES ('$name','$contact','$date','$id','$foodtype')";
+        $resultquery = setData($conn, $insertquery);
+    
+        if ($resultquery == "Record created") {
+            $jsonresponse = array('code' => '200', 'status' => 'success', 'message' => "Record Inserted");
+        } else {
+            $jsonresponse = array('code' => '500', 'status' => 'error', 'message' => "Insert Failed" );
+        }
+    }
+   
+    echo json_encode($jsonresponse);
+}
+
 ?>

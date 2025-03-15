@@ -557,7 +557,7 @@ function pendingreports(){
                    trrow.innerHTML = `
                     <td>${itm.CustomerName}</td>
                     <td>${itm.Email}</td>
-                    <td>${itm.Phone2}</td>
+                    <td>${itm.Billingnumber}</td>
                     <td>${itm.total_amount}</td>
                     <td>${itm.total_paid}</td>
                     <td>${itm.total_unpaid}</td>
@@ -712,7 +712,7 @@ function loadPendingMonthReport(tbtn){
                    trrow.innerHTML = `
                     <td>${itm.CustomerName}</td>
                     <td>${itm.Email}</td>
-                    <td>${itm.Phone2}</td>
+                    <td>${itm.Billingnumber}</td>
                     <td>${itm.total_amount}</td>
                     <td>${itm.total_paid}</td>
                     <td>${itm.total_unpaid}</td>
@@ -776,7 +776,7 @@ $.ajax({
             trow.innerHTML = `
             <td data-cid="${dt.customer_id}" data-psno="${dt.sno}" class="customer_name">${dt.CustomerName}</td>
             <td>${dt.Email}</td>
-            <td>${dt.Phone2}</td>
+            <td>${dt.BillingNumber}</td>
             <td class="p_fromdate" data-fromdate="${payload.fromdate}">${date_format(payload.fromdate)}</td>
             <td class="p_todate" data-todate="${payload.todate}">${date_format(payload.todate)}</td>
             <td data-initial-value="${dt.paid_amount}" class="previous_paid_amount">${dt.paid_amount}</td>

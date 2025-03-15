@@ -99,8 +99,7 @@ function add_billingaddress($conn){
     global $customerid,$billingaddress,$billingphone,$billingflatno,$billinglandmark,$billingstreet,$billingarea;
 
     $insertsql = "UPDATE `customers` 
-              SET `BillingAddress` = '$billingaddress', 
-                  `Phone2` = '$billingphone',
+              SET  
                   `Billing_Flatno` = '$billingflatno',
                   `Billing_Street` = '$billingstreet',
                   `Billing_Area` = '$billingarea',
@@ -125,8 +124,7 @@ function add_deliveryaddress($conn){
     global $customerid,$deliveryaddress,$map,$deliveryphone,$deliveryflatno,$deliverystreet,$deliveryarea,$deliverylandmark;
 
     $insertsql = "UPDATE `customers` 
-              SET `DeliveryAddress` = '$deliveryaddress', 
-                  `Phone3` = '$deliveryphone', 
+              SET 
                   `Map` = '$map',
                   `delivery_Flatno` = '$deliveryflatno',
                   `delivery_Street` = '$deliverystreet',
@@ -167,8 +165,8 @@ function register($conn){
     // $insertsql = "INSERT INTO `customers`(`CustomerName`, `Phone1`, `Phone2`, `Phone3`, `FlatNo`, `Street`, `Area`, `Landmark`, `BillingAddress`, `DeliveryAddress`, `email`, `periodicity`, `Map`) 
     // VALUES ('customername','primaryphone','billingphone','deliveryphone','flatno','street','area','landmark','billingaddress','deliveryaddress','email','periodicity','map')";
     
-    $insertsql = "INSERT INTO `customers`(`CustomerName`, `Phone1`,`Email`,DeliveryAddress,Phone3,Map,Delivery_Flatno,Delivery_Street,Delivery_Area,Delivery_landmark,Delivery_Phonenumber) 
-    VALUES ('$customername','$primaryphone','$email','$deliveryaddress','$deliveryphone','$map','$deliveryflatno','$deliverystreet','$deliveryarea','$deliverylandmark','$deliveryphone')";
+    $insertsql = "INSERT INTO `customers`(`CustomerName`, `Phone1`,`Email`,Map,Delivery_Flatno,Delivery_Street,Delivery_Area,Delivery_landmark,Delivery_Phonenumber) 
+    VALUES ('$customername','$primaryphone','$email','$map','$deliveryflatno','$deliverystreet','$deliveryarea','$deliverylandmark','$deliveryphone')";
 
     $sqlresult = setData($conn,$insertsql);
 

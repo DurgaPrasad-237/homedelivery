@@ -12,6 +12,7 @@
     <header class="head">
         <div class="register" id="register"><img src="images/person.png" height="25px" width="25px"/>Register</div>
         <div class="Report"><img src="images/report.png" width="25px" height="25px"><a href="reports.php">Report</a></div>
+        <div class="kot"><img src="images/report.png" width="25px" height="25px"><a href="kot.php">KOT</a></div>
         <div class="date-container">
             <div><img onclick="viewMenu()" class="menuimg" src="images/menu.png" height="50px" width="50px"></div>
             <div>
@@ -485,7 +486,7 @@
                 <div class="dialog-container">
                     <div class="selection-container-b">
                         <div class="button-container-b">
-                            <button class="menu-button-b" onclick="showBreakfastB();fetchallb()">
+                            <button class="menu-button-b" onclick="showBreakfastB();fetchallb();handleDateChangeB();">
                                 Breakfast
                                 <input type="number" id="mealqtyb" value="0" readonly />
                                 <input type="number" id="mealamtb" value="0" readonly />
@@ -494,7 +495,7 @@
                                 <input type="number" id="mealqtylb" value="0" readonly />
                                 <input type="number" id="mealamountb" value="0" readonly />
                             </button>
-                            <button class="menu-button-b" onclick="showDinnerB();getallb()">
+                            <button class="menu-button-b" onclick="showDinnerB();getallb();handleDateChangeD();">
                                 Dinner
                                 <input type="number" id="mealqtydb" value="0" readonly />
                                 <input type="number" id="mealamtdb" value="0" readonly />
@@ -546,33 +547,22 @@
 
                         <!-- Lunch Details Box -->
                         <div class="breakfast-box" id="lunch-box-b" style="display: none;">
-                            <h3>Lunch (Qty)</h3>
+                         
                             <div class="period">
+                         <h3>Lunch (Qty)</h3>
                                 <label for="from-date-l">From:</label>
                                 <input type="date" name="from-date-l" id="from-date-l">
                                 <label for="to-date-l">To:</label>
                                 <input type="date" name="to-date-l" id="to-date-l">
                             </div>
-                            <table class="breakfast-table">
-                                <tr>
-                                    <th>Lunch Type</th>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label>
-                                            <input type="radio" name="lunch-category" value="category1" onclick="fetchalllunch()" disabled>
-                                            Category 1
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="lunch-category" value="category2" disabled>
-                                            Category 2
-                                        </label>
-                                    </td>
-                                </tr>
-                            </table>
+                 
+                         <div id="lunch-options-containers" class="lunch-contain" style="display: none;"> 
 
+                         <div class="lunch-tabs-container">
+                                 <div id="subTabsl" class="tabsl"></div>
+                             </div>
                             <!-- Dynamic Options Container -->
-                            <div id="lunch-options-containers" style="display: none; margin-top: 10px;">
+                         <div class="table-container" id="lunch-bulk-table">
                                 <table id="lunch-table-l">
                                     <thead>
                                         <tr>
@@ -586,7 +576,7 @@
 
                                     </tbody>
                                 </table>
-                                <!-- </div> -->
+                             </div>
 
                             </div>
                         </div>
