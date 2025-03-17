@@ -1139,7 +1139,6 @@ table td:nth-child(3) {
 width: 50px; /* First column */
 }
 .food_details{
-    border:2px solid black;
     height:80vh;
     width:100%;
     display:none;

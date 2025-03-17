@@ -274,13 +274,7 @@
 
                 <div class="bfhead">
                     <th>Breakfast Type</th><label>
-                        <input type="radio" name="breakfast-category" value="categoryb1" disabled>
-                        Category 1
-                    </label>
-                    <label>
-                        <input type="radio" name="breakfast-category" value="categoryb2" disabled>
-                        Category 2
-                    </label>
+                        
                     <button class="placeorderbtn" onclick="openSummaryModal(event)">Place Order</button>
                 </div>
 
@@ -325,13 +319,7 @@
             <div class="breakfast-box" id="lunch-box" style="display: none;">
                 <div class="bfhead">
                     <th>Lunch Type</th><label>
-                        <input type="radio" name="lunch-category" value="category1" onclick="headerfetch()" disabled>
-                        Category 1
-                    </label>
-                    <label>
-                        <input type="radio" name="lunch-category" value="category2" disabled>
-                        Category 2
-                    </label>
+                       
                     <button id="insert-button" onclick="openSummaryModal(event)">Place Order</button>
                 </div>
 
@@ -362,13 +350,7 @@
              </div> -->
                 <div class="bfhead">
                     <th>Dinner Type</th><label>
-                        <input type="radio" name="dinner-category" value="categoryd1" disabled>
-                        Category 1
-                    </label>
-                    <label>
-                        <input type="radio" name="dinner-category" value="categoryd2" disabled>
-                        Category 2
-                    </label>
+                       
                     <button class="placeorderbtn" onclick="openSummaryModal(event)">Place Order</button>
                 </div>
 

@@ -15,6 +15,9 @@ if($load == "load_foodtype"){
 elseif ($load == "load_orders") {
     loadOrders($conn, $data);
 }
+elseif($load == "load_orderitems"){
+    loadOrdersforitems($conn, $data);
+}
 elseif ($load == "update_print_status") {
     updatePrintStatus($conn, $data);
 }
@@ -82,7 +85,8 @@ function loadOrders($conn, $data) {
     o.OrderID, c.CustomerName, c.Phone1, o.OrderDate, f.type, fd.ItemName, 
     o.Quantity, o.TotalAmount, c.Delivery_Landmark, o.Print, o.DeliveryPersonID
     ORDER BY 
-    o.OrderID, f.type";
+    o.OrderID, f.type;
+    ";
 
     $resultquery = getData($conn, $query);
 
@@ -94,6 +98,125 @@ function loadOrders($conn, $data) {
 
     echo json_encode($jsonresponse);
 }
+
+
+function loadOrdersforitems($conn, $data) {
+    global $pappu, $pachadi, $pulusu, $fry, $curry, $rice, $curd, $curryset, $meals, $mealsnc, $bf, $dn, $ln;
+
+    $date = $data['date'];
+    $foodtype = $data['foodtype'];
+
+    $query = "SELECT 
+        o.OrderID, 
+        o.OrderDate, 
+        f.type AS food_type, 
+        fd.ItemName, 
+        o.Quantity 
+    FROM 
+        orders o
+    JOIN 
+        customers c ON o.CustomerID = c.CustomerID 
+    JOIN 
+        foodtype f ON o.FoodTypeID = f.sno 
+    JOIN 
+        fooddetails fd ON fd.OptionID = o.FoodID
+    WHERE 
+        o.OrderDate = '$date'  
+        AND o.Quantity <> 0
+        AND o.FoodTypeID = '$foodtype'
+    ORDER BY 
+        o.OrderID, f.type;
+    ";
+
+    $resultquery = getData($conn, $query);
+
+    $bf = $ln = $dn = 0;
+    $meals = $mealsnc = $curryset = 0;
+    $curry = $pappu = $pachadi = $pulusu = $fry = $curd = $rice = 0;
+
+    if (count($resultquery) > 0) {
+        foreach ($resultquery as $row) {
+            $food_type = strtolower($row['food_type']);
+            $item_name = strtolower($row['ItemName']);
+            $quantity = (int)$row['Quantity'];
+
+            if ($food_type === "breakfast") {
+                $bf += $quantity;
+            } elseif ($food_type === "lunch") {
+                $ln += $quantity;
+            } elseif ($food_type === "dinner") {
+                $dn += $quantity;
+            }
+ 
+            if (strpos($item_name, "meals/nc") !== false) {
+                $mealsnc += $quantity;
+                $curry += $quantity;
+                $pappu += $quantity;
+                $pachadi += $quantity;
+                $pulusu += $quantity;
+                $fry += $quantity;
+                $rice += $quantity;
+            }
+
+            if (strpos($item_name, "curryset") !== false) {
+                $curryset += $quantity;
+                $curry += $quantity;
+                $pappu += $quantity;
+                $pachadi += $quantity;
+                $pulusu += $quantity;
+                $fry += $quantity;
+            }
+
+            if ($item_name === "curry") {
+                $curry += $quantity;
+            }
+            if ($item_name === "pappu") {
+                $pappu += $quantity;
+            }
+            if ($item_name === "pachadi") {
+                $pachadi += $quantity;
+            }
+            if ($item_name === "pulusu") {
+                $pulusu += $quantity;
+            }
+            if ($item_name === "fry") {
+                $fry += $quantity;
+            }
+            if ($item_name === "curd") {
+                $curd += $quantity;
+            }
+            if ($item_name === "rice") {
+                $rice += $quantity;
+            }
+        }
+
+        $jsonresponse = array(
+            'code' => '200', 
+            'status' => "Success", 
+            'data' => array(
+                'Breakfast' => $bf,
+                'Lunch' => $ln,
+                'Dinner' => $dn,
+                'Meals' => $meals,
+                'Meals/Nc' => $mealsnc,
+                'Curryset' => $curryset,
+                'Curry' => $curry,
+                'Pappu' => $pappu,
+                'Pachadi' => $pachadi,
+                'Pulusu' => $pulusu,
+                'Fry' => $fry,
+                'Curd' => $curd,
+                'Rice' => $rice
+            )
+        );
+    } else {
+        $jsonresponse = array('code' => '200', 'status' => "fail", 'data' => 'No Data');
+    }
+
+    echo json_encode($jsonresponse);
+}
+
+
 
 
 

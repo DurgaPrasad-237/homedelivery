@@ -10,7 +10,7 @@ function load_foodType() {
     success: function (response) {
       if (response.status === "Success") {
         let foodtype = document.querySelector(".foodtype");
-        foodtype.innerHTML = '<option value="">All</option>';
+        foodtype.innerHTML = '<option value="" disabled selected>Select Food type</option>';
         response.data.forEach((fd) => {
           const option = document.createElement("option");
           option.value = fd.sno;
@@ -299,7 +299,7 @@ function printkot(order) {
                 </table>
 
                 <div class="kot-footer">
-                    <p>Thank you for your order!</p>
+                    <p>Thank you for your order!<br> Visit Us Again</p>
                 </div>
             </div>
         </body>
@@ -319,7 +319,7 @@ function printkot(order) {
 }
 
 
-// Function to generate item rows with proper formatting
+// Function to generate item rows in kot table
 function generateItemRows(order) {
     let totalQuantity = 0;
     let totalAmount = 0;
@@ -383,3 +383,55 @@ function generateItemRows(order) {
 
 
 
+function loadOrdersforitems(event) {
+    event.preventDefault();
+    console.log("Fetching items data...");
+
+    let selectedDate = $("#from-date").val();
+    let selectedFoodType = $("#foodtype").val();
+
+    let payload = {
+        load: "load_orderitems",
+        date: selectedDate,
+        foodtype: selectedFoodType,
+    };
+
+    $.ajax({
+        url: "./webservices/kot.php",
+        type: "POST",
+        data: JSON.stringify(payload),
+        success: function(response) {
+            let item = JSON.parse(response);
+            if (item.code === "200" && item.status === "Success") {
+                $("#Breakfast").text(item.data.Breakfast || 0);
+                $("#Lunch").text(item.data.Lunch || 0);
+                $("#Meals").text(item.data.Meals || 0);
+                $("#MealsNc").text(item.data["Meals/Nc"] || 0);
+                $("#Curryset").text(item.data.Curryset || 0);
+                $("#Curry").text(item.data.Curry || 0);
+                $("#Pappu").text(item.data.Pappu || 0);
+                $("#Pachadi").text(item.data.Pachadi || 0);
+                $("#Pulusu").text(item.data.Pulusu || 0);
+                $("#Fry").text(item.data.Fry || 0);
+                $("#Curd").text(item.data.Curd || 0);
+                $("#Rice").text(item.data.Rice || 0);
+                $("#Dinner").text(item.data.Dinner || 0);
+            } else {
+                $(".quantity").text("0");
+            }
+        }
+    });
+}
+
+
+
+//Setting the date to today
+
+
+window.onload = function() {
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0];
+    const datefield = document.getElementById("from-date");
+    datefield.value = formattedDate;
+    
+};

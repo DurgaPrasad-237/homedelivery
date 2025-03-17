@@ -641,7 +641,7 @@ function setitem($conn){
         }
         $resultmrorder = setData($conn,$sqltmrorder);
         if($resultmrorder == 'Record created'){
-            $sqlosno = "SELECT SNO,CustomerID,Quantity,OrderID,TotalAmount,FoodTypeID from orders WHERE FoodTypeID = $foodtypeID and Status = 1 and FoodID = $OptionID and OrderDate = '$selecteddate'";
+            $sqlosno = "SELECT SNO,CustomerID,Quantity,OrderID,TotalAmount,FoodTypeID from Orders WHERE FoodTypeID = $foodtypeID and Status = 1 and FoodID = $OptionID and OrderDate = '$selecteddate'";
             $sqlosnoresult = getData($conn,$sqlosno);
         if(count($sqlosnoresult) > 0){
             $jsonresponse = insertToLog($sqlosnoresult,$conn);
@@ -1798,7 +1798,7 @@ global $id;
             // No contact found for the given name
             $jsonresponse = array(
                 'code' => 404,  // Changed to 404 since the resource (contacts) was not found
-                'status' => 'error', 
+                'status' => $resultquery, 
                 'message' => 'No contact found'
             );
         }

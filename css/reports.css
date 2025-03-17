@@ -125,6 +125,7 @@ body {
     align-items: center;
     font-weight: bold;
     /* margin-bottom:1%; */
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
    
     width:100%;
     height:55%;
@@ -134,7 +135,7 @@ body {
 
 .form-row input,
 .form-row button,
-#periodicity,.foodtype {
+#periodicity,.foodtype,.status {
     padding: 5px;
     font-size: 1rem;
     border-radius: 5px;
@@ -160,7 +161,7 @@ table {
     border-collapse: collapse;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
     /* overflow-y: scroll; */
-    height: 25vh;
+    height: auto;
 
 
 }
@@ -709,6 +710,11 @@ span.active{
 }
 .descbd p span{
     width:33%;
+}
+.currysetlist{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-around;
 }
 /* .descbd p:nth-last-child(even){
     background-color: rgb(57, 57, 57);

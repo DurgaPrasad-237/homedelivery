@@ -31,8 +31,6 @@ $paiddate = $data['paiddate'] ?? "";
 $previousmonth = $data['previousmonth'] ?? "";
 $thismonth = $data['thismonth'] ?? "";
 $tablename = $data['tablename'] ?? "";
-$foodtext = $data['foodtext']?? "";
-$fdtextvaluearr = $data['fdtextvaluearr'] ?? "";
 
 if($load == "load_report"){
     loadReport($conn);
@@ -476,54 +474,46 @@ function payments($cid,$orderdate,$foodtypeID,$conn){
 
 
 function loadReport($conn){
-    global $fromdate, $todate, $cid, $periodicity,$foodtype,$foodtext,$fdtextvaluearr,$status;
+    global $fromdate, $todate, $cid, $periodicity,$foodtype;
 
     $x = "";
-    $y = [];
-    $t = "";
-    $s = "";
-    if ($foodtype == "") {
-        if ($cid == "") {
-            $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate'";
-        } else {
-            $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND c.CustomerID = '$cid'  AND o.Status <> 0";
-        }
-
-        forEach($fdtextvaluearr as $row){
-            $y[] = "SUM(CASE WHEN ft.sno = {$row['foodvalue']} THEN o.TotalAmount ELSE 0 END) AS `{$row['foodtext']}`";
-        }
-        $t = "SUM(o.TotalAmount) AS Totalamount";
-        
+if ($foodtype == "") {
+    if ($periodicity == "" && $cid == "") {
+        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND o.Status <> '0'";
+    } elseif ($periodicity !== "" && $cid == "") {
+        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate'  AND o.Status <> 0";
+    } elseif ($periodicity == "" && $cid !== "") {
+        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND c.CustomerID = '$cid' AND o.Status <> 0";
     } else {
-        if ($cid == "") {
-            $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND o.FoodTypeID = '$foodtype' AND o.Status <> '0'";
-        } else {
-            $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND c.CustomerID = '$cid' AND o.FoodTypeID = '$foodtype' AND o.Status <> 0";
-        }
-        $y = ["SUM(CASE WHEN ft.sno = {$foodtype} THEN o.TotalAmount ELSE 0 END) AS `{$foodtext}`"];
-        $t = "SUM(CASE WHEN ft.sno = {$foodtype} THEN o.TotalAmount ELSE 0 END) AS TotalAmount";
+        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND c.CustomerID = '$cid'  AND o.Status <> 0";
     }
-    //conditions for foodtype
-    if ($status == "") {
-        $x .= " AND o.Status <> 0"; 
+} else {
+    if ($periodicity == "" && $cid == "") {
+        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND o.FoodTypeID = '$foodtype' AND o.Status <> '0'";
+    } elseif ($periodicity !== "" && $cid == "") {
+        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND o.FoodTypeID = '$foodtype' AND o.Status <> 0";
+    } elseif ($periodicity == "" && $cid !== "") {
+        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND c.CustomerID = '$cid' AND o.FoodTypeID = '$foodtype' AND o.Status <> 0";
     } else {
-        $x .= " AND o.Status = '$status'"; 
+        $x = "WHERE o.OrderDate BETWEEN '$fromdate' AND '$todate' AND c.CustomerID = '$cid' AND o.FoodTypeID = '$foodtype' AND o.Status <> 0";
     }
+}
 
 
 // Final SQL query
 $selectsql = "
     SELECT 
         c.CustomerID AS CustomerID,
-        c.CustomerName AS Name,
+        c.CustomerName AS name,
         c.Billing_Phonenumber AS BillingNumber,
-        c.Email AS Mail,
+        c.Email AS mail,
         o.OrderDate,
         c.Delivery_Phonenumber AS DeliveryNumber,
-        o.Status AS StatusSno,
-        " . implode(", ", $y) . ",
-        $t,
-        s.Status AS Status
+        SUM(CASE WHEN ft.Type = 'Breakfast' THEN o.TotalAmount ELSE 0 END) AS breakfast,
+        SUM(CASE WHEN ft.Type = 'Lunch' THEN o.TotalAmount ELSE 0 END) AS lunch,
+        SUM(CASE WHEN ft.Type = 'Dinner' THEN o.TotalAmount ELSE 0 END) AS dinner,
+        SUM(o.TotalAmount) AS totalamount,
+        s.Status AS status
     FROM 
         orders o
     JOIN 
@@ -568,7 +558,7 @@ $selectsql = "
         echo json_encode($jsonresponse);
     }
     else{
-        $jsonresponse = array('code' => '200', 'status' => "fail",'data'=>'');
+        $jsonresponse = array('code' => '200', 'status' => "fail",'data'=>'No Data');
         echo json_encode($jsonresponse);
     }
     
@@ -601,7 +591,7 @@ function load_status($conn){
         echo json_encode($jsonresponse);
     }
     else{
-        $jsonresponse = array('code' => '200', 'status' => "fail",'data'=>'');
+        $jsonresponse = array('code' => '200', 'status' => "fail",'data'=>'No Data');
         echo json_encode($jsonresponse);
     }
 }

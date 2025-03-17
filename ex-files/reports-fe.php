@@ -69,22 +69,13 @@
  
                         </select>
                     </div>
-
-                    <div class="form-group">
-                        <label for="foodtype">Status :</label>
-                        <select class="status">
-                                 <option value="">Select Status</option>
- 
-                        </select>
-                    </div>
-
                     <button id="#fetch-report-btn" onclick="reportdetails(event)">Fetch Report</button>
                 </div>
             </div>
             <div class="container2">
                 <table id="report-table">
-                    <thead class="report_thead">
-                        <!-- <tr>
+                    <thead>
+                        <tr>
                             <th>Name</th>
                             <th>Delivery Number</th>
                             <th>Email</th>
@@ -95,7 +86,7 @@
                             <th>Total Amount</th>
                             <th>Status</th>
                             <th>Contact</th>
-                        </tr> -->
+                        </tr>
                     </thead>
                     <tbody class="report_tbody">
 

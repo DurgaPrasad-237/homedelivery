@@ -21,9 +21,6 @@ let totalamount;
 let pending_months_span = document.querySelectorAll('.pending_months span:nth-child(n+2)');
 let infocircle;
 let allreports = document.querySelector('#allreport');
-let statusOptions = [];
-
-
 
 
 
@@ -61,22 +58,21 @@ $.ajax({
     data: JSON.stringify(payload),
     dataType:"json",
     success:function(response){
-        console.log("today order summary",response)
         let tos = document.querySelector('.pending_delivery');
         tos.innerHTML = "";
         if(response.data.length > 0){
             tos.innerHTML = `
-            <div><img src="./images/idly.png" height="30px" width="30px">BreakFast:<span>${response.data[0]['bf'] || 0}</span></div>
-            <div><img src="./images/meal.png" height="30px" width="30px">Lunch:<span>${response.data[0]['lunch'] || 0}</span></div>
-           <div><img src="./images/dosa.png" height="30px" width="30px">Dinner:<span>${response.data[0]['Dinner'] || 0}</span></div>
+            <div><img src="./images/idly.png" height="30px" width="30px">BreakFast:<span>${response.data[0]['bf']}</span></div>
+            <div><img src="./images/meal.png" height="30px" width="30px">Lunch:<span>${response.data[0]['lunch']}</span></div>
+           <div><img src="./images/dosa.png" height="30px" width="30px">Dinner:<span>${response.data[0]['Dinner']}</span></div>
             <div><img src="./images/total.png" height="25px" width="25px">TotalOrders:<span>
                 ${parseInt(response.data[0]['bf'] || 0) +
                 parseInt(response.data[0]['lunch'] || 0) +
                 parseInt(response.data[0]['Dinner'] || 0)}
             </span></div>
 
-          <div><img id="movingImage" src="./images/delivery.png" height="30px" width="30px">Delivered:<span>${response.data[0]['Delivered'] || 0}</span></div>
-           <div><img id="scalingpending" src="./images/Pending.png" height="25px" width="25px">Pending:<span>${response.data[0]['Pending'] || 0}</span></div>   `
+          <div><img id="movingImage" src="./images/delivery.png" height="30px" width="30px">Delivered:<span>${response.data[0]['Delivered']}</span></div>
+           <div><img id="scalingpending" src="./images/Pending.png" height="25px" width="25px">Pending:<span>${response.data[0]['Pending']}</span></div>   `
         }
     },
     error:function(err){
@@ -257,170 +253,78 @@ orderhistory.addEventListener('click',()=>{
         data: JSON.stringify(payload),
         dataType:"json",
         success: function (response) {
-        console.log("viehistory",response);
+        console.log(response);
 
         document.querySelector('.payment_list').style.display = "none";
         document.querySelector('.food_list').style.display = "flex";
         document.querySelector('.summary_body').style.display = "flex";
-
-        let foodList = document.querySelector('.food_list');
-        
-        // Clear any existing content
-        foodList.innerHTML = "";
-        let sections = {};
-        let totalAmounts = {};
-
-        response.data.forEach(itm => {
-            if (!sections[itm.type]) {
-                let sectionDiv = document.createElement('div');
-                sectionDiv.classList.add(`${itm.type}_list`);
-                sectionDiv.innerHTML = `<h3>${itm.type.charAt(0).toUpperCase() + itm.type.slice(1)} <span class="${itm.type}_amount">0</span></h3>`;
-                
-                let tableHeader = document.createElement('div');
-                tableHeader.innerHTML = `
-                    <p><b>Date</b></p>
-                
-                    <p><b>SC</b></p>
-                    <p><b>Q</b></p>
-                    <p><b>₹</b></p>
-                    <p><b>info</b></p>
-                `;
-                sectionDiv.appendChild(tableHeader);
-                
-                foodList.appendChild(sectionDiv);
-                sections[itm.type] = sectionDiv;
-
-                totalAmounts[itm.type] = 0;
-
-            }
-        });
+        let breakfastlist = document.querySelector('.breakfast_list');
+        let lunchlist = document.querySelector('.lunch_list');
+        let dinnerlist = document.querySelector('.dinner_list');
 
 
-         // Step 2: Populate the sections with data
-         response.data.forEach(itm => {
-            let rowDiv = document.createElement('div');
-            rowDiv.innerHTML = `
+
+        breakfastlist.innerHTML = "";
+        lunchlist.innerHTML = "";
+        dinnerlist.innerHTML = "";
+     // Clear previous data if necessary
+        breakfastlist.innerHTML = `<h3>BreakFast<span class="bfamount">0</span></h3>
+            <div>
+                <p><b>Date</b></p>
+                <p><b>Item</b></p>
+                <p><b>Sub ategory</b></p>
+                <p><b>Quantity</b></p>
+                <p><b>Amount</b></p>
+            </div>`;
+        lunchlist.innerHTML = `<h3>Lunch <span class="lnamount">0</span></h3>
+            <div>
+                 <p><b>Date</b></p>
+                <p><b>Item</b></p>
+                <p><b>Sub ategory</b></p>
+                <p><b>Quantity</b></p>
+                <p><b>Amount</b></p>
+            </div>`;
+        dinnerlist.innerHTML = `<h3>Dinner <span class="dnamount">0</span></h3>
+            <div>
+                <p><b>Date</b></p>
+                <p><b>Item</b></p>
+                <p><b>Sub ategory</b></p>
+                <p><b>Quantity</b></p>
+                <p><b>Amount</b></p>
+            </div>`;
+
+        // Process the response data
+        response.data.forEach((itm) => {
+            let divele = document.createElement('div');
+            
+            divele.innerHTML = `
                 <p>${itm.OrderDate}</p>
-              
+                <p>${itm.ItemName}</p>
                 <p>${itm.subcategory}</p>
                 <p>${itm.Quantity}</p>
                 <p>${itm.TotalAmount}</p>
-                <p><i class="fa-solid fa-circle-info" onmouseover="checkfooditems('${itm.OrderDate}','${itm.type}','${itm.ItemName}',this)"></i></p>
             `;
-
-            sections[itm.type].appendChild(rowDiv);
-
-            // Update total amounts
-            totalAmounts[itm.type] += parseInt(itm.TotalAmount);
-            document.querySelector(`.${itm.type}_amount`).textContent = totalAmounts[itm.type];
+            if (itm.type === "breakfast") {
+                bfamount += parseInt(itm.TotalAmount);
+                breakfastlist.appendChild(divele);
+                document.querySelector('.bfamount').textContent = bfamount;
+            } else if (itm.type === "lunch") {
+                lnamount += parseInt(itm.TotalAmount);
+                lunchlist.appendChild(divele);
+                document.querySelector('.lnamount').textContent = lnamount;
+            } else if (itm.type === "dinner") {
+                dnamount += parseInt(itm.TotalAmount);
+                dinnerlist.appendChild(divele);
+                document.querySelector('.dnamount').textContent = dnamount;
+            }
         });
-
-        // Step 3: Add Total Amount Footer
-        let totalAmountFooter = document.createElement('div');
-        totalAmountFooter.classList.add('total_amount_footer');
-
-        let totalAmount = Object.values(totalAmounts).reduce((sum, amount) => sum + amount, 0);
-        totalAmountFooter.innerHTML = `<h3>Total Amount: <span>${totalAmount}</span></h3>`;
-        foodList.appendChild(totalAmountFooter);
-
+        document.querySelector('.total_amount_footer').innerHTML = `<h3>Total Amount:<span>${bfamount+lnamount+dnamount}</span></h3>`;
     },
     error:function(err){
         console.log(err);
     }
     })
 })
-
-async function checkfooditems(orderdate,foodtype,Itemname,thisinfo){
-    console.log(Itemname);
-    let parentElement = thisinfo.parentElement; // Declare first
-    
-    // Remove existing popup if present
-    let existingDiv = parentElement.querySelector('.custom-popup');
-    if (existingDiv) {
-        existingDiv.remove();
-    }
-    
-    let cdiv = document.createElement('div');
-    cdiv.classList.add('custom-popup'); // Add a class for easy identification
-    
-    parentElement.style.position = "relative";
-    
-    cdiv.style.width = "20vw";
-    cdiv.style.height = "auto";
-    cdiv.style.position = "absolute";
-    cdiv.style.border = "2px solid black";
-    cdiv.style.left = "-40vh";
-    cdiv.style.top = "0px";
-    cdiv.style.backgroundColor = "white";
-    cdiv.style.display = "none";
-    cdiv.style.flexDirection = "column";
-    cdiv.style.overflowY = "auto";
-    
-    // if (foodtype.toLowerCase().trim() === "lunch") {
-        if (Itemname.toLowerCase().trim() === "curryset") {         
-            let response = await currySetItems(orderdate, foodtype);
-            console.log("data", response);
-            if (response.data.length > 0) {
-                response.data.forEach(itm => {
-                    let p = document.createElement('p');
-                    p.classList.add("currysetlist")
-                    p.style.margin = "5px 0";
-                    p.style.width = "100%";
-                    cdiv.style.top = "-100px";
-                    p.innerHTML = `<span><b>${itm.subcategory}</b></span><span>${itm.ItemName}</span>`;
-                    cdiv.appendChild(p);
-                });
-                parentElement.appendChild(cdiv); // Append first
-                cdiv.style.display = "flex"; // Then display it
-            }
-        // }
-    } else {
-        let p = document.createElement('p');
-        p.style.margin = "5px 0";
-        p.style.width = "100%";
-        p.textContent = Itemname;
-        cdiv.appendChild(p);
-        parentElement.appendChild(cdiv);
-        cdiv.style.display = "flex";
-    }
-    
-    thisinfo.addEventListener('mouseleave', () => {
-        cdiv.style.display = "none";
-    });
-    
-
-}
-
-async function currySetItems(od,foodtype){
-    let tablename = foodtype+"schedule";
-    tablename = tablename.trim();
-    return new Promise((resolve,reject) =>{
-
-   
-    var payload = {
-        load:"checkcurrysetitems",
-        orderdate:od,
-        tablename:tablename
-    }
-
-    console.log("payload",payload);
-    $.ajax({
-        type:"POST",
-        url: "./webservices/reports.php",
-        data: JSON.stringify(payload),
-        dataType:"json",
-        success:function(response){
-            resolve(response);
-        },
-        error:function(err){
-            console.log("error to fetch lunch items",err);
-            reject(err);
-
-        }
-    })
-    })
-}
-
 
 paymenthistory.addEventListener('click',()=>{
     document.querySelector('.payment_list').style.display = "flex";
@@ -562,7 +466,7 @@ function pendingreports(){
                    trrow.innerHTML = `
                     <td>${itm.CustomerName}</td>
                     <td>${itm.Email}</td>
-                    <td>${itm.Billingnumber}</td>
+                    <td>${itm.Phone2}</td>
                     <td>${itm.total_amount}</td>
                     <td>${itm.total_paid}</td>
                     <td>${itm.total_unpaid}</td>
@@ -717,7 +621,7 @@ function loadPendingMonthReport(tbtn){
                    trrow.innerHTML = `
                     <td>${itm.CustomerName}</td>
                     <td>${itm.Email}</td>
-                    <td>${itm.Billingnumber}</td>
+                    <td>${itm.Phone2}</td>
                     <td>${itm.total_amount}</td>
                     <td>${itm.total_paid}</td>
                     <td>${itm.total_unpaid}</td>
@@ -781,7 +685,7 @@ $.ajax({
             trow.innerHTML = `
             <td data-cid="${dt.customer_id}" data-psno="${dt.sno}" class="customer_name">${dt.CustomerName}</td>
             <td>${dt.Email}</td>
-            <td>${dt.BillingNumber}</td>
+            <td>${dt.Phone2}</td>
             <td class="p_fromdate" data-fromdate="${payload.fromdate}">${date_format(payload.fromdate)}</td>
             <td class="p_todate" data-todate="${payload.todate}">${date_format(payload.todate)}</td>
             <td data-initial-value="${dt.paid_amount}" class="previous_paid_amount">${dt.paid_amount}</td>
@@ -916,40 +820,27 @@ function reportdetails(){
 let fromDate = $("#from-date").val();
 let toDate = $("#to-date").val();
 let od;
-let  fdtextvaluearr = [];
 // let periodicity = document.querySelector('#periodicity').value
 let foodtype = document.querySelector('.foodtype').value
-let fdtext = document.querySelector('.foodtype')
-fdtext = fdtext.options[fdtext.selectedIndex].text;
 let actualstatus;
 
 console.log(foodtype,"foodtype");
 
-    if(foodtype === ""){
-        for (let i = 1; i < document.querySelector('.foodtype').options.length; i++) {  // Skip "All" option (index 0)
-            let option = document.querySelector('.foodtype').options[i];
-            fdtextvaluearr.push({foodvalue:option.value,foodtext:option.text});
-        }
-    }
 
+//    if(!foodtype){
+//        alert("Please select the foodtype")
+//        return "";
+//     }
 
-    if(!document.querySelector('.status').value){
-        alert("Please select the Status")
-        return "";
-    }
-
-    var payload = {
-        load:"load_report",
-        todate:toDate,
-        fromdate:fromDate,
-        // periodicity:periodicity,
-        customerid:document.getElementById('customer-id').value,
-        foodtype:foodtype,
-        foodtext:fdtext,
-        fdtextvaluearr:fdtextvaluearr,
-        status:document.querySelector('.status').value
-    }
-    console.log("report",payload);
+var payload = {
+    load:"load_report",
+    todate:toDate,
+    fromdate:fromDate,
+    // periodicity:periodicity,
+    customerid:document.getElementById('customer-id').value,
+    foodtype:foodtype
+}
+console.log("report",payload);
 
 $.ajax({
     type: "POST",
@@ -957,147 +848,69 @@ $.ajax({
     data: JSON.stringify(payload),
     dataType: "json",
     success:function(response){
-        console.log("report response",response)
-
-        
-        let reporttable = document.querySelector('#report-table');
-        let report_thead = document.querySelector('.report_thead');
-        let report_tbody = document.querySelector('.report_tbody');
-
-        // Clear previous data
-        report_thead.innerHTML = "";
-        report_tbody.innerHTML = "";
-
-        // Check if response has data
-        if (!response.data || response.data.length === 0) {
-            alert("No data available");
-            return; // Exit if no data
-        }
-
-        let firstrecord = response.data[0];
-
-        // Define case-insensitive keys to exclude
-        let excludeKeys = ["customerid","billingnumber","statussno"];
-        let headers = Object.keys(firstrecord).filter(key => !excludeKeys.includes(key.toLowerCase()));
-
-        console.log(headers);
-
-        // Create table header row
-        let trhead = document.createElement('tr');
-        headers.forEach(itm => {
-            let th = document.createElement('th');
-            th.textContent = itm;
-            trhead.appendChild(th);
-        });
-
-        report_thead.appendChild(trhead);
-
-        // Populate table body with data
-        response.data.forEach(row => {
-            console.log("r",row);
-            let tr = document.createElement('tr');
-            headers.forEach(key => {
-                let td = document.createElement('td');
-                if(key === "Status"){
-                    let select = document.createElement("select");
-                    select.className = "orderstatus";
-                    if(foodtype === "" || row.StatusSno === "0" || row.StatusSno === "2"){
-                        select.disabled = true;
-                    }
-                    select.setAttribute("onchange", `updateStatus(this, '${row.CustomerID}', '${row.Mail}', '${row.Name}', '${row.OrderDate}')`);
-                    statusOptions.forEach(sts => {
-                        let option = document.createElement("option");
-
-                        option.value = sts.sno;
-                        option.textContent = sts.status;
-                        if (sts.status === row[key]) {
-                            option.selected = true;
-                        }
-                        select.appendChild(option);
-                    });
-
-                    td.appendChild(select);
+        console.log(response)
+        if(response.status === "Success"){
+            let reporttbody = document.querySelector('.report_tbody');
+            reporttbody.innerHTML = "";
+            response.data.forEach(dt =>{
+                // let bgclr = (dt.status === "2") ? "green" : "#F05050";
+                if(dt.CustomerID === null){
+                    alert("No Data Found");
+                    return "";
                 }
-                else{
-                    td.textContent = row[key] || '-'; // Fallback for missing values
-                }
-                tr.appendChild(td);
-               
-            });
-            report_tbody.appendChild(tr);
-        });
-
-
-        //body of report table
-        
-
-
-
-
-
-        // if(response.status === "Success"){
-        //     let reporttbody = document.querySelector('.report_tbody');
-        //     reporttbody.innerHTML = "";
-        //     console.log("value",document.querySelector('.foodtype').value)
-        //     response.data.forEach(dt =>{
-        //         // let bgclr = (dt.status === "2") ? "green" : "#F05050";
-        //         if(dt.CustomerID === null){
-        //             alert("No Data Found");
-        //             return "";
-        //         }
-        //         // let od = (periodicity === '1') ? dt.OrderDate : dt.OrderDate;
-        //         let filteredStatus = status.filter(sts => sts.sno !== "0");
+                // let od = (periodicity === '1') ? dt.OrderDate : dt.OrderDate;
+                let filteredStatus = status.filter(sts => sts.sno !== "0");
                 
-        //         let actualstatus = (!foodtype) ? `
-        //         <select class="orderstatus" 
-        //         onchange="updateStatus(this, '${dt.CustomerID}', '${dt.mail}', '${dt.name}', '${dt.OrderDate}')" disabled>
-        //         ${filteredStatus.map(sts => `
-        //             <option value="${sts.sno}" ${sts.status === dt.status ? 'selected' : ''}>
-        //                 ${sts.status}
-        //             </option>`).join('')}
-        //         </select>
-        //         `:
-        //         `
-        //         <select class="orderstatus" 
-        //         onchange="updateStatus(this, '${dt.CustomerID}', '${dt.mail}', '${dt.name}', '${dt.OrderDate}')">
-        //         ${filteredStatus.map(sts => `
-        //             <option value="${sts.sno}" ${sts.status === dt.status ? 'selected' : ''}>
-        //                 ${sts.status}
-        //             </option>`).join('')}
-        //         </select>
-        //         `;
+                let actualstatus = (!foodtype) ? `
+                <select class="orderstatus" 
+                onchange="updateStatus(this, '${dt.CustomerID}', '${dt.mail}', '${dt.name}', '${dt.OrderDate}')" disabled>
+                ${filteredStatus.map(sts => `
+                    <option value="${sts.sno}" ${sts.status === dt.status ? 'selected' : ''}>
+                        ${sts.status}
+                    </option>`).join('')}
+                </select>
+                `:
+                `
+                <select class="orderstatus" 
+                onchange="updateStatus(this, '${dt.CustomerID}', '${dt.mail}', '${dt.name}', '${dt.OrderDate}')">
+                ${filteredStatus.map(sts => `
+                    <option value="${sts.sno}" ${sts.status === dt.status ? 'selected' : ''}>
+                        ${sts.status}
+                    </option>`).join('')}
+                </select>
+                `;
 
-        //         let trow = document.createElement('tr');
-        //         // trow.style.backgroundColor = bgclr;
-        //         trow.innerHTML = `
+                let trow = document.createElement('tr');
+                // trow.style.backgroundColor = bgclr;
+                trow.innerHTML = `
                
-        //         <td class="cidtd" onmouseover="show_cid(this, '${dt.CustomerID}')"  onmouseout="hide_cid(this, '${dt.CustomerID}')">
-        //         ${dt.name}<br><span class="show_hide_cid">id:${dt.CustomerID}</span></td>
+                <td class="cidtd" onmouseover="show_cid(this, '${dt.CustomerID}')"  onmouseout="hide_cid(this, '${dt.CustomerID}')">
+                ${dt.name}<br><span class="show_hide_cid">id:${dt.CustomerID}</span></td>
 
-        //         <td>${dt.DeliveryNumber}</td>
+                <td>${dt.DeliveryNumber}</td>
 
-        //         <td class="biltd" onmouseover="show_num(this, '${dt.BillingNumber}')"  onmouseout="hide_num(this, '${dt.BillingNumber}')">
-        //         ${dt.mail}<br/><span class="show_hide_num">BillingNumber:<br/>${dt.BillingNumber}</span></td>
-        //         <td>${dt.OrderDate}</td>
+                <td class="biltd" onmouseover="show_num(this, '${dt.BillingNumber}')"  onmouseout="hide_num(this, '${dt.BillingNumber}')">
+                ${dt.mail}<br/><span class="show_hide_num">BillingNumber:<br/>${dt.BillingNumber}</span></td>
+                <td>${dt.OrderDate}</td>
               
-        //             <td>${dt.breakfast}</td>
-        //             <td>${dt.lunch}</td>
-        //                 <td>${dt.dinner}</td>
-        //                 <td>${dt.totalamount}</td>
-        //                 <td>${actualstatus}</td>
-        //                 <td class="icon-links">
-        //                         <a href="https://wa.me/${dt.BillingNumber}" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp" style="color: green;"></i></a>
-        //                         <a href="mailto:${dt.mail}" target="_blank" title="Email"><i class="fas fa-envelope" style="color: blue;"></i></a>
-        //                     </td>
-        //         `
-        //         reporttbody.appendChild(trow);
-        //      })
-        // }
-        // else{
-        //     alert("No Data Found")
-        //     let reporttbody = document.querySelector('.report_tbody');
-        //     reporttbody.innerHTML = "";
-        // }
+                    <td>${dt.breakfast}</td>
+                    <td>${dt.lunch}</td>
+                        <td>${dt.dinner}</td>
+                        <td>${dt.totalamount}</td>
+                        <td>${actualstatus}</td>
+                        <td class="icon-links">
+                                <a href="https://wa.me/${dt.BillingNumber}" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp" style="color: green;"></i></a>
+                                <a href="mailto:${dt.mail}" target="_blank" title="Email"><i class="fas fa-envelope" style="color: blue;"></i></a>
+                            </td>
+                `
+                reporttbody.appendChild(trow);
+             })
+        }
+        else{
+            alert("No Data Found")
+            let reporttbody = document.querySelector('.report_tbody');
+            reporttbody.innerHTML = "";
+        }
     }
     ,
     error:function(err){
@@ -1231,21 +1044,10 @@ $.ajax({
     data: JSON.stringify(payload),
     dataType: "json",
     success:function(response){
-       let statusop = document.querySelector('.status')
-       response.data.forEach(st=>{
-        statusOptions.push({
-            sno:st.sno,
-            status:st.status
-        })
-        let options = document.createElement('option');
-        options.text = st.status;
-        options.value = st.sno
-        statusop.appendChild(options);
-       })
+       status = response.data;
     },
     error:function(err){
         console.log(err);
-        alert("Something wrong in loading status")
     }
 
 })
