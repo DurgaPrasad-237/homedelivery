@@ -138,8 +138,7 @@
                                         <label for="category">Food Type:</label>
                                         <select id="category" class="category" onchange="loadsubcategory();loadFoodPrices(true);hidetab()">
                                             <option value="">Select Type</option>
-                                            <!-- <option value="daily">Daily</option>
-                                            <option value="monthly">Monthly</option> -->
+
                                         </select>
 
                                         <label for="sub_item">Category:</label>
@@ -333,66 +332,6 @@
                         <div class="schedule_menu_list">
 
                         </div>
-                        <!-- <div class="schedulingboxes">
-                            <h3>Break Fast</h3>
-                            <div class="tdybox">
-                                <p><b>Today</b></p>
-                                <input type="date" id="schtdydate" readonly>
-                                <input type="text" id="schtdbfitem" readonly>
-                            </div>
-                            <div class="tmrbox">
-                                <p><b>Tomorrow</b></p>
-                                <input type="date" id="schtmdydate" readonly>
-                                <select class="subcategory" onchange="loadcatitems()">
-
-                                </select>
-                                <select class="tmbfitems">
-
-                                </select>
-                                <button onclick="upddatetmitem(this,1)" class="btnbftmr">Save</button>
-                            </div>
-
-                        </div> -->
-                        <!-- 
-                        <div class="schedulingboxes">
-                            <h3>Lunch</h3>
-                            <div class="tdybox">
-                                <p><b>Today</b></p>
-                                <input type="date" id="schtdydate" readonly>
-                                <input type="text" id="schtdlunitem" readonly>
-                            </div>
-                            <div class="tmrbox">
-                                <p><b>Tomorrow</b></p>
-                                <input type="date" id="schtmdydate" readonly>
-                                <select class="lunchsubcategory" onchange="loadLunchCategoryItems()">
-
-                                </select>
-                                <select class="tmlunitems">
-
-                                </select>
-                                <button onclick="upddatetmitem(this,2)" class="btnluntmr">Save</button>
-                            </div>
-                        </div> -->
-
-                        <!-- <div class="schedulingboxes">
-                            <h3>Dinner</h3>
-                            <div class="tdybox">
-                                <p><b>Today</b></p>
-                                <input type="date" id="schtdydate" readonly>
-                                <input type="text" id="schtddinitem" readonly>
-                            </div>
-                            <div class="tmrbox">
-                                <p><b>Tomorrow</b></p>
-                                <input type="date" id="schtmdydate" readonly>
-                                <select class="dinnersubcategory" onchange="loadDinnerCategoryItems()">
-
-                                </select>
-                                <select class="tmdinitems">
-
-                                </select>
-                                <button onclick="upddatetmitem(this,3)" class="btndintmr">Save</button>
-                            </div>
-                        </div> -->
                     </div>
                 </div>
                 <div id="delivery-add" class="container">
@@ -400,7 +339,7 @@
     <form id="deliveryForm">
         <div class="form-group-add">
             <label for="name">Name:</label>
-            <input type="text" oninput="validateNameInput(this)" id="name" maxlength="30" name="name" placeholder="Enter your name" required>
+            <input type="text" oninput="validateNameInput(this)" id="name" name="name" placeholder="Enter your name" required>
         </div>
         <div class="form-group-add">
             <label for="contact">Contact:</label>
@@ -1680,18 +1619,50 @@
 
 
         // Function to toggle sections with active class
-        function toggleSection(sectionId, element) {
-            const sections = ['prices-content', 'items-menu', 'items-menu-content', 'sub-items-menu-content', 'scheduling-content', 'delivery-scheduling', 'delivery-add'];
-            sections.forEach(id => {
+        function toggleSection(sectionId, element) { 
+    const sections = ['prices-content', 'items-menu', 'items-menu-content', 'sub-items-menu-content', 'scheduling-content', 'delivery-scheduling', 'delivery-add'];
+    
+    sections.forEach(id => {
+        const section = document.getElementById(id);
+        
+        // Reset the section (e.g., clear inputs, uncheck checkboxes, reset scroll)
+        resetSection(section);
+        
+        // Display the current section, hide others
+        section.style.display = (id === sectionId) ? 'block' : 'none';
+    });
 
-                document.getElementById(id).style.display = (id === sectionId) ? 'block' : 'none';
-            });
+    // Active sidebar item
+    document.querySelectorAll('.side-container ul li').forEach(li => li.classList.remove('active'));
+    element.classList.add('active');
+}
 
-            // Active sidebar item
-            document.querySelectorAll('.side-container ul li').forEach(li => li.classList.remove('active'));
-            element.classList.add('active');
+function resetSection(section) {
+    if (!section) return;
 
+    // Clear input fields
+    section.querySelectorAll('input').forEach(input => {
+        if (input.type === 'checkbox' || input.type === 'radio') {
+            input.checked = false;
+        } else {
+            input.value = '';
         }
+    });
+
+    // Reset select elements
+    section.querySelectorAll('select').forEach(select => {
+        select.selectedIndex = 0;
+    });
+
+    // Clear textareas
+    section.querySelectorAll('textarea').forEach(textarea => {
+        textarea.value = '';
+    });
+
+    // Reset scroll position
+    section.scrollTop = 0;
+}
+
 
         // Reset form fields
         document.addEventListener("DOMContentLoaded", function() {
@@ -1909,7 +1880,7 @@
                 activity: currentActivity,
                 load: "activityStatusChange"
             };
-
+            status = ( currentActivity  === 1) ? "deactivated" : "activated";
             $.ajax({
                 type: "POST",
                 url: "./webservices/fooddetails1.php",
@@ -1918,7 +1889,7 @@
                 success: function(response) {
 
                     if (response.status === "success") {
-
+                        alert(`Item is ${status}`);
                         loadItemsByCategory(); // Refresh the list after update
                     } else {
                         alert("Failed to change status: " + response.msg);
@@ -1954,7 +1925,7 @@
                             dropdown.appendChild(option);
                         });
                     } else {
-                        dropdown.innerHTML = "<option disabled>No Subcategories Found</option>";
+                        dropdown.innerHTML = "<option disabled></option>";
                     }
                 },
                 error: function(err) {
@@ -2026,9 +1997,10 @@
 
                     if (response.data && response.data.length > 0) {
                         response.data.forEach(item => {
+                          
                             // Define activity label based on activity status (you can adjust logic)
-                            const activityLabel = item.activity === 1 ? "Deactivate" : "Activate";
-
+                            const activityLabel = item.activity == 1 ? "Deactivate" : "Activate";
+                           console.log("activityyyyyyy",activityLabel);
                             const row = `<tr>
                         <td>${item.ItemName}</td>
                         <td>${item.Price}</td>
@@ -2191,8 +2163,10 @@
                 sno: sno,
                 activity: currentActivity,
                 load: "activityStatusChangei"
+
             };
 
+           status = ( currentActivity  === 1) ? "deactivated" : "activated";
             console.log(payload);
             $.ajax({
                 type: "POST",
@@ -2203,7 +2177,9 @@
 
                     if (response.status === "success") {
 
+                        alert(`Item is ${status}`);
                         loadItemsByCategory1(); // Refresh the list after update
+                      
                     } else {
                         alert("Failed to change status: " + response.msg);
                     }

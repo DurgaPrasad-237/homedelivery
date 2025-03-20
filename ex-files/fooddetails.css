@@ -756,6 +756,7 @@ background-color: green;
     border-collapse: collapse;
 }
 
+
 .lun_table1 th,
 .lun_table1 td {
     padding: 10px;
@@ -1133,10 +1134,15 @@ background-color: green;
 }
 
 .lun_table1 thead {
-    background-color: #F3681E;
+    background-color: #F3681E; 
     color: white;
     font-weight: bold;
+    position: sticky;
+    top: 0; /* Keep it at the top */
+    z-index: 1; /* Ensure it stays above other content */
 }
+
+
 
 .lun_table1 tbody tr:nth-child(odd) {
     background-color: #f9f9f9;

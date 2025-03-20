@@ -141,9 +141,6 @@ else if($load == "updateSubcategory"){
 else if($load == "activityStatusChange"){
     activityStatusChange($conn);
 }
-else if($load == "changeActivity"){
-    changeActivity($conn);
-}
 else if($load == "updateitemname"){
     updateitemname($conn);
 }
@@ -373,19 +370,6 @@ function updateitem($conn){
         $jsonresponse = array('code' => '200', 'status' => $type);
         echo json_encode($jsonresponse);
     }
-}
-function changeActivity($conn) {
-    global $sno, $activity;
-
-    $updatequery = "UPDATE foodtype SET activity = '$activity' WHERE sno = '$sno'";
-    $resultquery = setData($conn, $updatequery);
-
-    if ($resultquery) {
-        $jsonresponse = array('code' => '200', 'status' => 'Activity updated successfully');
-    } else {
-        $jsonresponse = array('code' => '500', 'status' => 'Failed to update activity');
-    }
-    echo json_encode($jsonresponse);
 }
 
 function loaditem($conn){
@@ -1029,7 +1013,7 @@ function loadItemsByCategory1($conn) {
 }
 // Function to load items for item menu screen
 function loadfoodcategory1($conn) {
-    $selectQuery = "SELECT * FROM foodtype ORDER BY sno ASC";
+    $selectQuery = "SELECT * FROM foodtype  WHERE activity = 1 ORDER BY sno ASC";
     $resultquery = getdata($conn, $selectQuery);
 
     if (count($resultquery) > 0) {
@@ -1043,13 +1027,13 @@ function loadfoodcategory1($conn) {
 //  for item menu screen
 function loadsubcategory1($conn, $foodtype) {
     $foodtype = mysqli_real_escape_string($conn, $foodtype);
-    $selectQuery = "SELECT sno, subcategory,activity FROM subcategory WHERE foodtype = '$foodtype' ORDER BY sno ASC";
+    $selectQuery = "SELECT sno, subcategory,activity FROM subcategory WHERE foodtype = '$foodtype' AND activity = 1 ORDER BY sno ASC  ";
     $resultquery = getdata($conn, $selectQuery);
 
     if (count($resultquery) > 0) {
         $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resultquery);
     } else {
-        $jsonresponse = array('code' => '200', 'status' => 'error', 'message' => 'No subcategory found for this food type');
+        $jsonresponse = array('code' => '200', 'status' => 'error', 'message' => '');
     }
     echo json_encode($jsonresponse);
 }
@@ -1063,7 +1047,7 @@ function loadItemsByCategory($conn) {
     $foodtype = $conn->real_escape_string($input["category"] ?? "");
 
     // Query to fetch items based on category
-    $query = "SELECT SNO, subcategory,activity FROM subcategory WHERE foodtype = '$foodtype' ORDER BY SNO ASC;";
+    $query = "SELECT SNO, subcategory,activity FROM subcategory WHERE foodtype = '$foodtype'  ORDER BY SNO ASC;";
     $result = $conn->query($query);
 
     $data = [];
@@ -1184,7 +1168,7 @@ function activityStatusChange($conn){
 function loadsubcategory($conn)
 {
     global $category;
-    $selectQuery = "SELECT * from  subcategory WHERE foodtype = '$category' ORDER BY sno ASC;";
+    $selectQuery = "SELECT * from  subcategory WHERE foodtype = '$category' AND activity = 1 ORDER BY sno ASC";
     $resultquery = getdata($conn, $selectQuery);
 
     if (count($resultquery) > 0) 
@@ -1202,7 +1186,7 @@ function loadsubcategory($conn)
 //  for category menu screen
 function  loadfoodcategory($conn)
 {
-    $selectQuery = "SELECT * from  foodtype ORDER BY sno ASC";
+    $selectQuery = "SELECT * FROM foodtype  WHERE activity = 1 ORDER BY sno ASC";
     $resultquery = getdata($conn, $selectQuery);
 
     if (count($resultquery) > 0) 
@@ -1504,7 +1488,7 @@ function setBreakFast($conn){
 //load food items by category 
 function loadfdby_category($conn){
     global $sbcategory;
-    $selectquery = "SELECT * FROM `fooddetails` WHERE subcategory = '$sbcategory'";
+    $selectquery = "SELECT * FROM `fooddetails` WHERE subcategory = '$sbcategory' AND activity = 1 ";
     $resultsql = getData($conn,$selectquery);
     if(count($resultsql) > 0){
         $jsonresponse = array('code'=>'200','status'=>'success','data'=>$resultsql);
@@ -1691,7 +1675,7 @@ function getcom($conn) {
 }
 
 function loadfoodtype($conn){
-    $selectquery = "SELECT * FROM `foodtype` WHERE type != 'dinner'";
+    $selectquery = "SELECT * FROM `foodtype` WHERE type!= 'Dinner'";
     $resultquery = getData($conn,$selectquery);
 
     if(count($resultquery) > 0){
@@ -1727,7 +1711,7 @@ function updatecom($conn, $category, $OptionID, $ItemName, $Price, $from_date, $
 
 // foodtype for ds screen today
 function loadfoodtypeds($conn) {
-    $selectQuery = "SELECT * FROM foodtype ORDER BY sno ASC";
+    $selectQuery = "SELECT * FROM foodtype  WHERE activity = 1 ORDER BY sno ASC";
     $resultquery = getdata($conn, $selectQuery);
 
     if (count($resultquery) > 0) {
@@ -1740,7 +1724,7 @@ function loadfoodtypeds($conn) {
 
 // foodtype for ds screen today
 function loadfoodtypesds($conn) {
-    $selectQuery = "SELECT * FROM foodtype ORDER BY sno ASC";
+    $selectQuery = "SELECT * FROM foodtype  WHERE activity = 1 ORDER BY sno ASC";
     $resultquery = getdata($conn, $selectQuery);
 
     if (count($resultquery) > 0) {

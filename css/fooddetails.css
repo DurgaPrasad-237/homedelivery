@@ -1136,6 +1136,9 @@ background-color: green;
     background-color: #F3681E;
     color: white;
     font-weight: bold;
+    position: sticky;
+    top: 0; /* Keep it at the top */
+    z-index: 1; /* Ensure it stays above other content */
 }
 
 .lun_table1 tbody tr:nth-child(odd) {

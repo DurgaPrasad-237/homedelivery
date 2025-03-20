@@ -578,7 +578,7 @@ $selectsql = "
 //load foodtype
 function loadfoodtype($conn){
 
-    $selectquery = "SELECT * FROM `foodtype`";
+    $selectquery = "SELECT * FROM `foodtype` Where activity = 1";
     $resultquery = getData($conn,$selectquery);
 
     if(count($resultquery) > 0){

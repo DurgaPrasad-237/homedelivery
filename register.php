@@ -52,7 +52,7 @@
                 </div>
                 <div>
                     <label>Mobile Number:</label>
-                    <input id="da_mobile_number" placeholder="Mobile Number" disabled/>
+                    <input id="da_mobile_number" maxlength="10" oninput="validateRegisterPhoneNumber(this)" placeholder="Mobile Number" disabled/>
                 </div>
                 <div>
                     <label>Email</label>
@@ -61,19 +61,19 @@
                 <p>Address</p>
                 <div>
                     <label>Flat No:</label>
-                    <input id="da_flatno" placeholder="Flatno/houseno" />
+                    <input id="da_flatno" maxlength="14" type="text" placeholder="Flatno/houseno" oninput="validFlatNo(this)"/>
                 </div>
                 <div>
                     <label>Area</label>
-                    <input id="da_area" placeholder="Area" />
+                    <input maxlength="30" id="da_area" placeholder="Area" />
                 </div>
                 <div>
                     <label>Street</label>
-                    <input id="da_street" placeholder="Street" />
+                    <input maxlength="25" id="da_street" placeholder="Street" />
                 </div>
                 <div>
                     <label>LandMark</label>
-                    <input id="da_landmark" placeholder="Landmark" />
+                    <input maxlength="25" id="da_landmark" placeholder="Landmark" />
                 </div>
                 <div>
                     <label>Delivery Ph</label>
@@ -139,10 +139,10 @@
                             </select>
                         </div> -->
                         <div class="reg_address">
-                            <input placeholder="flatno/houseno" class="regaddress_input" id="regflat">
-                            <input placeholder="Street" class="regaddress_input" id="regstreet">
-                            <input placeholder="Area" class="regaddress_input" id="regarea">
-                            <input placeholder="LandMark" class="regaddress_input" id="reglandmark" maxlength="15" />
+                            <input placeholder="flatno/houseno" maxlength="15" class="regaddress_input" id="regflat" oninput="validFlatNo(this)">
+                            <input placeholder="Street" maxlength="25" class="regaddress_input" id="regstreet">
+                            <input placeholder="Area" maxlength="30" class="regaddress_input" id="regarea">
+                            <input placeholder="LandMark" class="regaddress_input" id="reglandmark" maxlength="25" />
                             <input oninput="validateRegisterPhoneNumber(this)" type="text" maxlength="10" placeholder="Delivery_Mobile" class="regaddress_input" id="regdmobile">
                             <input placeholder="Address link" class="regaddress_input" id="reglink">
                             <!-- <input placeholder="Address link" class="regaddress_input"> -->
@@ -187,10 +187,10 @@
                     <div class="delivery_area" id="delivery_area">
                         <h3>Delivery Address <span><i class="fa-solid fa-plus" onclick="addnewDelivery()" title="Add new Address"></i></span></h3>
                         <div class="address_input_area">
-                            <input placeholder="flatno/houseno" class="address_input" id="address_flat" disabled>
-                            <input placeholder="Street" class="address_input" id="address_street" disabled>
-                            <input placeholder="Area" class="address_input" id="address_area" disabled>
-                            <input placeholder="Landmark" class="address_input" id="address_landmark" disabled>
+                            <input placeholder="flatno/houseno" maxlength="15" class="address_input" id="address_flat" disabled oninput="validFlatNo(this)">
+                            <input placeholder="Street" maxlength="25" class="address_input" id="address_street" disabled>
+                            <input placeholder="Area" maxlength="30" class="address_input" id="address_area" disabled>
+                            <input placeholder="Landmark" maxlength="25" class="address_input" id="address_landmark" disabled>
                             <input type="text" oninput="validateRegisterPhoneNumber(this)"  placeholder="Mobile" class="address_input" id="address_mobile" disabled>
                             <input placeholder="Address link" class="address_input" id="address_link" disabled>
                             <button class="editbtn" id="deditbtn">Edit</button>
@@ -206,10 +206,10 @@
                             <p class="sadtext">Same as Delivery Address</p>
                         </div>
                         <div class="address_input_area">
-                            <input placeholder="flatno/houseno" class="address_input" id="billing_flat" disabled>
-                            <input placeholder="Street" class="address_input" id="billing_street" disabled>
-                            <input placeholder="Area" class="address_input" id="billing_area" disabled>
-                            <input placeholder="Landmark" class="address_input" id="billing_landmark" disabled>
+                            <input placeholder="flatno/houseno" maxlength="15" class="address_input" id="billing_flat" disabled oninput="validFlatNo(this)">
+                            <input placeholder="Street" maxlength="25" class="address_input" id="billing_street" disabled>
+                            <input placeholder="Area" maxlength="30" class="address_input" id="billing_area" disabled>
+                            <input placeholder="Landmark" maxlength="30" class="address_input" id="billing_landmark" disabled>
                             <input type="text" oninput="validateRegisterPhoneNumber(this)"  placeholder="Mobile" class="address_input" id="billing_mobile" disabled>
                             <input placeholder="Address link" class="address_input" id="billing_link" disabled>
                             <button class="editbtn" id="beditbtn">Edit</button>

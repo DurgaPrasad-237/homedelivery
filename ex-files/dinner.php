@@ -562,99 +562,6 @@ function fetchheader($conn)
     echo json_encode($jsonresponse);
 }
 
-
-// function setitemsb($conn)
-// {
-//     global $cid, $ordertype, $totalamount, $quantity, $dates, $foodid, $day;
-
-//     if (empty($dates)) {
-//         $jsonresponse = array('code' => '400', 'status' => 'error', 'message' => "Date range is missing");
-//         echo json_encode($jsonresponse);
-//         return;
-//     }
-
-//     $existingDates = [];
-//     $newDates = [];
-//     $insertedDates = [];
-
-//     // Check for existing dates
-//     foreach ($dates as $date) {
-//         $checkquery = "SELECT * FROM `orders` WHERE `CustomerID` = '$cid' AND `OrderDate` = '$date' AND `FoodTypeID` = '$ordertype' AND `Quantity`<> 0";
-//         $resultselectquery = getData($conn, $checkquery);
-//         if (count($resultselectquery) > 0) {
-//             $existingDates[] = $date;
-//         } else {
-//             $newDates[] = $date;
-//         }
-//     }
-
-//     // Insert new records
-//     foreach ($newDates as $date) {
-//         $day = date('l', strtotime($date));
-//         $query = "SELECT f.price AS Price, f.fd_oid AS OptionID
-//                     FROM fooddetails_log f
-//                     WHERE f.fd_oid = (
-//                         SELECT sno 
-//                         FROM week 
-//                         WHERE day = '$day'
-//                     )
-//                     AND f.fromdate = (
-//                         SELECT MAX(fromdate)
-//                         FROM fooddetails_log
-//                         WHERE fd_oid = (
-//                             SELECT sno 
-//                             FROM week 
-//                             WHERE day = '$day'
-//                         )
-//                         AND fromdate <= '$date'
-//                     );
-//                     ";
-//         $result = $conn->query($query);
-//         if ($result && $result->num_rows > 0) {
-//             $row = $result->fetch_assoc();
-//             $totalamount = $row['Price'];
-//             $foodid = $row['OptionID'];
-//         } else {
-//             $totalamount = 0; // Default to 0 if no price is found
-//         }
-//         $orderidquery = "SELECT COALESCE(MAX(OrderID),0)+1 AS OrderID FROM `orders`";
-//         $orderidResult = $conn->query($orderidquery);
-//         if ($orderidResult && $orderidResult->num_rows > 0) {
-//             $row = $orderidResult->fetch_assoc();
-//             $orderid = $row['OrderID'];
-//         }
-
-//         $insertquery = "INSERT INTO `orders` (`OrderID`, `CustomerID`, `FoodTypeID`, `TotalAmount`, `Quantity`, `OrderDate`, `Status`, `CategoryID`, `FoodID`) 
-//                         VALUES ('$orderid','$cid', '$ordertype', '" . ($totalamount * $quantity) . "', '$quantity', '$date', '1', '1', '$foodid')";
-//         $insertResult = $conn->query($insertquery);
-
-//         if ($conn->affected_rows > 0) {
-//             $logQuery = "INSERT INTO `logs`(`CustomerID`, `OrderID`, `Quantity`, `Price`, `FoodType`) 
-//                          VALUES ('$cid', '$orderid', '$quantity', '" . ($totalamount * $quantity) . "', '$ordertype')";
-//             setData($conn, $logQuery);
-//             $result = payments($cid,$date,$conn);
-
-//             $insertedDates[] = $date;
-//         }
-//     }
-
-//     // Prepare single JSON response
-//     $responseMessage = '';
-//     if (!empty($existingDates)) {
-//         $responseMessage .= 'Records already exist for the following dates: ' . implode(', ', $existingDates) . '. ';
-//     }
-//     if (!empty($insertedDates)) {
-//         $responseMessage .= 'Order placed successfully for the following dates: ' . implode(', ', $insertedDates) . '.';
-//     }
-
-//     $jsonresponse = array(
-//         'code' => !empty($insertedDates) ? '201' : '200',
-//         'status' => !empty($insertedDates) ? 'success' : 'partial_success',
-//         'message' => $responseMessage
-//     );
-
-//     echo json_encode($jsonresponse);
-// }
 function setitemsb($conn)
 {
     global $cid, $ordertype, $dates, $orderid, $totalamount;
@@ -1461,7 +1368,7 @@ function getall($conn)
     global $day, $fromdate,$cid;
     $day = date('l', strtotime($fromdate));
     $selectQuery = "SELECT 
-    f2.ItemName AS ItemName, 
+    f.item_name AS ItemName, 
     f.price AS Price, 
     f.fd_oid AS OptionID, 
     f2.subcategory as subcategory,
@@ -1476,14 +1383,13 @@ function getall($conn)
     AND o.OrderDate = '$fromdate'  
     AND o.CustomerID = '$cid'
     WHERE 
-    f2.subcategory = '16' 
+    f2.subcategory = '6' 
     AND f.fromdate = (
         SELECT MAX(f3.fromdate) 
         FROM fooddetails_log f3 
         WHERE f3.fd_oid = f.fd_oid 
         AND f3.fromdate <= '$fromdate'
     )
-    AND f2.activity <> 0
     GROUP BY 
     f.item_name, f.price, f.fd_oid
     ORDER BY 

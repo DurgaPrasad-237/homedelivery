@@ -1936,7 +1936,7 @@ function updateDisplay(gpd, category, item, selecteditemid) {
                 activity: currentActivity,
                 load: "activityStatusChange"
             };
-
+            status = ( currentActivity  === 1) ? "deactivated" : "activated";
             $.ajax({
                 type: "POST",
                 url: "./webservices/fooddetails1.php",
@@ -1945,7 +1945,7 @@ function updateDisplay(gpd, category, item, selecteditemid) {
                 success: function(response) {
 
                     if (response.status === "success") {
-
+                        alert(`Item is ${status}`);
                         loadItemsByCategory(); // Refresh the list after update
                     } else {
                         alert("Failed to change status: " + response.msg);
@@ -1981,7 +1981,7 @@ function updateDisplay(gpd, category, item, selecteditemid) {
                             dropdown.appendChild(option);
                         });
                     } else {
-                        dropdown.innerHTML = "<option disabled>No Subcategories Found</option>";
+                        dropdown.innerHTML = "<option disabled></option>";
                     }
                 },
                 error: function(err) {
@@ -2054,8 +2054,8 @@ function updateDisplay(gpd, category, item, selecteditemid) {
                     if (response.data && response.data.length > 0) {
                         response.data.forEach(item => {
                             // Define activity label based on activity status (you can adjust logic)
-                            const activityLabel = item.activity === 1 ? "Deactivate" : "Activate";
-
+                            const activityLabel = item.activity == 1 ? "Deactivate" : "Activate";
+                           console.log("activityyyyyyy",activityLabel);
                             const row = `<tr>
                         <td>${item.ItemName}</td>
                         <td>${item.Price}</td>
@@ -2220,6 +2220,7 @@ function updateDisplay(gpd, category, item, selecteditemid) {
                 load: "activityStatusChangei"
             };
 
+           status = ( currentActivity  === 1) ? "deactivated" : "activated";
             console.log(payload);
             $.ajax({
                 type: "POST",
@@ -2230,6 +2231,7 @@ function updateDisplay(gpd, category, item, selecteditemid) {
 
                     if (response.status === "success") {
 
+                        alert(`Item is ${status}`);
                         loadItemsByCategory1(); // Refresh the list after update
                     } else {
                         alert("Failed to change status: " + response.msg);
@@ -2600,6 +2602,7 @@ function loadfoodtypeds() {
                     data: JSON.stringify(payload),
                     dataType: "json",
                     success: function(response) {
+                        console.log("fds", response.data)
                         let contactDropdown = document.getElementById("contact-tdy");
 
                         // Clear the dropdown before populating it

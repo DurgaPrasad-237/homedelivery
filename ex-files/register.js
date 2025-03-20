@@ -54,17 +54,9 @@ $(document).ready(intialload())
 
 
 function validateRegisterPhoneNumber(input){
-    const allowedPattern = /^[A-Za-z0-9\/-]*$/;
-
-    // Check if the current input value matches the allowed pattern
-    if (!allowedPattern.test(input.value)) {
-      // If not, remove the last entered character
-      input.value = input.value.slice(0, -1);
-      // Display an error message
-      document.getElementById('errorMsg').textContent = "Only letters, numbers, '/', and '-' are allowed.";
-    } else {
-      // Clear the error message if the input is valid
-      document.getElementById('errorMsg').textContent = "";
+    input.value = input.value.replace(/[^0-9]/g, ''); // Allow only numbers
+    if (!/^[6-9]/.test(input.value)) {
+        input.value = ""; // Clear if the first digit is not 6-9
     }
 }
 
@@ -76,11 +68,6 @@ function validateRegisterEmail(input) {
     } else {
         input.style.borderColor = ""; // Reset if valid
     }
-}
-//valid flat input
-function validFlatNo(input) {
-    input.value = input.value.replace(/[^A-Za-z0-9\/-]/g, '');
-    
 }
 
 sm.addEventListener("mousedown",(e)=>{  //capture the mouse position inside the box
@@ -578,16 +565,16 @@ register.addEventListener('click', () => {
 //function for register
 submit.addEventListener('click', () => {
    
-    if (!customername.value || !primaryphone.value || !regflat.value || !regstreet.value ||
+    if (!customername.value || !primaryphone.value || !email.value || !regflat.value || !regstreet.value ||
         !regarea.value || !reglink.value || !regmobile.value ||!reglandmark.value
     ) {
         alert("fill the required fields")
         return "";
     }
-    // if (!validateEmail(email.value)) {
-    //     alert("not a valid email")
-    //     return "";
-    // }
+    if (!validateEmail(email.value)) {
+        alert("not a valid email")
+        return "";
+    }
     if (!validatePhoneNumber(primaryphone.value)) {
         alert("not a valid phone number")
         return "";
@@ -820,7 +807,7 @@ function fetchbyname(sinput) {
                         intialdeliveryaddress = cust.DeliveryAddress + "," + cust.Phone3 + "," + cust.Map;
                         console.log(cust.DeliveryAddress);
                         if (cust.BillingAddress !== null) {
-                            // const baddressarray = cust.BillingAddress.split(",");
+                            const baddressarray = cust.BillingAddress.split(",");
                             document.getElementById("billing_flat").value = cust.Billing_Flatno
                             document.getElementById("billing_street").value = cust.Billing_Street
                             document.getElementById("billing_area").value = cust.Billing_Area
@@ -846,7 +833,7 @@ function fetchbyname(sinput) {
 
                         if (cust.DeliveryAddress !== null) {
                             console.log(cust.DeliveryAddress)
-                            // const daddressarray = cust.DeliveryAddress.split(",");
+                            const daddressarray = cust.DeliveryAddress.split(",");
                             document.getElementById("address_flat").value = cust.Delivery_Flatno
                             document.getElementById("address_street").value = cust.Delivery_Street
                             document.getElementById("address_area").value = cust.Delivery_Area
@@ -944,7 +931,7 @@ function fetchbymobile(sinput) {
                         intialdeliveryaddress = cust.DeliveryAddress + "," + cust.Phone3 + "," + cust.Map;
                         console.log(cust.DeliveryAddress);
                         if (cust.BillingAddress !== null) {
-                            // const baddressarray = cust.BillingAddress.split(",");
+                            const baddressarray = cust.BillingAddress.split(",");
                             document.getElementById("billing_flat").value = cust.Billing_Flatno
                             document.getElementById("billing_street").value = cust.Billing_Street
                             document.getElementById("billing_area").value = cust.Billing_Area
@@ -969,7 +956,7 @@ function fetchbymobile(sinput) {
 
                         if (cust.DeliveryAddress !== null) {
                             console.log(cust.DeliveryAddress)
-                            // const daddressarray = cust.DeliveryAddress.split(",");
+                            const daddressarray = cust.DeliveryAddress.split(",");
                             document.getElementById("address_flat").value = cust.Delivery_Flatno
                             document.getElementById("address_street").value = cust.Delivery_Street
                             document.getElementById("address_area").value = cust.Delivery_Area
@@ -1127,8 +1114,8 @@ function addNewdelivery(){
         billingmobile: document.getElementById('billing_mobile').value,
         map: document.getElementById('da_link').value,
 
-        deliveryflatno:document.querySelector('#da_flatno').value,
-        deliverystreet:document.querySelector('#da_street').value ,
+        deliveryflatno:document.querySelector('#billing_flat').value,
+        deliverystreet:document.querySelector('#billing_street').value ,
         deliveryarea:document.querySelector('#da_area').value ,
         deliverylandmark: document.getElementById('da_landmark').value,
         billingflatno:document.querySelector('#billing_flat').value,
@@ -3070,27 +3057,40 @@ function openSummaryModal(event) {
 
 // }
 function closeSummaryModal(event) {
-    event.preventDefault();
-    // Hide the modal
-    
-    document.getElementById('summary-modal').style.display = 'none';
-    document.getElementById("breakfast-box-b").style.display = "none";
-    document.getElementById("lunch-box-b").style.display = "none";
-    document.getElementById("dinner-box-b").style.display = "none";
-    
-    let today = new Date().toISOString().split('T')[0];
-    
-    document.getElementById('from-date-b').value = today;
-    document.getElementById('to-date-b').value = today;
-    document.getElementById('from-date-l').value = today;
-    document.getElementById('to-date-l').value = today;
-    document.getElementById('from-date-d').value = today;
-    document.getElementById('to-date-d').value = today;
-    $('#breakfast-contain-b').hide();
-    $('#dinner-container-b').hide();
-    $('#lunch-options-containers').hide();
-    
-    
+event.preventDefault();
+// Hide the modal
+
+document.getElementById('summary-modal').style.display = 'none';
+document.getElementById('overlay').style.display = 'none';
+document.getElementById("breakfast-box-b").style.display = "none";
+document.getElementById("dinner-box-b").style.display = "none";
+
+let today = new Date().toISOString().split('T')[0];
+
+document.getElementById('from-date-b').value = today;
+document.getElementById('to-date-b').value = today;
+document.getElementById('from-date-l').value = today;
+document.getElementById('to-date-l').value = today;
+document.getElementById('from-date-d').value = today;
+document.getElementById('to-date-d').value = today;
+$('#breakfast-contain-b').hide();
+$('#dinner-container-b').hide();
+$('#lunch-options-containers').hide();
+const breakfastRadioBtn = document.querySelector('input[name="breakfast-category-b"][value="categoryb1b"]');
+if (breakfastRadioBtn) {
+breakfastRadioBtn.checked = false;  
+}
+
+const dinnerRadioBtn = document.querySelector('input[name="dinner-category-b"][value="categoryd1d"]');
+if (dinnerRadioBtn) {
+dinnerRadioBtn.checked = false; 
+}
+
+const lunchRadioBtn = document.querySelector('input[name="lunch-category"][value="category1"]');
+if (lunchRadioBtn) {
+    lunchRadioBtn.checked = false;  
+}
+
 }
 
 function showBreakfastB() {
