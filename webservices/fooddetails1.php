@@ -425,7 +425,7 @@ function loaditemsbysubcategory($conn){
     $sql = "select sb.subcategory,sb.SNO,ft.sno,ft.type,fd.OptionID,fd.ItemName from subcategory as sb
             join foodtype as ft on sb.foodtype = ft.sno
             join fooddetails as fd on sb.SNO = fd.subcategory
-            where fd.subcategory = $ssubcategory";
+            where fd.subcategory = $ssubcategory and fd.activity <> 0";
     $resultsql = getData($conn,$sql);
     if(count($resultsql) > 0){
         $jsonresponse = array('code' => '200', 'status' => 'success', 'data' => $resultsql);

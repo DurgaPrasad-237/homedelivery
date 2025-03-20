@@ -274,6 +274,7 @@ orderhistory.addEventListener('click',()=>{
             if (!sections[itm.type]) {
                 let sectionDiv = document.createElement('div');
                 sectionDiv.classList.add(`${itm.type}_list`);
+                sectionDiv.classList.add('order_item_list')
                 sectionDiv.innerHTML = `<h3>${itm.type.charAt(0).toUpperCase() + itm.type.slice(1)} <span class="${itm.type}_amount">0</span></h3>`;
                 
                 let tableHeader = document.createElement('div');
@@ -748,6 +749,16 @@ function monthly_summary(){
 document.querySelector('.sumamry_tabs').style.display = "none";
 document.querySelector('.payment_list').style.display = "none";
 document.querySelector('.food_list').style.display = "none";
+let totalpaid = document.querySelector('.totalpaid');
+let totapending = document.querySelector('.totapending');
+let totalamount = document.querySelector('.totalamount');
+totalpaid.textContent = 0;
+totapending.textContent = 0;
+totalamount.textContent = 0;
+let tp = 0;
+let tpen = 0;
+let ta = 0;
+
 
 var payload = {
     load:"loadpayments",
@@ -772,6 +783,15 @@ $.ajax({
             let s_tbody = document.querySelector('.s_tbody');
             s_tbody.innerHTML = "";
             response.data.forEach((dt)=>{
+                console.log("Data => paid_amount:", dt.paid_amount, "total_amount:", dt.total_amount);
+                const paid = Number(dt.paid_amount) || 0;
+                const total = Number(dt.total_amount) || 0;
+                
+                
+                tp += paid;
+                tpen += (total - paid);
+                ta += total;
+                console.log("tp",total - paid,typeof(total));
                
             let disable = (dt.total_amount - dt.paid_amount === 0) ? "disabled" : "enabled";
             let trow = document.createElement('tr');
@@ -798,6 +818,9 @@ $.ajax({
             `
             s_tbody.appendChild(trow);
         })
+        totalpaid.textContent = tp;
+        totapending.textContent = tpen;
+        totalamount.textContent = ta;
         }
         else{
             alert("No data")

@@ -104,6 +104,29 @@
 .cancel-btn:hover {
     background-color: #B02A37;
 }
+
+.selectedItemsParagraph {
+ 
+    width: 98%;
+    height: 5.5vh;
+    white-space: nowrap;      
+    display: flex;
+    flex-direction: column;
+    overflow:auto ;
+    align-items: center;
+    
+}
+
+.selectedItemsParagraph span {
+    margin-right: 10px;
+}
+.selectedItemsParagraph::-webkit-scrollbar{
+    display: none;
+}
+
+
+
+
     </style>
 </head>
 
@@ -877,6 +900,7 @@ function updateDisplay(gpd, category, item, selecteditemid) {
           
 
             let closestFditems = selectbutton.closest('div')?.querySelector('.fditems');
+            let itemname = closestFditems.options[closestFditems.selectedIndex].text;
 
             let closestsubcategory = selectbutton.closest('div')?.querySelector('.subcategory');
 
@@ -913,9 +937,9 @@ function updateDisplay(gpd, category, item, selecteditemid) {
             }
             else{
                 if(!closestFditems.value || closestFditems.value === " "){
-                alert("Item required")
-                return
-            }
+                    alert("Item required")
+                    return
+                }
 
                 if(!closestsubcategory.value || closestsubcategory.value === " "){
                     alert("sub category required")
@@ -924,9 +948,13 @@ function updateDisplay(gpd, category, item, selecteditemid) {
             }
 
 
-            let userResponse = confirm(`Items you want to add\n${selected_lunch_items.map(itm => `-${itm.item}`).join("\n")}`);
+            let userResponse = (foodtype === "lunch")? confirm(`Items you want to add\n${selected_lunch_items.map(itm => `-${itm.item}`).join("\n")}`):
+                                                     confirm(`Do you want to set the ${foodtype}: ${itemname}\nON: ${selecteddate.textContent}`);
 
             if(!userResponse){
+                closestsubcategory.value = " ";
+                closestFditems.value = " ";
+                closestFditems.disabled = true;
                 return;
             }
 

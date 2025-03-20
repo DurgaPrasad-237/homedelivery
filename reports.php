@@ -140,9 +140,9 @@
                                 <th>Billing Number</th>
                                 <th>From Date</th>
                                 <th>To Date</th>
-                                <th>Paid Amount</th>
-                                <th>Pending Amount</th>
-                                <th>Total Amount</th>
+                                <th class="totalpaidth">Paid Amount<br/><span class="totalpaid">0</span></th>
+                                <th class="totapendingth">Pending Amount<br/><span class="totapending">0</span></th>
+                                <th class="totalamountth">Total Amount<br/><span class="totalamount">0</span></th>
                                 <th>Related Y-M</th>
                                 <th>Edit Amount</th>
                                 <th></th>

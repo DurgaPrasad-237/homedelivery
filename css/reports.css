@@ -236,7 +236,7 @@ thead {
 
 .summary{
     background-color: #f4f4f4;
-    height:85vh;
+    height:87vh;
     display:none;   
 }
 .summary_head{
@@ -284,14 +284,14 @@ thead {
     transition: background-color 0.4s ease, color 0.4s ease;
 }
 .summary_table{
-    width:70%;
+    width:75%;
     height:100%;
     display:flex;
     flex-direction: column;
     padding:10px;
 }
 .view_summary_history{
-    width:30%;
+    width:25%;
     height:100%;
     padding:10px;
     background-color: #FFC857;
@@ -306,14 +306,15 @@ thead {
     margin-top: 5px;
 }
 .s_table th{
-    font-size: 10px;
+    font-size: 12px;
     background-color:#e4a300 ;
     color:#ffffff;
+  
 }
 .s_tbody td {
     word-wrap: break-word; 
     word-break: break-all; 
-    max-width: 150px;
+    max-width: auto;
     font-size: 12px;
     padding:4px;
 }
@@ -369,16 +370,21 @@ button{
     /* justify-content: center;
     align-items: center; */
 }
-.breakfast_list,.lunch_list,.dinner_list{
+.order_item_list{
     /* flex-direction: column;
     display:flex; */
     height:30vh;
     /* border:2px solid black; */
     overflow-y: auto;
-    font-size: 15px;
+    font-size: 12px;
     background-color: rgba(255, 255, 255, 0.5);
     padding-bottom:10px;
     
+}
+.totalpaidth,.totapendingth,.totalamountth{
+    width:50px;
+   
+   
 }
 .breakfast_list div, .lunch_list div, .dinner_list div{
     flex-direction: row;

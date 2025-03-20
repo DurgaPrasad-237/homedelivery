@@ -158,6 +158,16 @@ function loadOrdersforitems($conn, $data) {
                 $rice += $quantity;
             }
 
+            if (strpos($item_name, "meals") !== false && strpos($item_name, "meals/nc") === false) {
+                $meals += $quantity;
+                $curry += $quantity;
+                $pappu += $quantity;
+                $pachadi += $quantity;
+                $pulusu += $quantity;
+                $fry += $quantity;
+                $rice += $quantity;
+            }
+
             if (strpos($item_name, "curryset") !== false) {
                 $curryset += $quantity;
                 $curry += $quantity;
