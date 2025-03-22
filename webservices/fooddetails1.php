@@ -1212,7 +1212,7 @@ function  loadfoodcategory($conn)
     } 
     else 
     {
-        $jsonresponse = array('code' => '200' , 'status' => 'error' , 'message' => 'No foodtype found');
+        $jsonresponse = array('code' => '200' , 'status' => 'error' , 'message' => 'No foodtype found','data'=>'');
         echo json_encode($jsonresponse);
     }
 }

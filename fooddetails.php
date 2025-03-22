@@ -34,7 +34,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 400px;
-            margin: 70px 70px 70px 150px;
+            margin: 70px 70px 40px 150px;
         }
 
         h2 {
@@ -64,7 +64,7 @@
 
         label {
             display: block;
-            margin-bottom: 5px;
+           
             font-weight: bold;
         }
 
@@ -236,7 +236,7 @@
                     <div class="addlun">
                         <h3>Add Item</h3>
                         <div class="input_lun">
-                            <input type="text" id="category_name" placeholder="Enter category Name">
+                            <input type="text" maxlength="25" oninput="validateName(this)" id="category_name" placeholder="Enter category Name">
                             <button type="submit" id="addBtn" name="add" style="background-color: #28a745; color: white; border: none; padding: 10px 20px; cursor: pointer;">Save</button>
 
                             <button type="submit" id="updateBtn" name="update" style="display: none;  background-color: #ffc107;">Update </button>
@@ -275,7 +275,7 @@
                     <div class="addlun">
                         <h3>Add Item</h3>
                         <div class="input_lun">
-                            <input type="text" id="subcategory_name" placeholder="Enter Subcategory Name">
+                            <input type="text" maxlength="25" oninput="validateName(this)" id="subcategory_name" placeholder="Enter Subcategory Name">
                             <button type="submit" id="add" name="add">Save</button>
                             <button type="submit" id="update" name="add" style="display:none;">Update</button>
                             <button class="cnclbtn" style="display:none;background-color:red">Cancel</button>
@@ -320,7 +320,7 @@
                     <div class="add_lun1">
                         <h3>Add Sub Item</h3>
                         <div class="input_lun">
-                            <input type="text" id="item_name" placeholder="Enter Sub Item" maxlength="40">
+                            <input type="text" oninput="validateName(this)" id="item_name" placeholder="Enter Sub Item" maxlength="40">
                             <input type="number" id="item_number" placeholder="Enter price" maxlength="10">
                             <button type="submit" id="addi">Save</button>
                             <button type="submit" id="updatei" name="add" style="display:none;">Update</button>
@@ -427,16 +427,16 @@
         </div>
         <div class="form-group-add">
             <label for="Doorno">Door No.:</label>
-            <input type="text" oninput="validateDoorNumberInput(this)" id="Doorno" name="Doorno" placeholder="Enter your Doorno" />
+            <input type="text" oninput="validFlatNo(this)"  maxlength="30" id="Doorno" name="Doorno" placeholder="Enter your Doorno" />
             <span id="doornoError" style="color: red; font-size: 12px;"></span>
         </div>
         <div class="form-group-add">
             <label for="Street">Street:</label>
-            <input type="text" oninput="validateStreetAndAreaInput(this)" id="Street" name="Street" placeholder="Enter your Street" required>
+            <input type="text" oninput="validFlatNo(this)"  maxlength="30" id="Street" name="Street" placeholder="Enter your Street" required>
         </div>
         <div class="form-group-add">
             <label for="Area">Area:</label>
-            <input type="text" oninput="validateStreetAndAreaInput(this)" id="Area" name="Area" placeholder="Enter your Area" required>
+            <input type="text" oninput="validFlatNo(this)"  maxlength="30" id="Area" name="Area" placeholder="Enter your Area" required>
         </div>
 
         <div class="form-buttons">
@@ -1715,13 +1715,63 @@ function updateDisplay(gpd, category, item, selecteditemid) {
             sections.forEach(id => {
 
                 document.getElementById(id).style.display = (id === sectionId) ? 'block' : 'none';
+
             });
 
+
+
+
+            if (sectionId === 'prices-content') {
+                document.getElementById('from_date').value = "";
+                document.getElementById('category').selectedIndex = 0;
+                document.getElementById('sub_items-dp').innerHTML = "<option value='' disabled selected>Select Category</option>";
+                document.getElementById('food_items-dp').innerHTML = "<option value='' disabled selected>Select Food Item</option>";
+                document.getElementById('Price').value = "";
+                $('#typesTableBody').hide();
+                $('#typesTableBody1').hide();
+                $('#tablehead').hide();
+
+
+
+            } else if (sectionId === 'items-menu') {
+                document.getElementById('category_name').value = "";
+                $('#typesTableBody').hide();
+                $('#typesTableBody1').hide();
+                $('#tablehead').hide();
+
+            } 
+            else if (sectionId === 'items-menu-content') {
+                document.getElementById('item_category').selectedIndex = 0;
+                document.getElementById('subcategory_name').value = "";
+                $('.lun_table tbody').hide();
+            }
+            else if (sectionId === 'sub-items-menu-content') {
+                document.getElementById('sub_item_category').selectedIndex = 0;
+                document.getElementById('sub_items').innerHTML = "<option value='' disabled selected>Select Category</option>";
+                document.getElementById('item_name').value = "";
+                document.getElementById('item_number').value = "";
+                $('.lun_table1 tbody').hide();
+            }
+            else if (sectionId === 'delivery-add') {
+                document.getElementById('name').value = "";
+                document.getElementById('contact').value = "";
+                document.getElementById('Doorno').value = "";
+                document.getElementById('Street').value = "";
+                document.getElementById('Area').value = "";
+            }
+            else if(sectionId == 'delivery-scheduling'){
+                document.getElementById(`foodtype-tdy`).selectedIndex = 0;
+                document.getElementById(`foodtype-tmr`).selectedIndex = 0;
+                document.getElementById(`name-tdy`).innerHTML = "<option value='' disabled selected>Select Name </option>";
+                document.getElementById(`name-tmr`).innerHTML = "<option value='' disabled selected>Select Name </option>";
+                document.getElementById(`contact-tdy`).innerHTML = "<option value='' disabled selected>Select Contact </option>";
+                document.getElementById(`contact-tmr`).innerHTML = "<option value='' disabled selected>Select Contact </option>";
+            }
             // Active sidebar item
             document.querySelectorAll('.side-container ul li').forEach(li => li.classList.remove('active'));
             element.classList.add('active');
 
-        }
+}
 
         // Reset form fields
         document.addEventListener("DOMContentLoaded", function() {
@@ -1791,6 +1841,7 @@ function updateDisplay(gpd, category, item, selecteditemid) {
                 data: JSON.stringify(payload),
                 dataType: "json",
                 success: function(response) {
+                    console.log("loaditem by category",response);
                     const tbody = document.querySelector(".lun_table tbody");
                     tbody.innerHTML = ""; // Clear existing rows
 
@@ -1806,6 +1857,7 @@ function updateDisplay(gpd, category, item, selecteditemid) {
                     </tr>`;
                             tbody.insertAdjacentHTML("beforeend", row);
                         });
+                        $('.lun_table tbody').show();
                     } else {
                         tbody.innerHTML = "<tr><td colspan='3'>No items found for this category.</td></tr>";
                     }
@@ -2064,6 +2116,7 @@ function updateDisplay(gpd, category, item, selecteditemid) {
                     </tr>`;
                             tbody.insertAdjacentHTML("beforeend", row);
                         });
+                        $('.lun_table1 tbody').show();
                     } else {
                         tbody.innerHTML = "<tr><td colspan='4'>No items found for this category.</td></tr>";
                     }
@@ -2387,6 +2440,7 @@ function changeActivity(sno, currentStatus, buttonElement) {
                 // Update button text and toggle status
                 buttonElement.textContent = newStatus == 1 ? "Deactivate" : "Activate";
                 buttonElement.setAttribute("onclick", `changeActivity(${sno}, ${newStatus}, this)`);
+                loadtabs();
             } else {
                 alert("Failed to update activity status.");
             }
@@ -2983,7 +3037,7 @@ function validateStreetAndAreaInput(input) {
     if (input.value.length > 50) {
         input.value = input.value.substring(0, 50); // Limit to 50 characters
             }
-        }
+}
 
     </script>
 </body>

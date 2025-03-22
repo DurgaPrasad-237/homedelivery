@@ -369,13 +369,15 @@ function loadFoodPrices(x) {
                         <td>${record.price}</td>
                         <td>${fromDateFormatted}</td>
                         <td>
-                            <button class="view_history" style="width: 50px; display: flex; align-items: center; justify-content: center; padding: 0; border: none; background-color: #f0f0f0; border-radius: 4px;">
+                            <button class="view_history" >
                                 <i class="fa-solid fa-eye fa-beat-fade" onclick="loadhistory(this,'${record.OptionID}')" style="font-size: 18px;"></i>
                             </button>
                         </td>
                     `);
                     typesTableBody.append(row);
+
                 });
+                $('#typesTableBody').show();
 
             } else {
                 const typesTableBody = $('#typesTableBody');
@@ -436,13 +438,14 @@ function loadFoodPricessub(x) {
                         <td>${record.price}</td>
                         <td>${fromDateFormatted}</td>
                         <td>
-                            <button class="view_history" style="width: 50px; display: flex; align-items: center; justify-content: center; padding: 0; border: none; background-color: #f0f0f0; border-radius: 4px;">
+                            <button class="view_history" >
                                 <i class="fa-solid fa-eye fa-beat-fade" onclick="loadhistory(this,'${record.OptionID}')" style="font-size: 18px;"></i>
                             </button>
                         </td>
                     `);
                     typesTableBody.append(row);
                 });
+                $('#typesTableBody').show();
 
             } else {
                 const typesTableBody = $('#typesTableBody');
@@ -532,8 +535,11 @@ function loadhistory(x, OptionID) {
                     typesTableBody.append(row);
                     initial = true;
                 });
+                $('#tablehead').show();
+                $('#typesTableBody1').show();
             } else {
                 $('#tablehead').hide();
+                $('#typesTableBody1').hide();
                 typesTableBody.empty();
                 document.querySelector('.no_price').style.display = "block";
             }
@@ -543,6 +549,7 @@ function loadhistory(x, OptionID) {
         }
     });
 }
+
 
 function hidetab(){
     const typesTableBody = $('#typesTableBody1');

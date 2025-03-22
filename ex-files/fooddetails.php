@@ -36,7 +36,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 400px;
-            margin: 70px 70px 70px 150px;
+            margin: 70px 70px 40px 150px;
         }
 
         h2 {
@@ -66,7 +66,7 @@
 
         label {
             display: block;
-            margin-bottom: 5px;
+           
             font-weight: bold;
         }
 
@@ -138,7 +138,8 @@
                                         <label for="category">Food Type:</label>
                                         <select id="category" class="category" onchange="loadsubcategory();loadFoodPrices(true);hidetab()">
                                             <option value="">Select Type</option>
-
+                                            <!-- <option value="daily">Daily</option>
+                                            <option value="monthly">Monthly</option> -->
                                         </select>
 
                                         <label for="sub_item">Category:</label>
@@ -155,9 +156,12 @@
 
                                         <label for="from_date">From:</label>
                                         <input type="date" id="from_date" name="from_date" required>
+                                        <div class="button">
 
+                                        
+                                        </div>
                                         <button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button>
-                                        <button type="cancel" class="btn btn-danger" onclick="cancelOperation()">Cancel</button>
+                                        <button type="cancel" class="btn btn-danger" onclick="cancelOperationforprices()">Cancel</button>
                                     </div>
                                 </div>
 
@@ -192,7 +196,7 @@
                                                 <th>From
                                                     Date</th>
                                                 <th>Edit</th>
-                                                                                        <th>Activity</th>
+                                                                                      
 
                                             </tr>
                                         </thead>
@@ -332,6 +336,66 @@
                         <div class="schedule_menu_list">
 
                         </div>
+                        <!-- <div class="schedulingboxes">
+                            <h3>Break Fast</h3>
+                            <div class="tdybox">
+                                <p><b>Today</b></p>
+                                <input type="date" id="schtdydate" readonly>
+                                <input type="text" id="schtdbfitem" readonly>
+                            </div>
+                            <div class="tmrbox">
+                                <p><b>Tomorrow</b></p>
+                                <input type="date" id="schtmdydate" readonly>
+                                <select class="subcategory" onchange="loadcatitems()">
+
+                                </select>
+                                <select class="tmbfitems">
+
+                                </select>
+                                <button onclick="upddatetmitem(this,1)" class="btnbftmr">Save</button>
+                            </div>
+
+                        </div> -->
+                        <!-- 
+                        <div class="schedulingboxes">
+                            <h3>Lunch</h3>
+                            <div class="tdybox">
+                                <p><b>Today</b></p>
+                                <input type="date" id="schtdydate" readonly>
+                                <input type="text" id="schtdlunitem" readonly>
+                            </div>
+                            <div class="tmrbox">
+                                <p><b>Tomorrow</b></p>
+                                <input type="date" id="schtmdydate" readonly>
+                                <select class="lunchsubcategory" onchange="loadLunchCategoryItems()">
+
+                                </select>
+                                <select class="tmlunitems">
+
+                                </select>
+                                <button onclick="upddatetmitem(this,2)" class="btnluntmr">Save</button>
+                            </div>
+                        </div> -->
+
+                        <!-- <div class="schedulingboxes">
+                            <h3>Dinner</h3>
+                            <div class="tdybox">
+                                <p><b>Today</b></p>
+                                <input type="date" id="schtdydate" readonly>
+                                <input type="text" id="schtddinitem" readonly>
+                            </div>
+                            <div class="tmrbox">
+                                <p><b>Tomorrow</b></p>
+                                <input type="date" id="schtmdydate" readonly>
+                                <select class="dinnersubcategory" onchange="loadDinnerCategoryItems()">
+
+                                </select>
+                                <select class="tmdinitems">
+
+                                </select>
+                                <button onclick="upddatetmitem(this,3)" class="btndintmr">Save</button>
+                            </div>
+                        </div> -->
                     </div>
                 </div>
                 <div id="delivery-add" class="container">
@@ -339,7 +403,7 @@
     <form id="deliveryForm">
         <div class="form-group-add">
             <label for="name">Name:</label>
-            <input type="text" oninput="validateNameInput(this)" id="name" name="name" placeholder="Enter your name" required>
+            <input type="text" oninput="validateNameInput(this)" id="name" maxlength="30" name="name" placeholder="Enter your name" required>
         </div>
         <div class="form-group-add">
             <label for="contact">Contact:</label>
@@ -1619,50 +1683,53 @@
 
 
         // Function to toggle sections with active class
-        function toggleSection(sectionId, element) { 
-    const sections = ['prices-content', 'items-menu', 'items-menu-content', 'sub-items-menu-content', 'scheduling-content', 'delivery-scheduling', 'delivery-add'];
-    
-    sections.forEach(id => {
-        const section = document.getElementById(id);
-        
-        // Reset the section (e.g., clear inputs, uncheck checkboxes, reset scroll)
-        resetSection(section);
-        
-        // Display the current section, hide others
-        section.style.display = (id === sectionId) ? 'block' : 'none';
-    });
+        function toggleSection(sectionId, element) {
+            const sections = ['prices-content', 'items-menu', 'items-menu-content', 'sub-items-menu-content', 'scheduling-content', 'delivery-scheduling', 'delivery-add'];
+            sections.forEach(id => {
 
-    // Active sidebar item
-    document.querySelectorAll('.side-container ul li').forEach(li => li.classList.remove('active'));
-    element.classList.add('active');
-}
+                document.getElementById(id).style.display = (id === sectionId) ? 'block' : 'none';
+              
+            });
 
-function resetSection(section) {
-    if (!section) return;
+          
+           
+            if(sectionId === 'prices-content') {
+                document.getElementById('from_date').value = "" ;
+                document.getElementById('category').selectedIndex = 0 ;
+                document.getElementById('sub_items-dp').innerHTML = "<option value='' disabled selected>Select Category</option>";
+                document.getElementById('food_items-dp').innerHTML = "<option value='' disabled selected>Select Food Item</option>";
+                document.getElementById('Price').value = "";
+                $('#typesTableBody').hide();
+                $('#typesTableBody1').hide();
+                $('#tablehead').hide();
+                
 
-    // Clear input fields
-    section.querySelectorAll('input').forEach(input => {
-        if (input.type === 'checkbox' || input.type === 'radio') {
-            input.checked = false;
-        } else {
-            input.value = '';
+               
+            }
+            else if(sectionId === 'items-menu'){
+                alert(sectionId)
+                document.getElementById('category_name').value = "";
+                $('#typesTableBody').hide();
+                $('#typesTableBody1').hide();
+                $('#tablehead').hide();
+               
+            }
+            // else if(){
+            //     alert(sectionId)
+
+            // }
+
+
+
+
+
+
+
+            // Active sidebar item
+            document.querySelectorAll('.side-container ul li').forEach(li => li.classList.remove('active'));
+            element.classList.add('active');
+
         }
-    });
-
-    // Reset select elements
-    section.querySelectorAll('select').forEach(select => {
-        select.selectedIndex = 0;
-    });
-
-    // Clear textareas
-    section.querySelectorAll('textarea').forEach(textarea => {
-        textarea.value = '';
-    });
-
-    // Reset scroll position
-    section.scrollTop = 0;
-}
-
 
         // Reset form fields
         document.addEventListener("DOMContentLoaded", function() {
@@ -1880,7 +1947,7 @@ function resetSection(section) {
                 activity: currentActivity,
                 load: "activityStatusChange"
             };
-            status = ( currentActivity  === 1) ? "deactivated" : "activated";
+
             $.ajax({
                 type: "POST",
                 url: "./webservices/fooddetails1.php",
@@ -1889,7 +1956,7 @@ function resetSection(section) {
                 success: function(response) {
 
                     if (response.status === "success") {
-                        alert(`Item is ${status}`);
+
                         loadItemsByCategory(); // Refresh the list after update
                     } else {
                         alert("Failed to change status: " + response.msg);
@@ -1925,7 +1992,7 @@ function resetSection(section) {
                             dropdown.appendChild(option);
                         });
                     } else {
-                        dropdown.innerHTML = "<option disabled></option>";
+                        dropdown.innerHTML = "<option disabled>No Subcategories Found</option>";
                     }
                 },
                 error: function(err) {
@@ -1997,10 +2064,9 @@ function resetSection(section) {
 
                     if (response.data && response.data.length > 0) {
                         response.data.forEach(item => {
-                          
                             // Define activity label based on activity status (you can adjust logic)
-                            const activityLabel = item.activity == 1 ? "Deactivate" : "Activate";
-                           console.log("activityyyyyyy",activityLabel);
+                            const activityLabel = item.activity === 1 ? "Deactivate" : "Activate";
+
                             const row = `<tr>
                         <td>${item.ItemName}</td>
                         <td>${item.Price}</td>
@@ -2163,10 +2229,8 @@ function resetSection(section) {
                 sno: sno,
                 activity: currentActivity,
                 load: "activityStatusChangei"
-
             };
 
-           status = ( currentActivity  === 1) ? "deactivated" : "activated";
             console.log(payload);
             $.ajax({
                 type: "POST",
@@ -2177,9 +2241,7 @@ function resetSection(section) {
 
                     if (response.status === "success") {
 
-                        alert(`Item is ${status}`);
                         loadItemsByCategory1(); // Refresh the list after update
-                      
                     } else {
                         alert("Failed to change status: " + response.msg);
                     }
@@ -2740,23 +2802,22 @@ document.querySelector('.cancelBtn').addEventListener('click', function() {
         function resetfields(x) {
             console.log(x);
 
-            // Reset food type dropdown
             let foodTypeDropdown = document.getElementById(`foodtype-${x}`);
             foodTypeDropdown.innerHTML = "<option value='' disabled selected>Select Food Type</option>";
 
-            // Reset name dropdown
+
             let nameDropdown = document.getElementById(`name-${x}`);
             nameDropdown.innerHTML = "<option value='' disabled selected>Select Name</option>";
 
-            // Reset contact dropdown
+
             let contactDropdown = document.getElementById(`contact-${x}`);
             contactDropdown.innerHTML = "<option value='' disabled selected>Select Contact</option>";
 
-            // Reload the food types dropdown so the options appear again
+        
             if (x === "tdy") {
                 loadfoodtypeds();
             } else if (x === "tmr") {
-                loadfoodtypesds(); // Create a similar function for tomorrow's dropdowns if needed
+                loadfoodtypesds(); 
             }
         }
 

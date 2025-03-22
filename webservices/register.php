@@ -54,6 +54,7 @@ else if($load == "loadMenubyDate"){
     loadMenuByDate($conn);
 }
 
+
 function loadMenuByDate($conn){
     global $menuDate;
     $selectquery = "SELECT s.Date, f.OptionID, f.ItemName, f.category,f.subcategory as subsno,ft.type,sb.subcategory
@@ -151,7 +152,7 @@ function register($conn){
     global $customername,$primaryphone,$email,$deliveryaddress,$deliveryphone,$map,
             $deliveryflatno,$deliverystreet,$deliveryarea,$deliverylandmark;
 
-    $checksql = "SELECT * FROM `customers` WHERE `Phone1` = '$primaryphone' OR `Email` = '$email'";
+    $checksql = "SELECT * FROM `customers` WHERE `Phone1` = '$primaryphone'";
     $resultsql = getData($conn,$checksql);
 
     

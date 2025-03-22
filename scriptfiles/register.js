@@ -54,32 +54,42 @@ $(document).ready(intialload())
 
 
 function validateRegisterPhoneNumber(input){
-    const allowedPattern = /^[A-Za-z0-9\/-]*$/;
-
-    // Check if the current input value matches the allowed pattern
-    if (!allowedPattern.test(input.value)) {
-      // If not, remove the last entered character
-      input.value = input.value.slice(0, -1);
-      // Display an error message
-      document.getElementById('errorMsg').textContent = "Only letters, numbers, '/', and '-' are allowed.";
-    } else {
-      // Clear the error message if the input is valid
-      document.getElementById('errorMsg').textContent = "";
+    input.value = input.value.replace(/[^0-9]/g, ''); // Allow only numbers
+    if (!/^[6-9]/.test(input.value)) {
+        input.value = ""; // Clear if the first digit is not 6-9
     }
+}
+
+//function for name
+function validateName(input) {
+    input.value = input.value.replace(/[^A-Za-z]/g, '');
+}
+//function for addresslink
+function validateAddressLink(input) {
+    // Remove only ' and " characters
+    input.value = input.value.replace(/['"]/g, '');
 }
 
 //validate register mail
 function validateRegisterEmail(input) {
-    input.value = input.value.replace(/[^a-zA-Z0-9@._-]/g, ''); // Allow only valid email characters
-    if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(input.value)) {
-        input.style.borderColor = "red"; // Highlight if invalid
+    // Allow only valid email characters while typing
+    input.value = input.value.replace(/[^a-zA-Z0-9@._-]/g, '');
+
+    // Full strict email validation regex
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    // Validate email format strictly
+    if (emailPattern.test(input.value)) {
+        input.style.borderColor = ""; // Valid email
     } else {
-        input.style.borderColor = ""; // Reset if valid
+        input.style.borderColor = "red"; // Invalid email
     }
 }
+
+
 //valid flat input
 function validFlatNo(input) {
-    input.value = input.value.replace(/[^A-Za-z0-9\/-]/g, '');
+    input.value = input.value.replace(/[^A-Za-z0-9\/\-\s]/g, '');
     
 }
 
@@ -275,6 +285,55 @@ function viewMenu() {
     }
 }
 
+//function for loadtabs
+function loadtabs(){
+    var payload = {
+        load:"loadfoodtype",
+    }
+    $.ajax({
+        type: "POST",
+        url: "./webservices/fooddetails1.php",
+        data: JSON.stringify(payload),
+        dataType: "json",
+        success:function(response){
+           
+            if(response.data.length > 0){
+                let btn_container_div = document.querySelector('.btn_container_div');
+                btn_container_div.innerHTML = "";
+                response.data.forEach(itm=>{
+                    let button = document.createElement('button');
+                    button.classList.add('menu-button');
+                    if(parseInt(itm.sno) === 1){
+                        button.addEventListener('click', showBreakfast);
+                    }
+                    else if(parseInt(itm.sno) === 2){
+                        button.addEventListener('click', showLunch);
+                    }
+                    else if(parseInt(itm.sno) === 3){
+                        button.addEventListener('click', showDinner);
+                    }
+                    button.innerHTML = `
+                      ${itm.type}
+                    <input type="number" id="${trimOperation(itm.type,"qty")}" class="mealqty" value="0" readonly />
+                    <input type="number" id="${trimOperation(itm.type,"amt")}" class="mealamt" value="0" readonly />
+                    `
+                    btn_container_div.appendChild(button);
+                })
+            }
+        },
+        error:function(err){
+            console.log(err);
+            alert("Something Wrong")
+        }
+    })
+}
+loadtabs();
+
+function trimOperation(string1,string2){
+    let string = string1+'_'+string2;
+    return string.trim();
+}
+
 
 function loadMenuByDate(thisdate){
 
@@ -468,13 +527,21 @@ function todayorderdetails(customerid) {
                             <p class="qty">${itm.quantity}</p>
                             <p class="amt">${itm.price}</p>
                     `
-                        let iqty = (itm.food_type === 'breakfast') ? "mealqty" : (itm.food_type === 'lunch') ? "mealqtyl" : "mealqtyd";
-                        let iamt = (itm.food_type === 'breakfast') ? "mealamt" : (itm.food_type === 'lunch') ? "mealamount" : "mealamtd";
+                        let iqty = trimOperation(itm.food_type,"qty");
+                        document.getElementById(`${iqty}`).value = itm.quantity;
+                        let iamt = trimOperation(itm.food_type,"amt");
+                        document.getElementById(`${iamt}`).value = itm.price;
+
+
+                        // let iqty = (itm.food_type === 'breakfast') ? `${trimOperation(itm.food_type,"qty")}` : (itm.food_type === 'lunch') ? `${trimOperation(itm.food_type,"qty")}` : "mealqtyd";
+                        // let iamt = (itm.food_type === 'breakfast') ? "mealamt" : (itm.food_type === 'lunch') ? "mealamount" : "mealamtd";
                         let iqtyb = (itm.food_type === 'breakfast') ? "mealqtyb" : (itm.food_type === 'lunch') ? "mealqtylb" : "mealqtydb";
                         let iamtb = (itm.food_type === 'breakfast') ? "mealamtb" : (itm.food_type === 'lunch') ? "mealamountb" : "mealamtdb";
                         
-                        document.getElementById(`${iqty}`).value = itm.quantity;
-                        document.getElementById(`${iamt}`).value = itm.price;
+                        // document.getElementById(`${iqty}`).value = itm.quantity;
+                        // document.getElementById(`${iamt}`).value = itm.price;
+
+
                         document.getElementById(`${iqtyb}`).value = itm.quantity;
                         document.getElementById(`${iamtb}`).value = itm.price;
                         
@@ -584,10 +651,15 @@ submit.addEventListener('click', () => {
         alert("fill the required fields")
         return "";
     }
-    // if (!validateEmail(email.value)) {
-    //     alert("not a valid email")
-    //     return "";
-    // }
+
+    if(email.value != ""){
+        if (!validateEmail(email.value)) {
+            alert("not a valid email")
+            return "";
+        }
+    }
+   
+
     if (!validatePhoneNumber(primaryphone.value)) {
         alert("not a valid phone number")
         return "";
@@ -2534,6 +2606,7 @@ function toggleDeliveryTextbox() {
 //     document.querySelector('.food_details').style.display = "none";
 // }
 function showBreakfast() {
+    console.log("hello");
     const cid = document.querySelector('.customer_id').value;
     if (!cid) {
         alert("Please select any user!")
@@ -2559,10 +2632,10 @@ function showLunch() {
     document.getElementById("insert-button").style.display = "block";
     document.getElementById("edit-box").style.display = "none";
     document.querySelector('.food_details').style.display = "none";
-    const radioBtn = document.querySelector('input[name="lunch-category"][value="category1"]');
-    if (radioBtn) {
-        radioBtn.checked = true;
-    }
+    // const radioBtn = document.querySelector('input[name="lunch-category"][value="category1"]');
+    // if (radioBtn) {
+    //     radioBtn.checked = true;
+    // }
     headerfetch();
 
 }

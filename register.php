@@ -65,15 +65,15 @@
                 </div>
                 <div>
                     <label>Area</label>
-                    <input maxlength="30" id="da_area" placeholder="Area" />
+                    <input maxlength="30" id="da_area" placeholder="Area"  oninput="validFlatNo(this)"/>
                 </div>
                 <div>
                     <label>Street</label>
-                    <input maxlength="25" id="da_street" placeholder="Street" />
+                    <input maxlength="25" id="da_street" placeholder="Street"  oninput="validFlatNo(this)"/>
                 </div>
                 <div>
                     <label>LandMark</label>
-                    <input maxlength="25" id="da_landmark" placeholder="Landmark" />
+                    <input maxlength="25" id="da_landmark" placeholder="Landmark"  oninput="validFlatNo(this)"/>
                 </div>
                 <div>
                     <label>Delivery Ph</label>
@@ -122,7 +122,7 @@
                         </div>
                         <div class="input_row">
                             <label><span><i class="fa-solid fa-user"></i></span></label>
-                            <input disabled class="customer_Name" id="customer_name" placeholder="Enter Name">
+                            <input disabled maxlength="25"oninput="validateName(this)" class="customer_Name" id="customer_name" placeholder="Enter Name">
                         </div>
                         <div class="input_row">
                             <label><span><i class="fa-solid fa-phone"></i></span></label>
@@ -140,11 +140,11 @@
                         </div> -->
                         <div class="reg_address">
                             <input placeholder="flatno/houseno" maxlength="15" class="regaddress_input" id="regflat" oninput="validFlatNo(this)">
-                            <input placeholder="Street" maxlength="25" class="regaddress_input" id="regstreet">
-                            <input placeholder="Area" maxlength="30" class="regaddress_input" id="regarea">
-                            <input placeholder="LandMark" class="regaddress_input" id="reglandmark" maxlength="25" />
+                            <input placeholder="Street" maxlength="25" class="regaddress_input" id="regstreet" oninput="validFlatNo(this)">
+                            <input placeholder="Area" maxlength="30" class="regaddress_input" id="regarea" oninput="validFlatNo(this)">
+                            <input placeholder="LandMark" class="regaddress_input" id="reglandmark" maxlength="25" oninput="validFlatNo(this)" />
                             <input oninput="validateRegisterPhoneNumber(this)" type="text" maxlength="10" placeholder="Delivery_Mobile" class="regaddress_input" id="regdmobile">
-                            <input placeholder="Address link" class="regaddress_input" id="reglink">
+                            <input placeholder="Address link" oninput="validateAddressLink(this)" class="regaddress_input" id="reglink">
                             <!-- <input placeholder="Address link" class="regaddress_input"> -->
                         </div>
                         <button class="btngenerate" id="Submit">Submit</button>
@@ -188,11 +188,11 @@
                         <h3>Delivery Address <span><i class="fa-solid fa-plus" onclick="addnewDelivery()" title="Add new Address"></i></span></h3>
                         <div class="address_input_area">
                             <input placeholder="flatno/houseno" maxlength="15" class="address_input" id="address_flat" disabled oninput="validFlatNo(this)">
-                            <input placeholder="Street" maxlength="25" class="address_input" id="address_street" disabled>
-                            <input placeholder="Area" maxlength="30" class="address_input" id="address_area" disabled>
-                            <input placeholder="Landmark" maxlength="25" class="address_input" id="address_landmark" disabled>
+                            <input placeholder="Street" maxlength="25" class="address_input" id="address_street" disabled oninput="validFlatNo(this)">
+                            <input placeholder="Area" maxlength="30" class="address_input" id="address_area" disabled oninput="validFlatNo(this)">
+                            <input placeholder="Landmark" maxlength="25" class="address_input" id="address_landmark" disabled oninput="validFlatNo(this)">
                             <input type="text" oninput="validateRegisterPhoneNumber(this)"  placeholder="Mobile" class="address_input" id="address_mobile" disabled>
-                            <input placeholder="Address link" class="address_input" id="address_link" disabled>
+                            <input placeholder="Address link" class="address_input" id="address_link" disabled oninput="validateAddressLink(this)">
                             <button class="editbtn" id="deditbtn">Edit</button>
                             <div class="scbtn">
                                 <button id="dsbtn">Save</button>
@@ -207,11 +207,11 @@
                         </div>
                         <div class="address_input_area">
                             <input placeholder="flatno/houseno" maxlength="15" class="address_input" id="billing_flat" disabled oninput="validFlatNo(this)">
-                            <input placeholder="Street" maxlength="25" class="address_input" id="billing_street" disabled>
-                            <input placeholder="Area" maxlength="30" class="address_input" id="billing_area" disabled>
-                            <input placeholder="Landmark" maxlength="30" class="address_input" id="billing_landmark" disabled>
+                            <input placeholder="Street" maxlength="25" class="address_input" id="billing_street" disabled oninput="validFlatNo(this)">
+                            <input placeholder="Area" maxlength="30" class="address_input" id="billing_area" disabled oninput="validFlatNo(this)">
+                            <input placeholder="Landmark" maxlength="30" class="address_input" id="billing_landmark" disabled oninput="validFlatNo(this)">
                             <input type="text" oninput="validateRegisterPhoneNumber(this)"  placeholder="Mobile" class="address_input" id="billing_mobile" disabled>
-                            <input placeholder="Address link" class="address_input" id="billing_link" disabled>
+                            <input placeholder="Address link" class="address_input" id="billing_link" disabled oninput="validateAddressLink(this)">
                             <button class="editbtn" id="beditbtn">Edit</button>
                             <div class="bscbtn">
                                 <button id="bsbtn">Save</button>
@@ -239,7 +239,8 @@
 
             </div>
             <div class="button-container">
-                <button class="menu-button" onclick="showBreakfast()">
+                <div class="btn_container_div">
+                <!-- <button class="menu-button" onclick="showBreakfast()">
                     Breakfast
                     <input type="number" id="mealqty" value="0" readonly />
                     <input type="number" id="mealamt" value="0" readonly />
@@ -253,6 +254,12 @@
                     <input type="number" id="mealqtyd" value="0" readonly />
                     <input type="number" id="mealamtd" value="0" readonly />
                 </button>
+                <button class="menu-button" onclick="showDinner()">
+                    Snacks
+                    <input type="number" id="mealqtyd" value="0" readonly />
+                    <input type="number" id="mealamtd" value="0" readonly />
+                </button> -->
+                </div>
                 <!-- <button onclick="showedit()" class="edit-button">
                     Edit Order
                 </button> -->
@@ -468,6 +475,7 @@
                 <div class="dialog-container">
                     <div class="selection-container-b">
                         <div class="button-container-b">
+                            <div class="btn_continer_bulk">
                             <button class="menu-button-b" onclick="showBreakfastB();fetchallb();handleDateChangeB();">
                                 Breakfast
                                 <input type="number" id="mealqtyb" value="0" readonly />
@@ -482,8 +490,13 @@
                                 <input type="number" id="mealqtydb" value="0" readonly />
                                 <input type="number" id="mealamtdb" value="0" readonly />
                             </button>
+                            <button class="menu-button-b" onclick="showDinnerB();getallb();handleDateChangeD();">
+                                snacks
+                                <input type="number" id="mealqtydb" value="0" readonly />
+                                <input type="number" id="mealamtdb" value="0" readonly />
+                            </button>
+                            </div>
                             <button class="savebutton" type="submit" onclick="placeorder(event)">Save</button>
-
 
                         </div>
 

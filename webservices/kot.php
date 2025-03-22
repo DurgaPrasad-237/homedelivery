@@ -166,6 +166,7 @@ function loadOrdersforitems($conn, $data) {
                 $pulusu += $quantity;
                 $fry += $quantity;
                 $rice += $quantity;
+                $curd += $quantity;
             }
 
             if (strpos($item_name, "curryset") !== false) {

@@ -290,7 +290,7 @@ body {
     /* box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); */
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     height: 87vh;
-    overflow-y: scroll;
+    overflow-y: hidden;
     position: relative;
     cursor: default;
     scrollbar-width: none;
@@ -314,12 +314,22 @@ body {
 .button-container {
     display: flex;
     justify-content: space-around;
-    gap: 20px;
     padding: 10px;
     background-color: #f9f9f9;
     border-bottom: 2px solid #ddd;
     background-color: black;
-
+    width:99%;
+    height:10%;
+}
+.btn_container_div{
+    display: flex;
+    justify-content: space-around;
+    gap: 50px;
+    width:90%;
+    overflow: auto;
+}
+.btn_container_div::-webkit-scrollbar{
+    display:none;
 }
 
 .menu-button {
@@ -653,9 +663,7 @@ thead {
     display: none;
 } */
 
-#mealqty,
-#mealqtyd,
-#mealqtyl {
+.mealqty{
     width: 50px;
     height: 30px;
     text-align: center;
@@ -667,10 +675,7 @@ thead {
     box-sizing: border-box;
 }
 
-#mealamt,
-#mealamtd,
-#mealamtl,
-#mealamount {
+.mealamt {
     width: 80px;
     height: 30px;
     text-align: center;
@@ -1152,6 +1157,9 @@ width: 50px; /* First column */
     align-self: center;
     justify-self:flex-end;
 }
+.show_fdbtn{
+    margin-left: 1vw;
+}
 .show_fdbtn:hover,.savebutton:hover{
     background-color: #F3681E;
     color:white;
@@ -1240,8 +1248,19 @@ width: 50px; /* First column */
     padding: 5px;
     background-color: black;
     border-bottom: 2px solid #ddd;
-  
-
+    width:99%;
+}
+.btn_continer_bulk{
+    overflow: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width:90%;
+    overflow: auto;
+    height:10vh;
+}
+.savebutton{
+    width:10%;
 }
 
 #mealqtyb,
@@ -1275,6 +1294,8 @@ width: 50px; /* First column */
 }
 
 .menu-button-b {
+    min-width: 15vw; /* or try width: 20vw */
+    height: 100%;
     padding: 5px;
     font-size: 14px;
     cursor: pointer;
@@ -1283,6 +1304,11 @@ width: 50px; /* First column */
     color: #FFC857;
     border: 2px solid #ffc7574a;
 }
+
+.btn_continer_bulk::-webkit-scrollbar{
+    display:none;
+}
+
 
 .menu-button-b:hover {
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
@@ -1332,7 +1358,7 @@ overflow-x: hidden; /* Disable horizontal scrolling */
 
 margin-top: 10px;
 
-height: 47vh;
+height: 55vh;
 
 }
 #lunch-box-b{

@@ -290,7 +290,7 @@ body {
     /* box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); */
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     height: 87vh;
-    overflow-y: scroll;
+    overflow-y: hidden;
     position: relative;
     cursor: default;
     scrollbar-width: none;
@@ -416,6 +416,7 @@ body {
 #lunch-options-container {
     display: flex;
     flex-direction: column;
+    /* Arrange options vertically */
     gap: 15px;
     /* Add spacing between options */
 }
@@ -1331,7 +1332,7 @@ overflow-x: hidden; /* Disable horizontal scrolling */
 
 margin-top: 10px;
 
-height: 47vh;
+height: 55vh;
 
 }
 #lunch-box-b{
